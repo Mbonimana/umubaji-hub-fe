@@ -1,9 +1,22 @@
+
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Layout from "../src/layout/Layout"
+
+
 function App() {
-
-
   return (
-    <div className="text-red-500">Umubaji hub</div>
-
+    <BrowserRouter>
+    
+        <Routes>
+          <Route path='/' element={<Layout />}>
+          
+            
+         
+          </Route>
+        </Routes>
+     
+    </BrowserRouter>
   )
 }
+
 export default App;
