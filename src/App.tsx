@@ -2,6 +2,8 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Layout from "../src/layout/Layout"
 import Home from './pages/home';
+import HomePage from './pages/home';
+
 
 
 function App() {
@@ -15,6 +17,9 @@ function App() {
       
             
          
+            <Route index element={<HomePage />} />
+          
+      
           </Route>
         </Routes>
      
