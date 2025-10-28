@@ -1,6 +1,8 @@
 
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Layout from "../src/layout/Layout"
+import HomePage from './pages/home';
+
 
 
 function App() {
@@ -9,9 +11,9 @@ function App() {
     
         <Routes>
           <Route path='/' element={<Layout />}>
+            <Route index element={<HomePage />} />
           
-            
-         
+      
           </Route>
         </Routes>
      
