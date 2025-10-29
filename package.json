@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "axios": "^1.13.0",
     "lucide-react": "^0.548.0",
+    "notiflix": "^3.2.8",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.9.4"

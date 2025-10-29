@@ -2,8 +2,14 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Layout from "../src/layout/Layout"
 import Home from './pages/home';
-import HomePage from './pages/home';
 
+import Login from './components/auth/login';
+import Signup from './components/auth/signup';
+import ForgotPassword from './components/auth/forgotpassword';
+import OtpVerification from './components/auth/verifyotp';
+import PasswordReset from './components/auth/passwordReset';
+import VendorForgotPassword from './components/auth/vendorForgotpassword';
+import VendorPage from './components/vendorPage';
 
 
 function App() {
@@ -17,10 +23,18 @@ function App() {
       
             
          
-            <Route index element={<HomePage />} />
           
       
+          <Route path='vendorPage' element={<VendorPage/>} />
+ 
           </Route>
+          <Route path='Login' element={< Login />}/>
+          <Route path='Signup' element={< Signup />}/>
+          <Route path='forgot-password' element={< ForgotPassword />}/>
+          <Route path='otp-verification' element={< OtpVerification />}/>
+          <Route path='reset-password' element={<PasswordReset/>} />
+          <Route path='vendor-forgot-password' element={<VendorForgotPassword/>} />
+          
         </Routes>
      
     </BrowserRouter>
