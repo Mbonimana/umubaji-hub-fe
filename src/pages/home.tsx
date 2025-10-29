@@ -5,11 +5,14 @@ import {
     StarIcon,
     ShoppingCartIcon,
 } from '@heroicons/react/24/solid';
+import { useCart } from '../contexts/CartContext';
 
 const Home: React.FC = () => {
+    const { addToCart } = useCart();
+
     return (
         <div className="font-sans">
-            {/* 🟠 Hero Section */}
+            {/* Hero Section */}
             <section className="bg-gradient-to-b from-[#fefcf9] to-[#f3ebe2] py-12 text-center px-4">
                 <h1 className="text-2xl md:text-3xl font-semibold text-primary mb-2">
                     Find Expert Carpenters & Quality Furniture
@@ -30,7 +33,7 @@ const Home: React.FC = () => {
                     </button>
                 </div>
 
-                {/* 🟤 Category Buttons */}
+                {/* Category Buttons */}
                 <div className="flex justify-center gap-4 mt-6 flex-wrap">
                     {['Tables', 'Chairs', 'Custom Work', 'All Vendors'].map((label) => (
                         <button
@@ -45,17 +48,17 @@ const Home: React.FC = () => {
 
             {/* ⚪ White Background — Featured Vendors */}
             <section className="bg-white pt-16">
-                {/* Midway divider using gray background for visual spacing */}
                 <div className="bg-[#2f2f2f] py-12 px-4">
                     <div className="max-w-7xl mx-auto">
                         <div className="bg-white rounded-t-2xl p-6 shadow-lg">
+
                             {/* 🔸 Featured Vendors Header */}
                             <div className="flex justify-between items-center mb-6">
                                 <h2 className="text-xl font-semibold text-primary">Featured Vendors</h2>
                                 <button className="text-accent underline text-sm">View All</button>
                             </div>
 
-                            {/* 🧱 Vendor Cards */}
+                            {/* Vendor Cards */}
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
                                 {[
                                     {
@@ -120,7 +123,7 @@ const Home: React.FC = () => {
             <section className="bg-[#505050] py-12 px-4 text-white">
                 <div className="max-w-7xl mx-auto">
                     <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-secondary">
-                        📦 Trending Products
+                        Trending Products
                     </h2>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 justify-items-center">
@@ -154,7 +157,21 @@ const Home: React.FC = () => {
                                     <h4 className="font-medium text-lg">{product.name}</h4>
                                     <p className="text-sm text-gray-600">{product.material}</p>
                                     <p className="mt-1 font-semibold text-primary">{product.price}</p>
-                                    <button className="mt-4 bg-secondary text-white w-full py-2 text-sm rounded-md hover:bg-primary transition">
+
+                                    {/*  Add to Cart Button */}
+                                    <button
+                                        onClick={() =>
+                                            addToCart({
+                                                id: `${product.name}-${idx}`,
+                                                name: product.name,
+                                                price: parseInt(product.price.replace(/[₦,]/g, '')),
+                                                vendor: "Default Vendor",
+                                                img: product.img ?? '',
+                                                quantity: 1
+                                            })
+                                        }
+                                        className="mt-4 bg-secondary text-white w-full py-2 text-sm rounded-md hover:bg-primary transition"
+                                    >
                                         Add to Cart
                                     </button>
                                 </div>

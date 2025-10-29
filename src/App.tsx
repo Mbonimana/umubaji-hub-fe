@@ -1,7 +1,8 @@
-
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Layout from "../src/layout/Layout"
+import { Routes, Route } from 'react-router-dom';
+import Layout from './layout/Layout';
 import Home from './pages/home';
+import Cart from './pages/Cart'; 
+import Checkout from './pages/Checkout';
 
 import Login from './components/auth/login';
 import Signup from './components/auth/signup';
@@ -13,32 +14,23 @@ import VendorPage from './components/vendorPage';
 
 
 function App() {
-  return (  
-    <BrowserRouter>
-    
-        <Routes>
-          <Route path='/' element={<Layout />}>
-            <Route index element={<Home />} />
+  return (
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Home />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/otp-verification" element={<OtpVerification />} />
+        <Route path="/password-reset" element={<PasswordReset />} />
+        <Route path="/vendor-forgot-password" element={<VendorForgotPassword />} />
+        <Route path="/vendor/:vendorId" element={<VendorPage />} />
 
-      
-            
-         
-          
-      
-          <Route path='vendorPage' element={<VendorPage/>} />
- 
-          </Route>
-          <Route path='Login' element={< Login />}/>
-          <Route path='Signup' element={< Signup />}/>
-          <Route path='forgot-password' element={< ForgotPassword />}/>
-          <Route path='otp-verification' element={< OtpVerification />}/>
-          <Route path='reset-password' element={<PasswordReset/>} />
-          <Route path='vendor-forgot-password' element={<VendorForgotPassword/>} />
-          
-        </Routes>
-     
-    </BrowserRouter>
-  )
+      </Route>
+    </Routes>
+  );
 }
 
 export default App;
