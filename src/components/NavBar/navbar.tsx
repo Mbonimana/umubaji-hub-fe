@@ -1,163 +1,76 @@
-import { useState, useEffect } from "react"; 
-import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, Menu, X, LogOut } from "lucide-react";
+
+// Navbar.tsx
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { ShoppingCart, Menu, X } from "lucide-react";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) setUser(JSON.parse(storedUser));
-  }, []);
-
-  
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
-    if (token) {
-      localStorage.setItem("jwtToken", token);
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      console.log("Logged in user:", payload.email, payload.role);
-    }
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem("jwtToken");
-    localStorage.removeItem("user");
-    setUser(null);
-    navigate("/");
-  };
 
   return (
     <>
-      <nav className="fixed top-0 left-0 w-full bg-white shadow-md z-50 transition-all duration-300">
+      <nav className="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
-          
+            {/* Logo */}
             <div className="flex items-center space-x-3">
-              {/* Logo */}
-              <div className="logo bg-primary w-10 h-10 rounded-md flex items-center justify-center shadow-sm">
-                <span className="text-white font-bold">UH</span>
+              <div className="bg-primary w-10 h-10 rounded-xl flex items-center justify-center shadow-md hover:scale-105">
+                <span className="text-white font-bold text-lg">UH</span>
               </div>
-
-              <span className="font-semibold text-sm sm:text-lg text-slate-800 tracking-wide">
-                ububajiHub
-              </span>
-
-              {/* Desktop Menu */}
-              <ul className="hidden sm:flex space-x-5 ml-6 text-[15px] font-medium text-gray-700">
-                {["Home", "Explore", "Vendors", "About"].map((item) => (
-                  <li key={item}>
-                    <Link
-                      to="/"
-                      className="relative hover:text-primary transition-colors duration-200 after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-primary after:bottom-[-3px] after:left-0 hover:after:w-full after:transition-all after:duration-300"
-                    >
-                      {item}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              <span className="font-semibold text-lg text-gray-800">ububajiHub</span>
             </div>
 
-            {/* Right Section */}
-            <div className="flex items-center space-x-4">
-              {/* Cart */}
-              <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-slate-700 cursor-pointer hover:text-primary transition" />
+            {/* Desktop Menu */}
+            <ul className="hidden sm:flex space-x-6 font-medium text-gray-600">
+              <li><Link to="/" className="hover:text-primary">Home</Link></li>
+              <li><Link to="/explore" className="hover:text-primary">Explore</Link></li>
+              <li><Link to="/vendorPage" className="hover:text-primary">Vendors</Link></li>
+              <li><Link to="/about" className="hover:text-primary">About</Link></li>
+            </ul>
 
-              {/* User Actions */}
-              {user ? (
-                <div className="flex items-center space-x-2 text-sm text-slate-700">
-                  <span className="hidden sm:inline">Hi, {user.firstname}</span>
-
-                  {/* Logout icon only for big screens */}
-                  <button
-                    onClick={handleLogout}
-                    className="hidden sm:inline-flex text-red-500 hover:text-red-600 transition"
-                    title="Logout"
-                  >
-                    <LogOut size={20} className="text-black" />
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <Link to="/Login">
-                    <button className="hidden sm:inline-block h-8 w-20 rounded-md border border-slate-300 bg-slate-50 hover:bg-slate-100 text-sm font-medium transition">
-                      Login
-                    </button>
-                  </Link>
-                  <Link to="/Signup">
-                    <button className="hidden sm:inline-block h-8 w-20 bg-primary text-white rounded-md hover:bg-primary/90 text-sm font-medium transition">
-                      Register
-                    </button>
-                  </Link>
-                </>
-              )}
-
-              {/* Mobile Toggle */}
-              <button
-                className="sm:hidden p-2 rounded-md text-slate-700 hover:bg-slate-100 transition"
-                onClick={() => setIsOpen(!isOpen)}
-              >
-                {isOpen ? <X size={24} /> : <Menu size={24} />}
+            {/* Buttons */}
+            <div className="hidden sm:flex items-center space-x-3">
+              <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 text-gray-700 text-sm font-medium">
+                Login
               </button>
+              <button className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 shadow-md text-sm font-medium">
+                Register
+              </button>
+              <ShoppingCart className="w-6 h-6 text-gray-600 hover:text-primary cursor-pointer" />
             </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              className="sm:hidden p-2 rounded-md focus:outline-none"
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Dropdown */}
         {isOpen && (
-          <div className="sm:hidden bg-white border-t border-slate-200 animate-slideDown">
-            <ul className="flex flex-col space-y-2 p-4 text-gray-700 text-sm font-medium">
-              {["Home", "Explore", "Vendors", "About"].map((item) => (
-                <li key={item}>
-                  <Link
-                    to="/"
-                    onClick={() => setIsOpen(false)}
-                    className="block w-full hover:text-primary transition"
-                  >
-                    {item}
-                  </Link>
-                </li>
-              ))}
-
-              {!user ? (
-                <>
-                  <li>
-                    <Link to="/Login" onClick={() => setIsOpen(false)}>
-                      <button className="w-full h-8 mb-2 rounded-md border border-slate-300 bg-slate-50 hover:bg-slate-100 transition">
-                        Login
-                      </button>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/Signup" onClick={() => setIsOpen(false)}>
-                      <button className="w-full h-8 rounded-md bg-primary text-white hover:bg-primary/90 transition">
-                        Register
-                      </button>
-                    </Link>
-                  </li>
-                </>
-              ) : (
-                <li>
-                  <button
-                    onClick={() => {
-                      setIsOpen(false);
-                      handleLogout();
-                    }}
-                    className="w-full flex items-center justify-center gap-2 h-8 rounded-md bg-slate-50 text-slate-700 hover:bg-slate-100 transition"
-                  >
-                    <LogOut size={16} /> Logout
-                  </button>
-                </li>
-              )}
+          <div className="sm:hidden bg-white border-t border-gray-200 shadow-md">
+            <ul className="flex flex-col space-y-2 p-4 text-gray-700">
+              <li><Link to="/" className="block hover:text-primary">Home</Link></li>
+              <li><Link to="/explore" className="block hover:text-primary">Explore</Link></li>
+              <li><Link to="/vendorPage" className="block hover:text-primary">Vendors</Link></li>
+              <li><Link to="/about" className="block hover:text-primary">About</Link></li>
+              <li>
+                <button className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-lg hover:bg-gray-100 text-sm">
+                  Login
+                </button>
+              </li>
+              <li>
+                <button className="w-full px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 text-sm">
+                  Register
+                </button>
+              </li>
             </ul>
           </div>
         )}
       </nav>
-
-      {/* Spacer */}
       <div className="h-16"></div>
     </>
   );
