@@ -72,12 +72,14 @@ export default function Login() {
         return Notiflix.Notify.failure("Invalid response from server");
       }
 
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("token", token);
+     localStorage.setItem("user", JSON.stringify(user));
+localStorage.setItem("token", token);
 
-      Notiflix.Notify.success("Customer logged in successfully");
-      console.log(" Customer Login Success:", res.data);
-      navigate("/");
+// Dispatch event so Navbar knows user logged in
+window.dispatchEvent(new Event("userLoggedIn"));
+
+Notiflix.Notify.success("Customer logged in successfully");
+navigate("/");
     } catch (err: any) {
       Notiflix.Loading.remove();
       console.error(" Customer Login Failed:", err);
@@ -109,12 +111,16 @@ export default function Login() {
       return Notiflix.Notify.failure("Invalid response from server");
     }
 
-    // Save vendor + token
+    
     localStorage.setItem("Vendor", JSON.stringify(vendor));
     localStorage.setItem("token", token);
 
+
+     window.dispatchEvent(new Event("userLoggedIn"));
+
     Notiflix.Notify.success("Vendor logged in successfully");
-    console.log("Vendor Login Success:", res.data);
+    navigate("/vendordashboard");
+
 
     navigate("/vendordashboard");
   } catch (err: any) {
