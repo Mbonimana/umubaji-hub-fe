@@ -2,6 +2,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Layout from "../src/layout/Layout"
 import Home from './pages/home';
+import VendorDashboard from './pages/VendorDashboard';
 
 import Login from './components/auth/login';
 import Signup from './components/auth/signup';
@@ -19,15 +20,12 @@ function App() {
         <Routes>
           <Route path='/' element={<Layout />}>
             <Route index element={<Home />} />
-
-      
             
-         
-          
-      
+ 
           <Route path='vendorPage' element={<VendorPage/>} />
  
           </Route>
+          <Route path="vendor-dashboard" element={<VendorDashboard />} />
           <Route path='Login' element={< Login />}/>
           <Route path='Signup' element={< Signup />}/>
           <Route path='forgot-password' element={< ForgotPassword />}/>
