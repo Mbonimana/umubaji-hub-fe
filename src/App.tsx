@@ -1,6 +1,8 @@
 
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Layout from "../src/layout/Layout"
+import Home from './pages/home';
+
 import Login from './components/auth/login';
 import Signup from './components/auth/signup';
 import ForgotPassword from './components/auth/forgotpassword';
@@ -11,11 +13,18 @@ import VendorPage from './components/vendorPage';
 
 
 function App() {
-  return (
+  return (  
     <BrowserRouter>
     
         <Routes>
           <Route path='/' element={<Layout />}>
+            <Route index element={<Home />} />
+
+      
+            
+         
+          
+      
           <Route path='vendorPage' element={<VendorPage/>} />
  
           </Route>
