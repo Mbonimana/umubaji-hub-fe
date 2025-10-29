@@ -7,7 +7,7 @@ import ForgotPassword from './components/auth/forgotpassword';
 import OtpVerification from './components/auth/verifyotp';
 import PasswordReset from './components/auth/passwordReset';
 import VendorForgotPassword from './components/auth/vendorForgotpassword';
-import ProductListingPage from './components/vendorPage';
+import VendorPage from './components/vendorPage';
 
 
 function App() {
@@ -16,7 +16,7 @@ function App() {
     
         <Routes>
           <Route path='/' element={<Layout />}>
-          <Route path='vendorPage' element={<ProductListingPage/>} />
+          <Route path='vendorPage' element={<VendorPage/>} />
  
           </Route>
           <Route path='Login' element={< Login />}/>

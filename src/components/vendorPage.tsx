@@ -19,7 +19,7 @@ const products: Product[] = [
   { id: 6, name: "Side Cabinet", woodType: "Birch Wood", price: "₦65,000", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=500&q=80" },
 ];
 
-const ProductListingPage: React.FC = () => {
+const vendorPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState("Products");
 
   return (
@@ -132,4 +132,4 @@ const ProductListingPage: React.FC = () => {
   );
 };
 
-export default ProductListingPage;
+export default vendorPage;
