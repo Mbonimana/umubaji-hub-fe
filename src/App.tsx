@@ -1,30 +1,20 @@
-
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Layout from "../src/layout/Layout"
+import { Routes, Route } from 'react-router-dom';
+import Layout from './layout/Layout';
 import Home from './pages/home';
-import HomePage from './pages/home';
-
-
+import Cart from './pages/Cart'; 
+import Checkout from './pages/Checkout';
 
 function App() {
-  return (  
-    <BrowserRouter>
-    
-        <Routes>
-          <Route path='/' element={<Layout />}>
-            <Route index element={<Home />} />
+  return (
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Home />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
 
-      
-            
-         
-            <Route index element={<HomePage />} />
-          
-      
-          </Route>
-        </Routes>
-     
-    </BrowserRouter>
-  )
+      </Route>
+    </Routes>
+  );
 }
 
 export default App;
