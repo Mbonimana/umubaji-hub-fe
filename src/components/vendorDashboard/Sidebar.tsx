@@ -3,14 +3,14 @@ import { Home, Package, ShoppingCart, BarChart3, Star, MessageCircle, DollarSign
 import { Link, useLocation } from 'react-router-dom';
 
 const menu = [
-  { icon: Home, label: 'Dashboard', path: '/vendor-dashboard' },
+  { icon: Home, label: 'Dashboard', path: '/vendordashboard' },
   { icon: Package, label: 'My Products', path: '/my-products' },
-  { icon: ShoppingCart, label: 'Orders', path: '#' },
-  { icon: Star, label: 'Reviews', path: '#' },
-  { icon: BarChart3, label: 'Analytics', path: '#' },
-  { icon: MessageCircle, label: 'Messages', path: '#' },
-  { icon: DollarSign, label: 'Earnings', path: '#' },
-  { icon: Settings, label: 'Settings', path: '#' },
+  { icon: ShoppingCart, label: 'Orders', path: '/orders' },
+  { icon: Star, label: 'Reviews', path: '/reviews' },
+  { icon: BarChart3, label: 'Analytics', path: '/analytics' },
+  { icon: MessageCircle, label: 'Messages', path: '/messages' },
+  { icon: DollarSign, label: 'Earnings', path: '/earnings' },
+  { icon: Settings, label: 'Settings', path: '/settings' },
 ];
 
 export default function Sidebar() {
@@ -32,7 +32,7 @@ export default function Sidebar() {
               to={item.path}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                 location.pathname === item.path
-                  ? 'bg-amber-50 text-amber-700'
+                  ? 'bg-[#4B341C] text-white'
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
@@ -40,17 +40,6 @@ export default function Sidebar() {
               <span>{item.label}</span>
             </Link>
           ))}
-          <Link
-            to="/my-products"
-            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-              location.pathname === '/my-products'
-                ? 'bg-amber-50 text-amber-700'
-                : 'text-gray-700 hover:bg-gray-100'
-            }`}
-          >
-            <Package className="w-5 h-5" />
-            <span>My Products</span>
-          </Link>
         </nav>
       </div>
 
