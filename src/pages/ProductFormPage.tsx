@@ -20,6 +20,7 @@ export default function ProductFormPage() {
   });
   const [images, setImages] = useState<any[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Load product if editing
   useEffect(() => {
@@ -33,8 +34,10 @@ export default function ProductFormPage() {
           description: product.description,
           category: product.category,
           stock: product.stock,
+          created_at: product.created_at,
         });
-        setImages(product.images);
+        setImages(product.images || []);
+        
       }
     }
   }, [id, isEdit]);
@@ -58,15 +61,28 @@ export default function ProductFormPage() {
     }, 800);
   };
 
+  const handleRemoveImage = (imageId: string) => {
+    setImages(prev => prev.filter(i => i.id !== imageId));
+  };
+
   const handleSubmit = () => {
-    const product: ProductWithImages = {
-      id: isEdit ? Number(id) : Date.now(),
-      ...form,
-      vendor_id: 1,
-      created_at: isEdit ? form.created_at : new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      images,
-    } as ProductWithImages;
+    // Minimal validation
+    if (!form.name || !form.category) {
+      alert('Please fill in Product Name and Category.');
+      return;
+    }
+
+    setIsSubmitting(true);
+const product: ProductWithImages = {
+  id: isEdit ? Number(id) : Date.now(),
+  ...form,
+  price: Number(form.price) || 0,
+  stock: Number(form.stock) || 0,
+  vendor_id: 1,
+  created_at: isEdit ? form.created_at : new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+  images,
+} as ProductWithImages;
 
     const saved = JSON.parse(localStorage.getItem('vendor_products') || '[]');
     const newList = isEdit
@@ -74,6 +90,17 @@ export default function ProductFormPage() {
       : [...saved, product];
 
     localStorage.setItem('vendor_products', JSON.stringify(newList));
+
+    // Flash message for MyProducts toast
+    localStorage.setItem(
+      'flash',
+      JSON.stringify({
+        type: 'success',
+        message: isEdit ? 'Product updated successfully.' : 'Product added successfully.',
+      })
+    );
+
+    setIsSubmitting(false);
     navigate('/my-products');
   };
 
@@ -105,6 +132,9 @@ export default function ProductFormPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Product Name
+                  </label>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
                   <input
                     className="w-full border rounded-lg px-4 py-2 text-gray-900 placeholder-gray-400"
@@ -117,6 +147,8 @@ export default function ProductFormPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Price (₦)</label>
                   <input
                     type="number"
+                    min={0}
+                    step="0.01"
                     className="w-full border rounded-lg px-4 py-2 text-gray-900 placeholder-gray-400"
                     placeholder="0"
                     value={form.price}
@@ -136,6 +168,7 @@ export default function ProductFormPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Stock</label>
                   <input
                     type="number"
+                    min={0}
                     className="w-full border rounded-lg px-4 py-2 text-gray-900 placeholder-gray-400"
                     placeholder="0"
                     value={form.stock}
@@ -145,6 +178,9 @@ export default function ProductFormPage() {
               </div>
 
               <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Description (optional)
+                </label>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Description (optional)</label>
                 <textarea
                   rows={4}
@@ -176,6 +212,21 @@ export default function ProductFormPage() {
                     )}
                   </label>
                 </div>
+                {images.length > 0 && (
+                  <div className="flex gap-3 mt-4 flex-wrap">
+                    {images.map(img => (
+                      <div key={img.id} className="relative">
+                        <img src={img.url} alt="" className="w-24 h-24 object-cover rounded-lg" />
+                        <button
+                          onClick={() => handleRemoveImage(img.id)}
+                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 <div className="flex gap-3 mt-4 flex-wrap">
                   {images.map(img => (
                     <div key={img.id} className="relative">
@@ -195,12 +246,15 @@ export default function ProductFormPage() {
                 <button
                   onClick={() => navigate('/my-products')}
                   className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
+                  type="button"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSubmit}
                   className="px-6 py-2 bg-[#FFB347] text-white rounded-lg hover:bg-amber-600 font-medium"
+                  disabled={isSubmitting}
+                  type="button"
                 >
                   {isEdit ? 'Save Changes' : 'Save Product'}
                 </button>

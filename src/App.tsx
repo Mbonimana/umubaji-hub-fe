@@ -10,9 +10,14 @@ import ForgotPassword from './components/auth/forgotpassword';
 import OtpVerification from './components/auth/verifyotp';
 import PasswordReset from './components/auth/passwordReset';
 import VendorForgotPassword from './components/auth/vendorForgotpassword';
-import VendorPage from './components/vendorPage';
+
 import VendorsPage from './pages/allVendors';
 import Explore from './pages/Explore';
+import VendorPage from './components/vendorPage';
+import VendorDashboard from './pages/VendorDashboard';
+import MyProducts from './pages/MyProducts';
+import ProductFormPage from './pages/ProductFormPage';
+
 
 
 function App() {
@@ -34,6 +39,10 @@ function App() {
         
 
       </Route>
+      <Route path="vendordashboard" element={<VendorDashboard />} />
+        <Route path="/my-products" element={<MyProducts />} />
+        <Route path="/my-products/add" element={<ProductFormPage />} />
+        <Route path="/my-products/edit/:id" element={<ProductFormPage />} />
     </Routes>
   );
 }
