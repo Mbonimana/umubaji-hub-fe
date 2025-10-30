@@ -63,24 +63,24 @@ const Home: React.FC = () => {
                                 {[
                                     {
                                         name: 'Master Crafts Ltd',
-                                        location: 'Lagos, Nigeria',
+                                        location: 'Kigali, Rwanda',
                                         reviews: 124,
-                                        price: '₦100,000 - ₦600,000',
-                                        image: '/assets/vendor1.jpg',
+                                        price: 'RF100,000 - RF600,000',
+                                        image: 'https://lirp.cdn-website.com/222dffe2/dms3rep/multi/opt/Advert-homeoffice-1920w.jpg',
                                     },
                                     {
                                         name: 'Woodwork Artisans',
-                                        location: 'Abuja, Nigeria',
+                                        location: 'Kigali, Rwanda',
                                         reviews: 98,
-                                        price: '₦120,000 - ₦700,000',
-                                        image: '/assets/vendor2.jpg',
+                                        price: 'RF120,000 - RF700,000',
+                                        image: 'https://i.ytimg.com/vi/h2rUYMbW3_I/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLCzh_fNQc44W29tWYJoHptgNO4GnQ',
                                     },
                                     {
                                         name: 'Premium Furniture Co',
-                                        location: 'Port Harcourt, Nigeria',
+                                        location: 'Kigali, Rwanda',
                                         reviews: 65,
-                                        price: '₦170,000 - ₦800,000',
-                                        image: '/assets/vendor3.jpg',
+                                        price: 'RF170,000 - RF800,000',
+                                        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4z-zZntSAuKnSLgwcd7N986hAqDAwmq9XzA&s',
                                     },
                                 ].map((vendor, i) => (
                                     <div
@@ -128,15 +128,15 @@ const Home: React.FC = () => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 justify-items-center">
                         {[
-                            { name: 'Modern Dining Table', material: 'Oak Wood', price: '₦85,000' },
-                            { name: 'Ergonomic Office Chair', material: 'Walnut Wood', price: '₦65,000' },
+                            { name: 'Modern Dining Table', material: 'Oak Wood', price: '₦85,000', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s' },
+                            { name: 'Ergonomic Office Chair', material: 'Walnut Wood', price: '₦65,000', img:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s' },
                             {
                                 name: 'Classic Bookshelf',
                                 material: 'Pine Wood',
                                 price: '₦25,000',
-                                img: '/assets/bookshelf.jpg',
+                                img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s',
                             },
-                            { name: 'Rustic Coffee Table', material: 'Mahogany', price: '₦75,000' },
+                            { name: 'Rustic Coffee Table', material: 'Mahogany', price: '₦75,000', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s' },
                         ].map((product, idx) => (
                             <div
                                 key={idx}
