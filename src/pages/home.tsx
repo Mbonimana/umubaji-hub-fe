@@ -11,7 +11,7 @@ const Home: React.FC = () => {
     const { addToCart } = useCart();
 
     return (
-        <div className="font-sans">
+        <div className="font-sans bg-[#F5F5F5]">
             {/* Hero Section */}
             <section className="bg-gradient-to-b from-[#fefcf9] to-[#f3ebe2] py-12 text-center px-4">
                 <h1 className="text-2xl md:text-3xl font-semibold text-primary mb-2">
@@ -48,7 +48,7 @@ const Home: React.FC = () => {
 
             {/* ⚪ White Background — Featured Vendors */}
             <section className="bg-white pt-16">
-                <div className="bg-[#2f2f2f] py-12 px-4">
+                <div className="bg-[#F5F5F5] py-12 px-4">
                     <div className="max-w-7xl mx-auto">
                         <div className="bg-white rounded-t-2xl p-6 shadow-lg">
 
@@ -120,7 +120,7 @@ const Home: React.FC = () => {
             </section>
 
             {/* ⚫ Trending Products Dark Section */}
-            <section className="bg-[#505050] py-12 px-4 text-white">
+            <section className="bg-[#F5F5F5] py-12 px-4 text-white">
                 <div className="max-w-7xl mx-auto">
                     <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-[#4B341C]">
                         Trending Products
