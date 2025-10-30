@@ -86,107 +86,159 @@ function Navbar() {
               </div>
             </div>
 
-            {/* Right Section */}
-            <div className="flex items-center space-x-4">
-              {/* Cart */}
-              <Link to="/cart" className="relative">
-                <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-slate-700 cursor-pointer hover:text-primary transition" />
-                {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-secondary text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full">
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
+           {/* Right Section */}
+<div className="flex items-center gap-5">
+  {user ? (
+    // Logged-in user section
+    <div className="flex items-center gap-6 text-sm text-slate-700">
+      {/* Greeting */}
+      <span className="hidden sm:inline font-medium text-primary">
+        Hi, <span className="capitalize">{user.firstname}</span>
+      </span>
 
-              {/* User Actions */}
-              {user ? (
-                <div className="flex items-center space-x-2 text-sm text-slate-700">
-                  <span className="hidden sm:inline">Hi, {user.firstname}</span>
+      {/* Dashboard link */}
+      <Link
+        to="/customer-dashboard"
+        className="hidden sm:inline-block font-medium text-gray-700 hover:text-primary transition-colors duration-200"
+      >
+        Dashboard
+      </Link>
 
-                  {/* Logout icon only for big screens */}
-                  <button
-                    onClick={handleLogout}
-                    className="hidden sm:inline-flex text-red-500 hover:text-red-600 transition"
-                    title="Logout"
-                  >
-                    <LogOut size={20} className="text-black" />
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <Link to="/Login">
-                    <button className="hidden sm:inline-block h-8 w-20 rounded-md border border-slate-300 bg-slate-50 hover:bg-slate-100 text-sm font-medium transition">
-                      Login
-                    </button>
-                  </Link>
-                  <Link to="/Signup">
-                    <button className="hidden sm:inline-block h-8 w-20 bg-primary text-white rounded-md hover:bg-primary/90 text-sm font-medium transition">
-                      Register
-                    </button>
-                  </Link>
-                </>
-              )}
+      {/* Cart */}
+      <Link
+        to="/cart"
+        className="relative group"
+        title="View Cart"
+      >
+        <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-slate-700 group-hover:text-primary transition-transform duration-200 group-hover:scale-110" />
+        {cartCount > 0 && (
+          <span className="absolute -top-2 -right-2 bg-secondary text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full shadow-sm">
+            {cartCount}
+          </span>
+        )}
+      </Link>
 
-              {/* Mobile Toggle */}
-              <button
-                className="sm:hidden p-2 rounded-md text-slate-700 hover:bg-slate-100 transition"
-                onClick={() => setIsOpen(!isOpen)}
-              >
-                {isOpen ? <X size={24} /> : <Menu size={24} />}
-              </button>
-            </div>
+      {/* Logout Button */}
+      <button
+        onClick={handleLogout}
+        className="hidden sm:inline-flex items-center justify-center h-8 px-4 rounded-md border border-slate-300 bg-slate-50 text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-black transition-colors duration-200"
+        title="Logout"
+      >
+        <LogOut size={18} className="mr-1" />
+        Logout
+      </button>
+    </div>
+  ) : (
+    // Guest section
+    <>
+      {/* Cart (always visible) */}
+      <Link
+        to="/cart"
+        className="relative group"
+        title="View Cart"
+      >
+        <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-slate-700 group-hover:text-primary transition-transform duration-200 group-hover:scale-110" />
+        {cartCount > 0 && (
+          <span className="absolute -top-2 -right-2 bg-secondary text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full shadow-sm">
+            {cartCount}
+          </span>
+        )}
+      </Link>
+
+      {/* Auth buttons */}
+      <Link to="/Login">
+        <button className="hidden sm:inline-flex items-center justify-center h-8 w-20 rounded-md border border-slate-300 bg-white text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors duration-200">
+          Login
+        </button>
+      </Link>
+      <Link to="/Signup">
+        <button className="hidden sm:inline-flex items-center justify-center h-8 w-20 rounded-md bg-primary text-white text-sm font-medium hover:bg-primary/90 shadow-sm transition-colors duration-200">
+          Register
+        </button>
+      </Link>
+    </>
+  )}
+
+  {/* Mobile Menu Toggle */}
+  <button
+    className="sm:hidden p-2 rounded-md text-slate-700 hover:bg-slate-100 transition-colors duration-200"
+    onClick={() => setIsOpen(!isOpen)}
+  >
+    {isOpen ? <X size={24} /> : <Menu size={24} />}
+  </button>
+</div>
+
+
           </div>
         </div>
 
         {/* Mobile Menu */}
-        {isOpen && (
-          <div className="sm:hidden bg-white border-t border-slate-200 animate-slideDown">
-            <ul className="flex flex-col space-y-2 p-4 text-gray-700 text-sm font-medium">
-              {["Home", "Explore", "Vendors", "About"].map((item) => (
-                <li key={item}>
-                  <Link
-                    to="/"
-                    onClick={() => setIsOpen(false)}
-                    className="block w-full hover:text-primary transition"
-                  >
-                    {item}
-                  </Link>
-                </li>
-              ))}
+  {isOpen && (
+  <div className="sm:hidden bg-white border-t border-slate-200 animate-slideDown shadow-md">
+    <ul className="flex flex-col space-y-3 p-4 text-gray-700 text-sm font-medium">
+      {/* Main navigation links */}
+      {["Home", "Explore", "Vendors", "About"].map((item) => (
+        <li key={item}>
+          <Link
+            to="/"
+            onClick={() => setIsOpen(false)}
+            className="block w-full py-2 px-3 rounded-md hover:bg-slate-100 hover:text-primary transition-colors duration-200"
+          >
+            {item}
+          </Link>
+        </li>
+      ))}
 
-              {!user ? (
-                <>
-                  <li>
-                    <Link to="/Login" onClick={() => setIsOpen(false)}>
-                      <button className="w-full h-8 mb-2 rounded-md border border-slate-300 bg-slate-50 hover:bg-slate-100 transition">
-                        Login
-                      </button>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/Signup" onClick={() => setIsOpen(false)}>
-                      <button className="w-full h-8 rounded-md bg-primary text-white hover:bg-primary/90 transition">
-                        Register
-                      </button>
-                    </Link>
-                  </li>
-                </>
-              ) : (
-                <li>
-                  <button
-                    onClick={() => {
-                      setIsOpen(false);
-                      handleLogout();
-                    }}
-                    className="w-full flex items-center justify-center gap-2 h-8 rounded-md bg-slate-50 text-slate-700 hover:bg-slate-100 transition"
-                  >
-                    <LogOut size={16} /> Logout
-                  </button>
-                </li>
-              )}
-            </ul>
-          </div>
-        )}
+      {/* Guest actions */}
+      {!user ? (
+        <>
+          <li>
+            <Link to="/Login" onClick={() => setIsOpen(false)}>
+              <button className="w-full h-10 rounded-md border border-slate-300 bg-slate-50 text-sm font-medium hover:bg-slate-100 transition-colors duration-200">
+                Login
+              </button>
+            </Link>
+          </li>
+          <li>
+            <Link to="/Signup" onClick={() => setIsOpen(false)}>
+              <button className="w-full h-10 rounded-md bg-primary text-white text-sm font-medium hover:bg-primary/90 shadow transition-colors duration-200">
+                Register
+              </button>
+            </Link>
+          </li>
+        </>
+      ) : (
+        // Logged-in user actions
+        <>
+          <li>
+            <Link
+              to="/customer-dashboard"
+              onClick={() => setIsOpen(false)}
+              className="block w-full h-10 rounded-md bg-gray-50 text-slate-700 text-center font-medium hover:bg-primary hover:text-white transition-colors duration-200 "
+            >
+              Go to Dashboard
+            </Link>
+          </li>
+          <li className="flex space-x-2">
+            <div className="w-1/2 flex items-center justify-center h-10 rounded-md bg-gray-50 text-slate-700 font-medium">
+              Hi, {user.firstname}
+            </div>
+            <button
+              onClick={() => {
+                setIsOpen(false);
+                handleLogout();
+              }}
+              className="w-1/2 flex items-center justify-center gap-1 h-10 rounded-md bg-slate-50 text-slate-700 hover:bg-black hover:text-white transition-colors duration-200 font-medium"
+            >
+              <LogOut size={16} /> Logout
+            </button>
+          </li>
+        </>
+      )}
+    </ul>
+  </div>
+)}
+
       </nav>
 
       {/* Spacer */}
