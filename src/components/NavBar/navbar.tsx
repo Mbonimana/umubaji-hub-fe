@@ -1,18 +1,34 @@
 import { useState, useEffect } from "react"; 
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, Menu, X, LogOut } from "lucide-react";
+import { useCart } from "../../contexts/CartContext"; // added cart context
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const navigate = useNavigate();
+  const { cartItems } = useCart(); // cart context
+  const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0); // total items
 
   useEffect(() => {
+    // Load user on mount
     const storedUser = localStorage.getItem("user");
     if (storedUser) setUser(JSON.parse(storedUser));
+
+    // Listen for login/logout in the same tab
+    const handleUserUpdate = () => {
+      const updatedUser = localStorage.getItem("user");
+      if (updatedUser) setUser(JSON.parse(updatedUser));
+      else setUser(null);
+    };
+
+    window.addEventListener("userLoggedIn", handleUserUpdate);
+
+    return () => {
+      window.removeEventListener("userLoggedIn", handleUserUpdate);
+    };
   }, []);
 
-  
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get("token");
@@ -27,16 +43,23 @@ function Navbar() {
     localStorage.removeItem("jwtToken");
     localStorage.removeItem("user");
     setUser(null);
+
+    // Notify Navbar
+    window.dispatchEvent(new Event("userLoggedIn"));
+
     navigate("/");
   };
 
   return (
     <>
-      <nav className="fixed top-0 left-0 w-full bg-white shadow-md z-50 transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav className="fixed top-0 left-0 w-full bg-white/40 backdrop-blur-md border-b border-white/20 shadow-sm z-50 transition-all duration-300">
+
+        {/* Equal padding on left & right */}
+        <div className="max-w-7xl mx-auto px-[4%] sm:px-[4%] lg:px-[4%]">
           <div className="flex justify-between h-16 items-center">
-          
-            <div className="flex items-center space-x-3">
+
+            {/* Left Section */}
+            <div className="flex items-center space-x-4">
               {/* Logo */}
               <div className="logo bg-primary w-10 h-10 rounded-md flex items-center justify-center shadow-sm">
                 <span className="text-white font-bold">UH</span>
@@ -47,31 +70,33 @@ function Navbar() {
               </span>
 
               {/* Desktop Menu */}
-              
-            <div className="  flex-1 flex justify-center">
-
-          
-            
-              <ul className="hidden sm:flex space-x-5 ml-6 text-[15px] font-medium text-gray-700 ">
-                {["Home", "Explore", "Vendors", "About"].map((item) => (
-                  <li key={item}>
-                    <Link
-                      to="/"
-                      className="relative hover:text-primary transition-colors duration-200 after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-primary after:bottom-[-3px] after:left-0 hover:after:w-full after:transition-all after:duration-300"
-                    >
-                      {item}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+              <div className="flex-1 flex justify-center">
+                <ul className="hidden sm:flex space-x-5 ml-6 text-[15px] font-medium text-gray-700">
+                  {["Home", "Explore", "Vendors", "About"].map((item) => (
+                    <li key={item}>
+                      <Link
+                        to="/"
+                        className="relative hover:text-primary transition-colors duration-200 after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-primary after:bottom-[-3px] after:left-0 hover:after:w-full after:transition-all after:duration-300"
+                      >
+                        {item}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            
+            </div>
 
             {/* Right Section */}
             <div className="flex items-center space-x-4">
               {/* Cart */}
-              <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-slate-700 cursor-pointer hover:text-primary transition" />
+              <Link to="/cart" className="relative">
+                <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-slate-700 cursor-pointer hover:text-primary transition" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-secondary text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full">
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
 
               {/* User Actions */}
               {user ? (
