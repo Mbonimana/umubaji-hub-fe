@@ -1,0 +1,7 @@
+[33m95878b7[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32musanase[m[33m)[m HEAD@{0}: reset: moving to HEAD~1
+[33m392f42b[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{1}: pull origin main: Fast-forward
+[33me95f516[m[33m ([m[1;31morigin/usanase[m[33m)[m HEAD@{2}: commit: Vendor Dashboard
+[33md984904[m[33m ([m[1;32mmain[m[33m)[m HEAD@{3}: checkout: moving from main to usanase
+[33md984904[m[33m ([m[1;32mmain[m[33m)[m HEAD@{4}: pull origin main: Fast-forward
+[33m6d0e7b8[m HEAD@{5}: commit: Corrected Navbar
+[33m4d2cf12[m HEAD@{6}: clone: from https://github.com/Klab-Rwanda/umubaji-hub-fe.git
