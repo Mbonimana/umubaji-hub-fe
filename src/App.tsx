@@ -12,6 +12,7 @@ import PasswordReset from './components/auth/passwordReset';
 import VendorForgotPassword from './components/auth/vendorForgotpassword';
 import VendorPage from './components/vendorPage';
 import VendorsPage from './pages/allVendors';
+import Explore from './pages/Explore';
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
         <Route path="/vendor-forgot-password" element={<VendorForgotPassword />} />
         <Route path="/vendor/:vendorId" element={<VendorPage />} />
         <Route path='allVendors' element={<VendorsPage/>} />
+        <Route path = 'explore' element={< Explore/>} />
         
 
       </Route>
