@@ -26,7 +26,7 @@ export default function TopProducts() {
               <p className="font-medium text-gray-900">{p.name}</p>
               <p className="text-xs text-gray-600">{p.sales} sales</p>
             </div>
-            <p className="font-semibold text-amber-600">₦{p.revenue.toLocaleString()}</p>
+            <p className="font-semibold text-[#4B341C]">₦{p.revenue.toLocaleString()}</p>
           </div>
         ))}
       </div>

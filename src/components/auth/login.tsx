@@ -133,7 +133,7 @@ navigate("/");
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-[#f0ebe3] px-4">
-      <div className="bg-[#6B4B3E] w-16 h-16 flex items-center justify-center rounded-md mb-6 shadow">
+      <div className="bg-[#4B341C] w-16 h-16 flex items-center justify-center rounded-md mb-6 shadow">
         <span className="text-white font-semibold text-lg">UH</span>
       </div>
 
@@ -209,14 +209,14 @@ navigate("/");
 
           <button
             type="submit"
-            className="w-full bg-[#6B4B3E] text-white py-2 rounded-md hover:bg-[#5B3F33] transition"
+            className="w-full bg-[#4B341C] text-white py-2 rounded-md hover:bg-[#5B3F33] transition"
           >
             Sign In
           </button>
 
           <p className="text-sm text-center mt-4 text-gray-600">
             Don’t have an account?{" "}
-            <Link to="/signup" className="text-[#6B4B3E] font-medium hover:underline">
+            <Link to="/signup" className="text-[#4B341C] font-medium hover:underline">
               Sign up
             </Link>
           </p>
@@ -266,28 +266,28 @@ navigate("/");
               <input type="checkbox" className="mr-2" />
               Remember me
             </label>
-            <Link to="/vendor-forgot-password" className="text-sm text-[#6B4B3E] hover:underline">
+            <Link to="/vendor-forgot-password" className="text-sm text-[#4B341C] hover:underline">
               Forgot password?
             </Link>
           </div>
 
           <button
             type="submit"
-            className="w-full bg-[#6B4B3E] text-white py-2 rounded-md hover:bg-[#5B3F33] transition"
+            className="w-full bg-[#4B341C] text-white py-2 rounded-md hover:bg-[#5B3F33] transition"
           >
             Sign In
           </button>
 
           <p className="text-sm text-center mt-4 text-gray-600">
             Don’t have an account?{" "}
-            <Link to="/signup" className="text-[#6B4B3E] font-medium hover:underline">
+            <Link to="/signup" className="text-[#4B341C] font-medium hover:underline">
               Sign up
             </Link>
           </p>
         </form>
       )}
 
-      <Link to="/" className="mt-6 text-sm text-gray-600 hover:text-[#6B4B3E] transition">
+      <Link to="/" className="mt-6 text-sm text-gray-600 hover:text-[#4B341C] transition">
         ← Back to Home
       </Link>
     </div>

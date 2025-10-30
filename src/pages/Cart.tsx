@@ -38,14 +38,14 @@ const Cart = () => {
 
                                 <div className="flex items-center my-2">
                                     <button
-                                        className="px-2"
+                                        className="px-2 text-[#4B341C]"
                                         onClick={() => updateQuantity(item.id, -1)}
                                     >
                                         -
                                     </button>
                                     <span className="px-3">{item.quantity}</span>
                                     <button
-                                        className="px-2"
+                                        className="px-2 text-[#4B341C]"
                                         onClick={() => updateQuantity(item.id, 1)}
                                     >
                                         +
@@ -56,11 +56,11 @@ const Cart = () => {
                                 <button className="text-xs text-blue-400">Move to Wishlist</button>
                             </div>
                             <div className="text-right">
-                                <p className="text-orange-500 font-bold">₦{item.price * item.quantity}</p>
+                                <p className="text-[#4B341C] font-bold">₦{item.price * item.quantity}</p>
                                 <p className="text-xs text-gray-400">₦{item.price} each</p>
                             </div>
                             <button onClick={() => removeFromCart(item.id)}>
-                                <X className="w-4 h-4 text-red-400" />
+                                <X className="w-4 h-4 text-[#4B341C]" />
                             </button>
                         </div>
                     ))}
@@ -81,13 +81,13 @@ const Cart = () => {
                         <span>Shipping Fee</span>
                         <span className="text-green-600">FREE</span>
                     </div>
-                    <div className="flex justify-between font-bold text-orange-500">
+                    <div className="flex justify-between font-bold text-[#4B341C]">
                         <span>Total</span>
                         <span>₦{total}</span>
                     </div>
                     <button
                         onClick={() => navigate("/Checkout")}
-                        className="bg-secondary text-black py-2 px-6 rounded-md hover:bg-primary hover:text-white font-medium"
+                        className="bg-[#4B341C] text-white py-2 px-6 rounded-md hover:bg-primary hover:text-white font-medium"
                     >
                         Proceed to Checkout →
                     </button>

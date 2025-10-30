@@ -54,7 +54,7 @@ export default function VendorForgotPassword() {
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-[#f0ebe3] px-4">
       {/* Logo */}
-      <div className="bg-[#6B4B3E] w-16 h-16 flex items-center justify-center rounded-md mb-6 shadow">
+      <div className="bg-[#4B341C] w-16 h-16 flex items-center justify-center rounded-md mb-6 shadow">
         <span className="text-white font-semibold text-lg">UH</span>
       </div>
 
@@ -87,7 +87,7 @@ export default function VendorForgotPassword() {
           className={`w-full py-2 rounded-md text-white transition ${
             loading
               ? "bg-[#8d6f63] cursor-not-allowed"
-              : "bg-[#6B4B3E] hover:bg-[#5B3F33]"
+              : "bg-[#4B341C] hover:bg-[#5B3F33]"
           }`}
         >
           {loading ? "Sending..." : "Send OTP"}
@@ -97,7 +97,7 @@ export default function VendorForgotPassword() {
           Remember your password?{" "}
           <Link
             to="/login"
-            className="text-[#6B4B3E] font-medium hover:underline"
+            className="text-[#4B341C] font-medium hover:underline"
           >
             Sign In
           </Link>
@@ -106,7 +106,7 @@ export default function VendorForgotPassword() {
 
       <Link
         to="/"
-        className="mt-6 text-sm text-gray-600 hover:text-[#6B4B3E] transition"
+        className="mt-6 text-sm text-gray-600 hover:text-[#4B341C] transition"
       >
         ← Back to Home
       </Link>

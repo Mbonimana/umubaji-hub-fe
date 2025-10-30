@@ -24,7 +24,7 @@ export default function ProductTable({ products, onDelete }: Props) {
        <div className="flex justify-end mt-8">
   <button
     onClick={() => navigate('/my-products/add')}
-    className="bg-[#FFB347] text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-amber-700"
+    className="bg-[#4B341C] text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-amber-700"
   >
     <Plus className="w-5 h-5" /> Add Product
   </button>

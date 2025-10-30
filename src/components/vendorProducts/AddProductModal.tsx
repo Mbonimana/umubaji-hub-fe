@@ -150,7 +150,7 @@ export default function AddProductModal({ onSave, onClose }: Props) {
           </button>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700"
+            className="px-4 py-2 bg-[#4B341C] text-white rounded-lg hover:bg-amber-700"
           >
             Save Product
           </button>

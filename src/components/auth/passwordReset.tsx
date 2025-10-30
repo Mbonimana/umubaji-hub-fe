@@ -71,7 +71,7 @@ export default function PasswordReset() {
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-[#f0ebe3] px-4">
       {/* Logo */}
-      <div className="bg-[#6B4B3E] w-16 h-16 flex items-center justify-center rounded-md mb-6 shadow">
+      <div className="bg-[#4B341C] w-16 h-16 flex items-center justify-center rounded-md mb-6 shadow">
         <span className="text-white font-semibold text-lg">UH</span>
       </div>
 
@@ -88,7 +88,7 @@ export default function PasswordReset() {
         <div className="mb-4">
           <label className="block text-sm mb-1 text-gray-700">New Password</label>
           <div className="flex items-center border border-gray-300 rounded-md px-3">
-            <Lock size={16} className="text-gray-400" />
+            <Lock size={16} className="text-[#4B341C]" />
             <input
               type={showPassword ? "text" : "password"}
               value={password}
@@ -99,7 +99,7 @@ export default function PasswordReset() {
             <Eye
               size={16}
               onClick={() => setShowPassword(!showPassword)}
-              className="text-gray-400 cursor-pointer"
+              className="text-[#4B341C] cursor-pointer"
             />
           </div>
         </div>
@@ -131,7 +131,7 @@ export default function PasswordReset() {
           className={`w-full py-2 rounded-md transition ${
             loading
               ? "bg-gray-400 cursor-not-allowed text-white"
-              : "bg-[#6B4B3E] text-white hover:bg-[#5B3F33]"
+              : "bg-[#4B341C] text-white hover:bg-[#5B3F33]"
           }`}
         >
           {loading ? "Submitting..." : "Confirm Password Change"}
@@ -140,7 +140,7 @@ export default function PasswordReset() {
         {/* Back to login */}
         <p className="text-sm text-center mt-4 text-gray-600">
           Remember your password?{" "}
-          <Link to="/login" className="text-[#6B4B3E] font-medium hover:underline">
+          <Link to="/login" className="text-[#4B341C] font-medium hover:underline">
             Sign In
           </Link>
         </p>
@@ -148,7 +148,7 @@ export default function PasswordReset() {
 
       <Link
         to="/"
-        className="mt-6 text-sm text-gray-600 hover:text-[#6B4B3E] transition"
+        className="mt-6 text-sm text-gray-600 hover:text-[#4B341C] transition"
       >
         ← Back to Home
       </Link>

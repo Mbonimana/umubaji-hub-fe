@@ -124,7 +124,7 @@ const Checkout = () => {
                             <span className="text-green-600">FREE</span>
                         </div>
                         <hr />
-                        <div className="flex justify-between font-bold text-secondary text-base">
+                        <div className="flex justify-between font-bold text-[#4B341C] text-base">
                             <span>Total</span>
                             <span>₦{total.toLocaleString()}</span>
                         </div>
@@ -140,7 +140,7 @@ const Checkout = () => {
                     {/* Continue */}
                     <button
                         onClick={handleContinue}
-                        className="mt-6 w-full bg-secondary text-black font-medium py-2 rounded hover:bg-primary hover:text-white flex items-center justify-center gap-2 transition"
+                        className="mt-6 w-full bg-[#4B341C] text-white font-medium py-2 rounded hover:bg-primary hover:text-white flex items-center justify-center gap-2 transition"
                     >
                         Continue to Payment <ArrowRight size={16} />
                     </button>
@@ -162,7 +162,7 @@ const Step = ({
 }) => (
     <div className="flex flex-col items-center">
         <div
-            className={`w-10 h-10 flex items-center justify-center rounded-full border-2 ${active ? "bg-secondary text-white border-secondary" : "border-gray-300 text-gray-400"
+            className={`w-10 h-10 flex items-center justify-center rounded-full border-2 ${active ? "bg-[#4B341C] text-white border-[#4B341C]" : "border-gray-300 text-gray-400"
                 }`}
         >
             {icon}

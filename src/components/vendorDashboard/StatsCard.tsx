@@ -24,10 +24,10 @@ export default function StatsCard({ title, value, change, icon }: Props) {
     <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
       <div className="flex items-center justify-between mb-3">
         <p className="text-sm text-gray-600">{title}</p>
-        <Icon className="w-5 h-5 text-amber-600" />
+        <Icon className="w-5 h-5 text-[#4B341C]" />
       </div>
 
-      <p className="text-2xl font-bold text-gray-900">{value}</p>
+      <p className="text-2xl font-bold text-[#4B341C]">{value}</p>
 
       <p
         className={`text-sm mt-1 ${

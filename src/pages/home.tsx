@@ -38,7 +38,7 @@ const Home: React.FC = () => {
                     {['Tables', 'Chairs', 'Custom Work', 'All Vendors'].map((label) => (
                         <button
                             key={label}
-                            className="bg-white border border-gray-300 shadow-sm py-3 px-5 rounded-md hover:bg-secondary hover:text-white transition"
+                            className="bg-white border border-gray-300 shadow-sm py-3 px-5 rounded-md hover:bg-[#4B341C] hover:text-white transition"
                         >
                             {label}
                         </button>
@@ -55,7 +55,7 @@ const Home: React.FC = () => {
                             {/* 🔸 Featured Vendors Header */}
                             <div className="flex justify-between items-center mb-6">
                                 <h2 className="text-xl font-semibold text-primary">Featured Vendors</h2>
-                                <button className="text-accent underline text-sm">View All</button>
+                                <button className="text-[#4B341C] underline text-sm">View All</button>
                             </div>
 
                             {/* Vendor Cards */}
@@ -122,7 +122,7 @@ const Home: React.FC = () => {
             {/* ⚫ Trending Products Dark Section */}
             <section className="bg-[#505050] py-12 px-4 text-white">
                 <div className="max-w-7xl mx-auto">
-                    <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-secondary">
+                    <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-[#4B341C]">
                         Trending Products
                     </h2>
 
@@ -170,7 +170,7 @@ const Home: React.FC = () => {
                                                 quantity: 1
                                             })
                                         }
-                                        className="mt-4 bg-secondary text-white w-full py-2 text-sm rounded-md hover:bg-primary transition"
+                                        className="mt-4 bg-[#4B341C] text-white w-full py-2 text-sm rounded-md hover:bg-primary transition"
                                     >
                                         Add to Cart
                                     </button>
@@ -189,7 +189,7 @@ const Home: React.FC = () => {
                 <p className="mb-4 max-w-xl mx-auto text-sm">
                     Join UbuojuHub today and connect with customers looking for quality craftsmanship
                 </p>
-                <button className="bg-secondary text-black py-2 px-6 rounded-md font-medium shadow hover:bg-accent hover:text-white transition duration-300">
+                <button className="bg-[#4B341C] text-white py-2 px-6 rounded-md font-medium shadow hover:bg-[#4B341C] hover:text-white transition duration-300">
                     Become a Vendor
                 </button>
             </section>

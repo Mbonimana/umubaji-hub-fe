@@ -252,7 +252,7 @@ const product: ProductWithImages = {
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="px-6 py-2 bg-[#FFB347] text-white rounded-lg hover:bg-amber-600 font-medium"
+                  className="px-6 py-2 bg-[#4B341C] text-white rounded-lg hover:bg-amber-600 font-medium"
                   disabled={isSubmitting}
                   type="button"
                 >

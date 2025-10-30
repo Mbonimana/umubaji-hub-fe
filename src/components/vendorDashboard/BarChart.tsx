@@ -51,7 +51,7 @@ export default function BarChartComponent() {
               boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
             }}
           />
-          <Bar dataKey="sales" fill="#FFB347" />
+          <Bar dataKey="sales" fill="#4B341C" />
         </ReBarChart>
       </ResponsiveContainer>
     </div>

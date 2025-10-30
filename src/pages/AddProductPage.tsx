@@ -139,7 +139,7 @@ export default function AddProductPage() {
                     ) : (
                       <div>
                         <Upload className="w-10 h-10 text-gray-400 mx-auto mb-3" />
-                        <p className="text-sm text-gray-600">Click to upload</p>
+                        <p className="text-sm text-[#4B341C]">Click to upload</p>
                       </div>
                     )}
                   </label>
@@ -168,7 +168,7 @@ export default function AddProductPage() {
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="px-6 py-2 bg-[#FFB347] text-white rounded-lg hover:bg-amber-600"
+                  className="px-6 py-2 bg-[#4B341C] text-white rounded-lg hover:bg-amber-600"
                 >
                   Save Product
                 </button>

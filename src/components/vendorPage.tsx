@@ -49,7 +49,7 @@ const vendorPage: React.FC = () => {
             <span className="font-medium text-gray-700">4.8</span>
             <span className="text-gray-500 text-sm">(124 reviews)</span>
           </div>
-          <p className="text-gray-600 text-sm">📍 Lagos, Nigeria</p>
+          <p className="text-gray-600 text-sm">📍 Kigali, Rwanda</p>
           <p className="text-gray-600 text-sm">📞 +234 830 124 557</p>
           <p className="text-gray-600 text-sm">✉ contact@mastercrafts.com</p>
         </div>

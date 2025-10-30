@@ -211,7 +211,7 @@ export default function Signup() {
               <span>I agree to the Terms of Service and Privacy Policy</span>
             </div>
 
-            <button className="w-full bg-[#5c4338] text-white py-2 rounded-md text-sm font-medium hover:bg-[#4a372d] transition">
+            <button className="w-full bg-[#4B341C] text-white py-2 rounded-md text-sm font-medium hover:bg-[#4a372d] transition">
               Create Account
             </button>
           </form>

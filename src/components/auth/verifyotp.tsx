@@ -60,7 +60,7 @@ export default function OtpVerification() {
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-[#f0ebe3] px-4">
       {/* Logo */}
-      <div className="bg-[#6B4B3E] w-16 h-16 flex items-center justify-center rounded-md mb-6 shadow">
+      <div className="bg-[#4B341C] w-16 h-16 flex items-center justify-center rounded-md mb-6 shadow">
         <span className="text-white font-semibold text-lg">UH</span>
       </div>
 
@@ -84,14 +84,14 @@ export default function OtpVerification() {
               value={digit}
               onChange={(e) => handleChange(e.target.value, index)}
               onKeyDown={handleKeyDown}
-              className="w-10 h-10 text-center border border-gray-300 rounded-md text-lg focus:outline-none focus:border-[#6B4B3E]"
+              className="w-10 h-10 text-center border border-gray-300 rounded-md text-lg focus:outline-none focus:border-[#4B341C]"
             />
           ))}
         </div>
 
         <button
           type="submit"
-          className="w-full py-2 rounded-md bg-[#6B4B3E] text-white hover:bg-[#5B4B3E] transition"
+          className="w-full py-2 rounded-md bg-[#4B341C] text-white hover:bg-[#5B4B3E] transition"
         >
           Verify OTP
         </button>
@@ -101,7 +101,7 @@ export default function OtpVerification() {
           <button
             type="button"
             onClick={() => Notiflix.Notify.info("Resend OTP triggered")}
-            className="text-[#6B4B3E] font-medium hover:underline"
+            className="text-[#4B341C] font-medium hover:underline"
           >
             Resend
           </button>
@@ -110,7 +110,7 @@ export default function OtpVerification() {
 
       <Link
         to="/"
-        className="mt-6 text-sm text-gray-600 hover:text-[#6B4B3E] transition"
+        className="mt-6 text-sm text-gray-600 hover:text-[#4B341C] transition"
       >
         ← Back to Home
       </Link>

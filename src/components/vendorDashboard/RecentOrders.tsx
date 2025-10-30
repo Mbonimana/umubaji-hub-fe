@@ -24,7 +24,7 @@ export default function RecentOrders() {
             <div>
               <p className="font-medium text-gray-900">{o.name}</p>
               <p className="text-sm text-gray-600">{o.product}</p>
-              <p className="text-sm font-semibold text-amber-600">₦{o.price.toLocaleString()}</p>
+              <p className="text-sm font-semibold text-[#4B341C]">₦{o.price.toLocaleString()}</p>
             </div>
             <span
               className={`px-3 py-1 text-xs font-medium rounded-full ${

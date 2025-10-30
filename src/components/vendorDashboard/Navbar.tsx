@@ -19,11 +19,11 @@ export default function Navbar() {
           </button>
           </div>
           <button className="flex items-center gap-2 px-3 py-2 bg-[#F5F5F5] rounded-lg hover:bg-amber-100 transition">
-            <div className="w-6 h-6 bg-amber-700 rounded-full flex items-center justify-center text-white text-xs font-bold">
+            <div className="w-6 h-6 bg-[#4B341C] rounded-full flex items-center justify-center text-white text-xs font-bold">
               MC
             </div>
             <span className="text-sm font-medium text-[#333333]">Vendor</span>
-            <svg className="w-4 h-4 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-[#4B341C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" className='text-[#333333]' />
             </svg>
           </button>

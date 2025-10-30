@@ -32,7 +32,7 @@ export default function VendorDashboard() {
           <div className="mb-6 flex justify-end">
             <button 
               onClick={() => navigate('/my-products/add')}
-              className="bg-[#FFB347] text-white mt-6 px-5 py-3 rounded-lg flex items-center gap-2 hover:bg-amber-700 font-medium"
+              className="bg-[#4B341C] text-white mt-6 px-5 py-3 rounded-lg flex items-center gap-2 hover:bg-amber-700 font-medium"
             >
               <Plus className="w-5 h-5" />
               Add New Product

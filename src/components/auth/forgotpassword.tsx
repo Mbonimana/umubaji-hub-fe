@@ -21,7 +21,7 @@ export default function ForgotPassword() {
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-[#f0ebe3] px-4">
   
-      <div className="bg-[#6B4B3E] w-16 h-16 flex items-center justify-center rounded-md mb-6 shadow">
+      <div className="bg-[#4B341C] w-16 h-16 flex items-center justify-center rounded-md mb-6 shadow">
         <span className="text-white font-semibold text-lg">UH</span>
       </div>
 
@@ -52,7 +52,7 @@ export default function ForgotPassword() {
         {/* Submit button */}
         <button
           type="submit"
-          className="w-full bg-[#6B4B3E] text-white py-2 rounded-md hover:bg-[#5B3F33] transition"
+          className="w-full bg-[#4B341C] text-white py-2 rounded-md hover:bg-[#5B3F33] transition"
         >
          Send OTP 
         </button>
@@ -62,7 +62,7 @@ export default function ForgotPassword() {
           Remember your password?{" "}
           <Link
             to="/login"
-            className="text-[#6B4B3E] font-medium hover:underline"
+            className="text-[#4B341C] font-medium hover:underline"
           >
             Sign In
           </Link>
@@ -71,7 +71,7 @@ export default function ForgotPassword() {
 
       <Link
         to="/"
-        className="mt-6 text-sm text-gray-600 hover:text-[#6B4B3E] transition"
+        className="mt-6 text-sm text-gray-600 hover:text-[#4B341C] transition"
       >
         ← Back to Home
       </Link>

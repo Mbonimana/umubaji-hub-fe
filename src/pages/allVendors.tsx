@@ -150,7 +150,7 @@ const VendorsPage: React.FC = () => {
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-5 py-2 rounded-lg border transition-all ${
                     selectedCategory === cat
-                      ? "bg-secondary text-white border-primary"
+                      ? "bg-[#4B341C] text-white border-primary"
                       : "bg-white text-gray-600 hover:bg-gray-100"
                   }`}
                 >
@@ -184,7 +184,7 @@ const VendorsPage: React.FC = () => {
                       {v.location}
                     </div>
                     <p className="text-gray-600 text-sm mt-1">Price range: {v.priceRange}</p>
-                    <button className="w-full bg-secondary text-white mt-4 py-2 rounded-lg font-medium hover:bg-primary/90 transition">
+                    <button className="w-full bg-[#4B341C] text-white mt-4 py-2 rounded-lg font-medium hover:bg-primary/90 transition">
                       View Profile
                     </button>
                   </div>
@@ -221,7 +221,7 @@ const VendorsPage: React.FC = () => {
                     {v.location}
                   </div>
                   <p className="text-gray-600 text-sm mt-1">Price range: {v.priceRange}</p>
-                  <button className="w-full bg-secondary text-white mt-4 py-2 rounded-lg font-medium hover:bg-primary/90 transition">
+                  <button className="w-full bg-[#4B341C] text-white mt-4 py-2 rounded-lg font-medium hover:bg-primary/90 transition">
                     View Profile
                   </button>
                 </div>

@@ -22,7 +22,7 @@ export default function ProductRow({ product, onEdit, onDelete }: Props) {
         </div>
       </td>
       <td className="p-4 text-gray-600">{product.category || '-'}</td>
-      <td className="p-4 font-semibold text-amber-600">₦{product.price.toLocaleString()}</td>
+      <td className="p-4 font-semibold text-[#4B341C]">₦{product.price.toLocaleString()}</td>
       <td className="p-4">{product.stock || 0}</td>
       <td className="p-4 text-sm text-gray-500">
         {new Date(product.created_at!).toLocaleDateString()}
@@ -31,15 +31,15 @@ export default function ProductRow({ product, onEdit, onDelete }: Props) {
         <div className="flex gap-2">
           <button
             onClick={onEdit}
-            className="p-2 hover:bg-amber-100 rounded-lg"
+            className="p-2  hover:bg-amber-100 rounded-lg"
           >
-            <Edit className="w-4 h-4 text-amber-700" />
+            <Edit className="w-4 h-4 text-[#4B341C]" />
           </button>
           <button
             onClick={() => onDelete(product.id!)}
             className="p-2 hover:bg-red-100 rounded-lg"
           >
-            <Trash2 className="w-4 h-4 text-red-600" />
+            <Trash2 className="w-4 h-4 text-[#4B341C]" />
           </button>
         </div>
       </td>

@@ -217,7 +217,7 @@ const Explore: React.FC = () => {
 
                       <button
                         onClick={() => navigate(`/vendor/${v.id}`)}
-                        className="w-full mt-3 bg-secondary text-white py-2 rounded-md hover:bg-primary"
+                        className="w-full mt-3 bg-[#4B341C] text-white py-2 rounded-md hover:bg-primary"
                       >
                         View Profile
                       </button>
