@@ -1,7 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import Layout from './layout/Layout';
 import Home from './pages/home';
-import VendorDashboard from './pages/VendorDashboard';
 import Cart from './pages/Cart'; 
 import Checkout from './pages/Checkout';
 
@@ -16,29 +15,6 @@ import VendorsPage from './pages/allVendors';
 
 
 function App() {
-  return (  
-    <BrowserRouter>
-    
-        <Routes>
-          <Route path='/' element={<Layout />}>
-            <Route index element={<Home />} />
-            
- 
-          <Route path='vendorPage' element={<VendorPage/>} />
- 
-          </Route>
-          <Route path="vendor-dashboard" element={<VendorDashboard />} />
-          <Route path='Login' element={< Login />}/>
-          <Route path='Signup' element={< Signup />}/>
-          <Route path='forgot-password' element={< ForgotPassword />}/>
-          <Route path='otp-verification' element={< OtpVerification />}/>
-          <Route path='reset-password' element={<PasswordReset/>} />
-          <Route path='vendor-forgot-password' element={<VendorForgotPassword/>} />
-          
-        </Routes>
-     
-    </BrowserRouter>
-  )
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
