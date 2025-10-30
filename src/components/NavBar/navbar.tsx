@@ -71,18 +71,29 @@ function Navbar() {
 
               {/* Desktop Menu */}
               <div className="flex-1 flex justify-center">
-                <ul className="hidden sm:flex space-x-5 ml-6 text-[15px] font-medium text-gray-700">
-                  {["Home", "Explore", "Vendors", "About"].map((item) => (
-                    <li key={item}>
-                      <Link
-                        to="/"
-                        className="relative hover:text-primary transition-colors duration-200 after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-primary after:bottom-[-3px] after:left-0 hover:after:w-full after:transition-all after:duration-300"
-                      >
-                        {item}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+               <ul className="hidden sm:flex space-x-5 ml-6 text-[15px] font-medium text-gray-700">
+               {["Home", "Explore", "Vendors", "AboutUs"].map((item) => {
+    
+                       const paths: Record<string, string> = {
+                       Home: "/",
+                       Explore: "/explore",
+                       Vendors: "/allvendors",
+                      AboutUs: "/about-us",
+                };
+
+    return (
+      <li key={item}>
+        <Link
+          to={paths[item]}
+          className="relative hover:text-primary transition-colors duration-200 after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-primary after:bottom-[-3px] after:left-0 hover:after:w-full after:transition-all after:duration-300"
+        >
+          {item}
+        </Link>
+      </li>
+    );
+  })}
+</ul>
+
               </div>
             </div>
 
@@ -175,67 +186,78 @@ function Navbar() {
         {/* Mobile Menu */}
   {isOpen && (
   <div className="sm:hidden bg-white border-t border-slate-200 animate-slideDown shadow-md">
-    <ul className="flex flex-col space-y-3 p-4 text-gray-700 text-sm font-medium">
-      {/* Main navigation links */}
-      {["Home", "Explore", "Vendors", "About"].map((item) => (
-        <li key={item}>
-          <Link
-            to="/"
-            onClick={() => setIsOpen(false)}
-            className="block w-full py-2 px-3 rounded-md hover:bg-slate-100 hover:text-primary transition-colors duration-200"
-          >
-            {item}
-          </Link>
-        </li>
-      ))}
+     <ul className="flex flex-col space-y-3 p-4 text-gray-700 text-sm font-medium">
+        {/* Main navigation links */}
+        {["Home", "Explore", "Vendors", "About"].map((item) => {
+          const paths: Record<string, string> = {
+            Home: "/",
+            Explore: "/explore",
+            Vendors: "/allvendors",
+            About: "/about-us",
+          };
 
-      {/* Guest actions */}
-      {!user ? (
-        <>
-          <li>
-            <Link to="/Login" onClick={() => setIsOpen(false)}>
-              <button className="w-full h-10 rounded-md border border-slate-300 bg-slate-50 text-sm font-medium hover:bg-slate-100 transition-colors duration-200">
-                Login
+          return (
+            <li key={item}>
+              <Link
+                to={paths[item]}
+                onClick={() => setIsOpen(false)}
+                className="block w-full py-2 px-3 rounded-md hover:bg-slate-100 hover:text-primary transition-colors duration-200"
+              >
+                {item}
+              </Link>
+            </li>
+          );
+        })}
+
+        {/* Guest actions */}
+        {!user ? (
+          <>
+            <li>
+              <Link to="/Login" onClick={() => setIsOpen(false)}>
+                <button className="w-full h-10 rounded-md border border-slate-300 bg-slate-50 text-sm font-medium hover:bg-slate-100 transition-colors duration-200">
+                  Login
+                </button>
+              </Link>
+            </li>
+            <li>
+              <Link to="/Signup" onClick={() => setIsOpen(false)}>
+                <button className="w-full h-10 rounded-md bg-primary text-white text-sm font-medium hover:bg-primary/90 shadow transition-colors duration-200">
+                  Register
+                </button>
+              </Link>
+            </li>
+          </>
+        ) : (
+          <>
+            {/* Dashboard link */}
+            <li>
+              <Link
+                to="/customer-dashboard"
+                onClick={() => setIsOpen(false)}
+                className="block w-full h-10 rounded-md bg-gray-50 text-slate-700 text-center font-medium hover:bg-primary hover:text-white transition-colors duration-200"
+              >
+                Go to Dashboard
+              </Link>
+            </li>
+
+            {/* Greeting + Logout */}
+            <li className="flex space-x-2">
+              <div className="w-1/2 flex items-center justify-center h-10 rounded-md bg-gray-50 text-slate-700 font-medium">
+                Hi, {user.firstname}
+              </div>
+              <button
+                onClick={() => {
+                  setIsOpen(false);
+                  handleLogout();
+                }}
+                className="w-1/2 flex items-center justify-center gap-1 h-10 rounded-md bg-slate-50 text-slate-700 hover:bg-black hover:text-white transition-colors duration-200 font-medium"
+              >
+                <LogOut size={16} /> Logout
               </button>
-            </Link>
-          </li>
-          <li>
-            <Link to="/Signup" onClick={() => setIsOpen(false)}>
-              <button className="w-full h-10 rounded-md bg-primary text-white text-sm font-medium hover:bg-primary/90 shadow transition-colors duration-200">
-                Register
-              </button>
-            </Link>
-          </li>
-        </>
-      ) : (
-        // Logged-in user actions
-        <>
-          <li>
-            <Link
-              to="/customer-dashboard"
-              onClick={() => setIsOpen(false)}
-              className="block w-full h-10 rounded-md bg-gray-50 text-slate-700 text-center font-medium hover:bg-primary hover:text-white transition-colors duration-200 "
-            >
-              Go to Dashboard
-            </Link>
-          </li>
-          <li className="flex space-x-2">
-            <div className="w-1/2 flex items-center justify-center h-10 rounded-md bg-gray-50 text-slate-700 font-medium">
-              Hi, {user.firstname}
-            </div>
-            <button
-              onClick={() => {
-                setIsOpen(false);
-                handleLogout();
-              }}
-              className="w-1/2 flex items-center justify-center gap-1 h-10 rounded-md bg-slate-50 text-slate-700 hover:bg-black hover:text-white transition-colors duration-200 font-medium"
-            >
-              <LogOut size={16} /> Logout
-            </button>
-          </li>
-        </>
-      )}
-    </ul>
+            </li>
+          </>
+        )}
+      </ul>
   </div>
 )}
 
