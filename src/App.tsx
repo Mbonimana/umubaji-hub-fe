@@ -17,8 +17,12 @@ import VendorPage from './components/vendorPage';
 import VendorDashboard from './pages/VendorDashboard';
 import MyProducts from './pages/MyProducts';
 import ProductFormPage from './pages/ProductFormPage';
-
-
+import Orders from './pages/Orders';
+import Reviews from './pages/Reviews';
+import Analytics from './pages/Analytics.tsx';
+import Messages from './pages/Messages';
+import Earnings from './pages/Earnings';
+import Settings from './pages/Settings';
 
 function App() {
   return (
@@ -36,13 +40,17 @@ function App() {
         <Route path="/vendor/:vendorId" element={<VendorPage />} />
         <Route path='allVendors' element={<VendorsPage/>} />
         <Route path = 'explore' element={< Explore/>} />
-        
-
       </Route>
       <Route path="vendordashboard" element={<VendorDashboard />} />
         <Route path="/my-products" element={<MyProducts />} />
         <Route path="/my-products/add" element={<ProductFormPage />} />
         <Route path="/my-products/edit/:id" element={<ProductFormPage />} />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="/reviews" element={<Reviews />} />
+        <Route path="/analytics" element={<Analytics />} />
+        <Route path="/messages" element={<Messages />} />
+        <Route path="/earnings" element={<Earnings />} />
+        <Route path="/settings" element={<Settings />} />
     </Routes>
   );
 }
