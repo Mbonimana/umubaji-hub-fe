@@ -24,6 +24,13 @@ import Messages from './pages/Messages';
 import Earnings from './pages/Earnings';
 import Settings from './pages/Settings';
 
+// Customer dashboard pages
+import CustomerDashboard from './pages/CustomerDashboard';
+import CustomerOrders from './pages/customer/Orders';
+import CustomerMessages from './pages/customer/Messages';
+import CustomerSettings from './pages/customer/Settings';
+import CustomerWishlist from './pages/customer/Wishlist';
+
 function App() {
   return (
     <Routes>
@@ -41,16 +48,25 @@ function App() {
         <Route path='allVendors' element={<VendorsPage/>} />
         <Route path = 'explore' element={< Explore/>} />
       </Route>
+
+      {/* Vendor routes */}
       <Route path="vendordashboard" element={<VendorDashboard />} />
-        <Route path="/my-products" element={<MyProducts />} />
-        <Route path="/my-products/add" element={<ProductFormPage />} />
-        <Route path="/my-products/edit/:id" element={<ProductFormPage />} />
-        <Route path="/orders" element={<Orders />} />
-        <Route path="/reviews" element={<Reviews />} />
-        <Route path="/analytics" element={<Analytics />} />
-        <Route path="/messages" element={<Messages />} />
-        <Route path="/earnings" element={<Earnings />} />
-        <Route path="/settings" element={<Settings />} />
+      <Route path="/my-products" element={<MyProducts />} />
+      <Route path="/my-products/add" element={<ProductFormPage />} />
+      <Route path="/my-products/edit/:id" element={<ProductFormPage />} />
+      <Route path="/orders" element={<Orders />} />
+      <Route path="/reviews" element={<Reviews />} />
+      <Route path="/analytics" element={<Analytics />} />
+      <Route path="/messages" element={<Messages />} />
+      <Route path="/earnings" element={<Earnings />} />
+      <Route path="/settings" element={<Settings />} />
+
+      {/* Customer routes */}
+      <Route path="/customer-dashboard" element={<CustomerDashboard />} />
+      <Route path="/customer/orders" element={<CustomerOrders />} />
+      <Route path="/customer/messages" element={<CustomerMessages />} />
+      <Route path="/customer/settings" element={<CustomerSettings />} />
+      <Route path="/customer/wishlist" element={<CustomerWishlist />} />
     </Routes>
   );
 }
