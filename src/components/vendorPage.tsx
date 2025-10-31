@@ -1,6 +1,7 @@
-// ProductListingPage.tsx
+// vendorPage.tsx
 import React, { useState } from "react";
 import { Star, MessageSquare, Phone } from "lucide-react";
+import { useCart } from "../contexts/CartContext"; 
 
 interface Product {
   id: number;
@@ -21,20 +22,24 @@ const products: Product[] = [
 
 const vendorPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState("Products");
+  const { addToCart } = useCart(); 
 
   return (
     <div className="min-h-screen w-full bg-gray-50 font-sans">
-      {/* Hero Section */}
+
+      {/* Hero Banner */}
       <div
         className="relative w-full h-0 sm:h-72 bg-cover bg-center"
-        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80')" }}
+        style={{
+          backgroundImage: "url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80')"
+        }}
       >
         <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
           <h1 className="text-white text-3xl sm:text-4xl font-bold">Master Crafts Ltd</h1>
         </div>
       </div>
 
-      {/* Profile Card */}
+      {/* Profile Section */}
       <div className="relative -mt-16 mx-auto w-11/12 max-w-5xl bg-white shadow-lg rounded-lg p-6 flex flex-col sm:flex-row items-center gap-6">
         <img
           src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSS_d3n2b819ECRjI5t_QJj6kk7Gz0HZZOlnA&s"
@@ -54,13 +59,13 @@ const vendorPage: React.FC = () => {
           <p className="text-gray-600 text-sm">✉ contact@mastercrafts.com</p>
         </div>
 
-        {/* Buttons */}
+        {/* Contact Buttons */}
         <div className="flex gap-3 mt-3 sm:mt-0">
           <button className="flex items-center justify-center gap-2 border border-gray-300 px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:scale-105 transition text-sm">
             <MessageSquare size={16} />
             Message
           </button>
-          <button className="flex items-center justify-center gap-2 bg-secondary text-white px-4 py-2 rounded-lg hover:bg-primary/90 hover:scale-105 transition text-sm">
+          <button className="flex items-center justify-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 hover:scale-105 transition text-sm">
             <Phone size={16} />
             Contact
           </button>
@@ -73,46 +78,59 @@ const vendorPage: React.FC = () => {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 font-medium flex-shrink-0 transition-all ${
-              activeTab === tab
-                ? "text-primary border-b-2 border-secondary"
+            className={`px-4 py-2 font-medium flex-shrink-0 transition-all ${activeTab === tab
+                ? "text-primary border-b-2 border-primary"
                 : "text-gray-500 hover:text-primary"
-            }`}
+              }`}
           >
             {tab}
           </button>
         ))}
       </div>
 
-      {/* Products Grid */}
+      {/* Products Tab */}
       {activeTab === "Products" && (
-         <div className="w-11/12 max-w-5xl mx-auto mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-10">
+        <div className="w-11/12 max-w-5xl mx-auto mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-10">
           {products.map((p) => (
             <div
               key={p.id}
-              className=" border-gray-200  rounded-lg shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all flex flex-col"
+              className="border border-gray-200 rounded-lg shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all flex flex-col"
             >
-              <div className="w-full h-80 bg-gray-100  overflow-hidden mb-3">
-             <img
-           src={p.image}
-           alt={p.name}
-           className="w-full h-80 md:h-96 rounded-lg lg:h-[28rem] object-cover hover:scale-110 transition-transform duration-500"
-/>
+              <div className="w-full h-80 overflow-hidden mb-3 bg-gray-100">
+                <img
+                  src={p.image}
+                  alt={p.name}
+                  className="w-full h-80 md:h-96 rounded-lg lg:h-[28rem] object-cover hover:scale-110 transition-transform duration-500"
+                />
               </div>
               <div className="h-16 px-4 pb-4 flex-1 flex flex-col">
-              <h3 className="text-gray-800 font-semibold text-base">{p.name}</h3>
-              <p className="text-sm text-gray-500">{p.woodType}</p>
-              <p className="text-primary font-semibold mt-1">{p.price}</p>
-              <button className="mt-3 bg-secondary text-white w-full py-2 rounded-lg hover:bg-primary/90 hover:scale-105 transition font-medium text-sm">
-                🛒 Add to Cart
-              </button>
+                <h3 className="text-gray-800 font-semibold text-base">{p.name}</h3>
+                <p className="text-sm text-gray-500">{p.woodType}</p>
+                <p className="text-primary font-semibold mt-1">{p.price}</p>
+
+                {/* ✅ Add to Cart Button */}
+                <button
+                  onClick={() =>
+                    addToCart({
+                      id: `mastercraft-${p.id}`,
+                      name: p.name,
+                      price: parseInt(p.price.replace(/[F,]/g, '')), // clean F and comma
+                      vendor: "Master Crafts Ltd",
+                      img: p.image ?? '',
+                      quantity: 1,
+                    })
+                  }
+                  className="mt-3 bg-primary text-white w-full py-2 rounded-lg hover:bg-primary/90 hover:scale-105 transition font-medium text-sm"
+                >
+                  🛒 Add to Cart
+                </button>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* About Section */}
+      {/* About Tab */}
       {activeTab === "About" && (
         <div className="w-11/12 max-w-4xl mx-auto mt-6 text-gray-700 pb-10 leading-relaxed">
           <p>
@@ -124,7 +142,7 @@ const vendorPage: React.FC = () => {
         </div>
       )}
 
-      {/* Reviews Section */}
+      {/* Reviews Tab */}
       {activeTab === "Reviews" && (
         <div className="w-11/12 max-w-4xl mx-auto mt-6 text-gray-700 pb-10">
           <p>No reviews yet. Be the first to leave feedback!</p>

@@ -6,6 +6,7 @@ import {
     ShoppingCartIcon,
 } from '@heroicons/react/24/solid';
 import { useCart } from '../contexts/CartContext';
+import { Link } from 'react-router-dom';    
 
 const Home: React.FC = () => {
     const { addToCart } = useCart();
@@ -108,7 +109,7 @@ const Home: React.FC = () => {
                                                 Price range: {vendor.price}
                                             </p>
                                             <button className="mt-3 bg-primary text-white px-4 py-2 rounded-md text-sm w-full">
-                                                View Profile
+                                                <Link to="/vendor/${v.id}">View Profile</Link>
                                             </button>
                                         </div>
                                     </div>
@@ -190,7 +191,7 @@ const Home: React.FC = () => {
                     Join UbuojuHub today and connect with customers looking for quality craftsmanship
                 </p>
                 <button className="bg-[#4B341C] text-white py-2 px-6 rounded-md font-medium shadow hover:bg-[#4B341C] hover:text-white transition duration-300">
-                    Become a Vendor
+                    <Link to="/Signup">Become a Vendor</Link>
                 </button>
             </section>
         </div>
