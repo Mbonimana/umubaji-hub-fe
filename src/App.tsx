@@ -30,12 +30,14 @@ import CustomerOrders from './pages/customer/Orders';
 import CustomerMessages from './pages/customer/Messages';
 import CustomerSettings from './pages/customer/Settings';
 import CustomerWishlist from './pages/customer/Wishlist';
+import NotFound from './pages/notFound';
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
+        <Route path="*" element={<NotFound />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/login" element={<Login />} />

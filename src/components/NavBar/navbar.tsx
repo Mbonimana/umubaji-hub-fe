@@ -61,13 +61,10 @@ function Navbar() {
             {/* Left Section */}
             <div className="flex items-center space-x-4">
               {/* Logo */}
-              <div className="logo bg-primary w-10 h-10 rounded-md flex items-center justify-center shadow-sm">
-                <span className="text-white font-bold">UH</span>
-              </div>
-              <Link to="/">
-              <span className="font-semibold text-sm sm:text-lg text-slate-800 tracking-wide">
-                ububajiHub
-              </span>
+              <Link to='/'>
+                <div className="logo bg-primary w-10 h-10 rounded-md flex items-center justify-center shadow-sm">
+                  <span className="text-white font-bold">UH</span>
+                </div>
               </Link>
 
               {/* Desktop Menu */}
