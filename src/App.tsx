@@ -47,6 +47,7 @@ function App() {
         <Route path="/password-reset" element={<PasswordReset />} />
         <Route path="/vendor-forgot-password" element={<VendorForgotPassword />} />
         <Route path="/vendor/:vendorId" element={<VendorPage />} />
+        <Route path="/vendorPage/:id" element={<VendorPage />} />
         <Route path='allVendors' element={<VendorsPage/>} />
         <Route path = 'explore' element={< Explore/>} />
       </Route>

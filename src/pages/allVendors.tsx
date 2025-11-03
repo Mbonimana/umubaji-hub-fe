@@ -1,237 +1,124 @@
 import React, { useState } from "react";
-import { Star, MapPin } from "lucide-react";
-
-interface Vendor {
+import { useNavigate } from "react-router-dom";
+import { MapPin } from "lucide-react";
+interface Product {
   id: number;
   name: string;
-  category: string;
-  location: string;
-  rating: number;
-  reviews: number;
-  priceRange: string;
-  image: string;
+  woodType: string;
+  price: string;
+  image?: string;
 }
-
+interface Vendor {
+  id: number;
+  company_name: string;
+  company_location: string;
+  company_email: string;
+  phone: string;
+  image?: string;
+  products: Product[];
+}
+// :white_check_mark: Dummy vendors with products
+const dummyVendors: Vendor[] = [
+  {
+    id: 1,
+    company_name: "Master Crafts Ltd",
+    company_location: "Kigali, Rwanda",
+    company_email: "contact@mastercrafts.com",
+    phone: "+250 788 123 456",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSS_d3n2b819ECRjI5t_QJj6kk7Gz0HZZOlnA&s",
+    products: [
+      { id: 1, name: "Modern Dining Table", woodType: "Oak Wood", price: "F85,000", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=500&q=80" },
+      { id: 2, name: "Ergonomic Office Chair", woodType: "Walnut Wood", price: "F95,000" },
+    ],
+  },
+  {
+    id: 2,
+    company_name: "WoodWorks Rwanda",
+    company_location: "Huye, Rwanda",
+    company_email: "info@woodworksrw.com",
+    phone: "+250 789 654 321",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_v5H5DBHuIl-dzqfFvIjSYvHSc7zVb_X8BA&s",
+    products: [
+      { id: 3, name: "Classic Bookshelf", woodType: "Pine Wood", price: "F125,000" },
+      { id: 4, name: "Rustic Coffee Table", woodType: "Mahogany", price: "F75,000" },
+    ],
+  },
+  {
+    id: 3,
+    company_name: "GreenWood Creations",
+    company_location: "Musanze, Rwanda",
+    company_email: "hello@greenwood.com",
+    phone: "+250 780 000 555",
+    image: "https://images.unsplash.com/photo-1602524200613-6b3b1fba3ef5?auto=format&fit=crop&w=600&q=80",
+    products: [
+      { id: 5, name: "Bed Frame Set", woodType: "Teak Wood", price: "F250,000" },
+      { id: 6, name: "Side Cabinet", woodType: "Birch Wood", price: "F65,000" },
+    ],
+  },
+  // Add more vendors similarly if needed
+];
 const VendorsPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<"Category" | "All">("Category");
-  const [selectedCategory, setSelectedCategory] = useState<string>("All");
-
-  const vendors: Vendor[] = [
-    {
-      id: 1,
-      name: "Master Crafts Ltd",
-      category: "Tables",
-      location: "Lagos, Nigeria",
-      rating: 4.8,
-      reviews: 124,
-      priceRange: "₦50,000 - ₦600,000",
-      image: "https://images.unsplash.com/photo-1615874959474-d609969a20ed?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 2,
-      name: "Woodwork Artisans",
-      category: "Chairs",
-      location: "Abuja, Nigeria",
-      rating: 4.6,
-      reviews: 98,
-      priceRange: "₦30,000 - ₦350,000",
-      image: "https://images.unsplash.com/photo-1615874959474-d609969a20ed?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 3,
-      name: "Premium Furniture Co",
-      category: "Custom Work",
-      location: "Port Harcourt, Nigeria",
-      rating: 4.9,
-      reviews: 156,
-      priceRange: "₦75,000 - ₦800,000",
-      image: "https://images.unsplash.com/photo-1615874959474-d609969a20ed?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 4,
-      name: "Elegant Interiors",
-      category: "Tables",
-      location: "Kigali, Rwanda",
-      rating: 4.7,
-      reviews: 112,
-      priceRange: "RWF 150,000 - RWF 1,200,000",
-      image: "https://images.unsplash.com/photo-1615874959474-d609969a20ed?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 5,
-      name: "Rustic Touch Furniture",
-      category: "Chairs",
-      location: "Accra, Ghana",
-      rating: 4.5,
-      reviews: 87,
-      priceRange: "₵2,000 - ₵15,000",
-      image: "https://images.unsplash.com/photo-1615874959474-d609969a20ed?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 6,
-      name: "TimberLine Works",
-      category: "Custom Work",
-      location: "Nairobi, Kenya",
-      rating: 4.6,
-      reviews: 140,
-      priceRange: "KSh 20,000 - KSh 300,000",
-      image: "https://images.unsplash.com/photo-1615874959474-d609969a20ed?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 7,
-      name: "African Art Furniture",
-      category: "Tables",
-      location: "Kampala, Uganda",
-      rating: 4.7,
-      reviews: 132,
-      priceRange: "UGX 500,000 - UGX 3,000,000",
-      image: "https://images.unsplash.com/photo-1615874959474-d609969a20ed?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 8,
-      name: "HomeCraft Studio",
-      category: "Chairs",
-      location: "Dar es Salaam, Tanzania",
-      rating: 4.9,
-      reviews: 156,
-      priceRange: "TSh 500,000 - TSh 2,000,000",
-      image: "https://images.unsplash.com/photo-1615874959474-d609969a20ed?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 9,
-      name: "Carve & Design",
-      category: "Custom Work",
-      location: "Johannesburg, South Africa",
-      rating: 4.8,
-      reviews: 205,
-      priceRange: "R 5,000 - R 50,000",
-      image: "https://images.unsplash.com/photo-1615874959474-d609969a20ed?auto=format&fit=crop&w=800&q=80",
-    },
-  ];
-
-  const categories = ["All", "Tables", "Chairs", "Custom Work"];
-
-  const filteredVendors =
-    selectedCategory === "All"
-      ? vendors
-      : vendors.filter((v) => v.category === selectedCategory);
-
+  const navigate = useNavigate();
+  const [vendors] = useState<Vendor[]>(dummyVendors);
   return (
-    <div className="bg-gray-50 min-h-screen py-12">
-      <div className="max-w-6xl mx-auto px-4">
-        <h1 className="text-3xl font-semibold text-gray-800 text-center mb-8">
-          Find Skilled Furniture Vendors
-        </h1>
-
-        {/* Tabs */}
-        <div className="flex justify-center border-b border-gray-200 mb-8">
-          {["Category", "All"].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab as "Category" | "All")}
-              className={`px-6 py-2 text-lg font-medium transition-all ${
-                activeTab === tab
-                  ? "text-primary border-b-2 border-primary"
-                  : "text-gray-500 hover:text-primary"
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
+    <div className="min-h-screen w-full bg-gray-50 font-sans">
+      {/* Header */}
+      <div
+        className="relative w-full h-60 bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1616628188467-8d1b6d29a60c?auto=format&fit=crop&w=1200&q=80')",
+        }}
+      >
+        <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center text-white">
+          <h1 className="text-6xl font-bold">All Vendors</h1>
+          <p className="text-3xl text-gray-200 mt-5">
+            Discover all our trusted vendors
+          </p>
         </div>
-
-        {/* Category View */}
-        {activeTab === "Category" && (
-          <>
-            <div className="flex flex-wrap justify-center gap-3 mb-10">
-              {categories.map((cat) => (
+      </div>
+      {/* Vendor Grid */}
+      <div className="w-11/12 max-w-6xl mx-auto mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-10">
+        {vendors.length > 0 ? (
+          vendors.map((v) => (
+            <div
+              key={v.id}
+              className="bg-white shadow-sm hover:shadow-lg rounded-xl p-4 transition cursor-pointer flex flex-col"
+            >
+              <img
+                src={v.image}
+                alt={v.company_name}
+                className="w-full h-52 object-cover rounded-lg"
+              />
+              <div className="mt-3 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="font-semibold text-lg text-gray-800">
+                    {v.company_name}
+                  </h3>
+                  <p className="text-gray-600 text-sm flex items-center mt-1">
+                    <MapPin size={14} className="mr-1 text-[#4B341C]" />
+                    {v.company_location}
+                  </p>
+                  <p className="text-gray-500 text-sm mt-1">{v.company_email}</p>
+                </div>
                 <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-5 py-2 rounded-lg border transition-all ${
-                    selectedCategory === cat
-                      ? "bg-[#4B341C] text-white border-primary"
-                      : "bg-white text-gray-600 hover:bg-gray-100"
-                  }`}
+                  onClick={() => navigate(`/vendorPage/${v.id}`)}
+                  className="w-full bg-[#4B341C] text-white mt-4 py-2 rounded-lg font-medium hover:bg-[#3A2917]/90 transition"
                 >
-                  {cat}
+                  View Profile
                 </button>
-              ))}
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredVendors.map((v) => (
-                <div
-                  key={v.id}
-                  className="bg-white rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all"
-                >
-                  <div className="h-64 rounded-t-xl overflow-hidden">
-                    <img
-                      src={v.image}
-                      alt={v.name}
-                      className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
-                    />
-                  </div>
-                  <div className="p-5">
-                    <h3 className="text-gray-800 font-semibold text-lg">{v.name}</h3>
-                    <div className="flex items-center text-yellow-500 gap-1 mt-1">
-                      <Star className="w-4 h-4 fill-yellow-500" />
-                      <span className="text-sm font-medium text-gray-700">{v.rating}</span>
-                      <span className="text-gray-500 text-sm">({v.reviews} reviews)</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-gray-500 mt-1 text-sm">
-                      <MapPin className="w-4 h-4" />
-                      {v.location}
-                    </div>
-                    <p className="text-gray-600 text-sm mt-1">Price range: {v.priceRange}</p>
-                    <button className="w-full bg-[#4B341C] text-white mt-4 py-2 rounded-lg font-medium hover:bg-primary/90 transition">
-                      View Profile
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-
-        {/* All Vendors View */}
-        {activeTab === "All" && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-10">
-            {vendors.map((v) => (
-              <div
-                key={v.id}
-                className="bg-white rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all"
-              >
-                <div className="h-64 rounded-t-xl overflow-hidden">
-                  <img
-                    src={v.image}
-                    alt={v.name}
-                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
-                  />
-                </div>
-                <div className="p-5">
-                  <h3 className="text-gray-800 font-semibold text-lg">{v.name}</h3>
-                  <div className="flex items-center text-yellow-500 gap-1 mt-1">
-                    <Star className="w-4 h-4 fill-yellow-500" />
-                    <span className="text-sm font-medium text-gray-700">{v.rating}</span>
-                    <span className="text-gray-500 text-sm">({v.reviews} reviews)</span>
-                  </div>
-                  <div className="flex items-center gap-1 text-gray-500 mt-1 text-sm">
-                    <MapPin className="w-4 h-4" />
-                    {v.location}
-                  </div>
-                  <p className="text-gray-600 text-sm mt-1">Price range: {v.priceRange}</p>
-                  <button className="w-full bg-[#4B341C] text-white mt-4 py-2 rounded-lg font-medium hover:bg-primary/90 transition">
-                    View Profile
-                  </button>
-                </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-center text-gray-500 w-full col-span-full">
+            No vendors found.
+          </p>
         )}
       </div>
     </div>
   );
 };
-
 export default VendorsPage;
