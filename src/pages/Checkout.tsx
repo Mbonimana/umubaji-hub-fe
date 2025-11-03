@@ -17,14 +17,14 @@ const Checkout = () => {
             type: "Home",
             tag: "Default",
             name: "musa",
-            phone: "+234 801 234 5678",
-            address: "123 Main Street, Ikeja, Lagos, Lagos State",
+            phone: "+250 787 065 734",
+            address: "12KG Main street, Kigali, Rwanda",
         },
         {
             type: "Office",
             name: "musa",
-            phone: "+234 802 345 6789",
-            address: "45 Business Avenue, Victoria Island, Lagos, Lagos State",
+            phone: "+250 787 065 734",
+            address: "456 Business Ave, Kigali, Rwanda",
         },
     ];
 
