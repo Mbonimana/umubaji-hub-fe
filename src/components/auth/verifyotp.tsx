@@ -54,7 +54,7 @@ export default function OtpVerification() {
     localStorage.setItem("resetOtp", enteredOtp);
 
     Notiflix.Notify.success("OTP verified successfully!");
-    navigate("/reset-password");
+    navigate("/password-reset");
   };
 
   return (

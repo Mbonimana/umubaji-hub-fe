@@ -1,26 +1,59 @@
 import { useState } from "react";
-import { Link ,useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Mail } from "lucide-react";
+import axios from "axios";
+import Notiflix from "notiflix";
+import { getBaseUrl } from "../../config/baseUrl";
 
-export default function ForgotPassword() {
+export default function VendorForgotPassword() {
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) {
-      alert("Please enter your registered email address.");
+
+    if (!email.trim()) {
+      Notiflix.Notify.failure("Please enter your company email address.");
       return;
-        
     }
 
-    // TODO: Replace with your axios POST request to backend
-    navigate("/otp-verification");
+    try {
+      setLoading(true);
+
+      const res = await axios.post(`${getBaseUrl()}/vendors/send-otp`, {
+        email: email.trim(),
+      });
+
+      //  Flexible success detection
+      const isSuccess =
+        res.status === 200 &&
+        (res.data?.success === true ||
+          res.data?.status === "success" ||
+          res.data?.message?.toLowerCase().includes("otp"));
+
+      if (isSuccess) {
+        Notiflix.Notify.success("OTP sent successfully! Check your email.");
+        localStorage.setItem("resetEmail", email);
+        navigate("/otp-verification");
+      } else {
+        Notiflix.Notify.failure(
+          res.data?.message || "Failed to send OTP. Please try again."
+        );
+      }
+    } catch (err: any) {
+      console.error("Error sending OTP:", err);
+      Notiflix.Notify.failure(
+        err.response?.data?.message || "An error occurred while sending OTP."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-[#f0ebe3] px-4">
-  
+      {/* Logo */}
       <div className="bg-[#4B341C] w-16 h-16 flex items-center justify-center rounded-md mb-6 shadow">
         <span className="text-white font-semibold text-lg">UH</span>
       </div>
@@ -34,9 +67,8 @@ export default function ForgotPassword() {
         onSubmit={handleSubmit}
         className="bg-white w-full max-w-sm rounded-lg shadow-md p-6"
       >
-      
         <div className="mb-4">
-          <label className="block text-sm mb-1 text-gray-700"> Email Address</label>
+          <label className="block text-sm mb-1 text-gray-700">Email Address</label>
           <div className="flex items-center border border-gray-300 rounded-md px-3">
             <Mail size={16} className="text-gray-400" />
             <input
@@ -49,15 +81,18 @@ export default function ForgotPassword() {
           </div>
         </div>
 
-        {/* Submit button */}
         <button
           type="submit"
-          className="w-full bg-[#4B341C] text-white py-2 rounded-md hover:bg-[#5B3F33] transition"
+          disabled={loading}
+          className={`w-full py-2 rounded-md text-white transition ${
+            loading
+              ? "bg-[#8d6f63] cursor-not-allowed"
+              : "bg-[#4B341C] hover:bg-[#5B3F33]"
+          }`}
         >
-         Send OTP 
+          {loading ? "Sending..." : "Send OTP"}
         </button>
 
-        {/* Back to login */}
         <p className="text-sm text-center mt-4 text-gray-600">
           Remember your password?{" "}
           <Link

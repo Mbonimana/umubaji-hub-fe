@@ -32,6 +32,9 @@ import CustomerSettings from './pages/customer/Settings';
 import CustomerWishlist from './pages/customer/Wishlist';
 import NotFound from './pages/notFound';
 
+//Vendor routes
+import VendorRegistration from './pages/customer/vendor/vendorregistration';
+
 function App() {
   return (
     <Routes>
@@ -49,6 +52,7 @@ function App() {
         <Route path="/vendor/:vendorId" element={<VendorPage />} />
         <Route path='allVendors' element={<VendorsPage/>} />
         <Route path = 'explore' element={< Explore/>} />
+        <Route path="/vendor-registration" element={<VendorRegistration />} />
       </Route>
 
       {/* Vendor routes */}
@@ -62,6 +66,7 @@ function App() {
       <Route path="/messages" element={<Messages />} />
       <Route path="/earnings" element={<Earnings />} />
       <Route path="/settings" element={<Settings />} />
+      <Route path="/vendor-registration" element={<VendorRegistration />} />
 
       {/* Customer routes */}
       <Route path="/customer-dashboard" element={<CustomerDashboard />} />
