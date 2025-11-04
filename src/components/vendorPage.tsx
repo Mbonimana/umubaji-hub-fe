@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom"; // ✅ Link from react-router-dom
 import { Star, MessageSquare } from "lucide-react";
 
 interface Product {
@@ -18,7 +18,7 @@ interface Vendor {
   products: Product[];
 }
 
-// ✅ Dummy vendors + products
+// Dummy vendors + products
 const dummyVendors: Vendor[] = [
   {
     id: 1,
@@ -27,20 +27,8 @@ const dummyVendors: Vendor[] = [
     image:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSS_d3n2b819ECRjI5t_QJj6kk7Gz0HZZOlnA&s",
     products: [
-      {
-        id: 1,
-        name: "Modern Dining Table",
-        woodType: "Oak Wood",
-        price: "F85,000",
-        image:
-          "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=500&q=80",
-      },
-      {
-        id: 2,
-        name: "Ergonomic Office Chair",
-        woodType: "Walnut Wood",
-        price: "F95,000",
-      },
+      { id: 1, name: "Modern Dining Table", woodType: "Oak Wood", price: "F85,000", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=500&q=80" },
+      { id: 2, name: "Ergonomic Office Chair", woodType: "Walnut Wood", price: "F95,000" },
     ],
   },
   {
@@ -48,7 +36,7 @@ const dummyVendors: Vendor[] = [
     company_name: "WoodWorks Rwanda",
     company_location: "Huye, Rwanda",
     image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_v5H5DBHuIl-dzqfFvIjSYvHSc7zVb_X8BA&s",
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=500&q=80",
     products: [
       { id: 3, name: "Classic Bookshelf", woodType: "Pine Wood", price: "F125,000" },
       { id: 4, name: "Rustic Coffee Table", woodType: "Mahogany", price: "F75,000" },
@@ -59,7 +47,7 @@ const dummyVendors: Vendor[] = [
     company_name: "Green WoodWorks",
     company_location: "Musanze, Rwanda",
     image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_v5H5DBHuIl-dzqfFvIjSYvHSc7zVb_X8BA&s",
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=500&q=80",
     products: [
       { id: 5, name: "Vintage Wardrobe", woodType: "Cherry Wood", price: "F210,000" },
       { id: 6, name: "Sleek Coffee Table", woodType: "Teak Wood", price: "F95,000" },
@@ -79,8 +67,8 @@ const VendorPage: React.FC = () => {
 
   return (
     <div className="min-h-screen w-full bg-gray-50 font-sans">
-      {/* ✅ Hero Section (No inline CSS) */}
-      <div className="relative w-full h-72 rounded-2xl overflow-hidden">
+      {/* Hero Section */}
+      <div className="relative w-full h-72 overflow-hidden">
         <img
           src={backgroundImage}
           alt={`${vendor.company_name} background`}
@@ -93,7 +81,7 @@ const VendorPage: React.FC = () => {
         </div>
       </div>
 
-      {/* ✅ Vendor Profile */}
+      {/* Vendor Profile */}
       <div className="relative -mt-16 mx-auto w-11/12 max-w-5xl bg-white shadow-lg rounded-lg p-6 flex flex-col sm:flex-row items-center gap-6">
         <img
           src={vendor.image}
@@ -110,15 +98,17 @@ const VendorPage: React.FC = () => {
           <p className="text-gray-600 text-sm mt-1">{vendor.company_location}</p>
         </div>
 
-        {/* ✅ Keep only the Message button */}
-        <div className="flex gap-3 mt-3 sm:mt-0">
-          <button className="flex items-center justify-center gap-2 border border-gray-300 px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:scale-105 transition text-sm">
-            <MessageSquare size={16} /> Message
-          </button>
-        </div>
+        {/* Message Button */}
+        <Link
+          to={`/vendors/${vendor.id}/contact`}
+          className="inline-flex items-center gap-2 border border-gray-300 px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:scale-105 transition text-sm font-medium"
+        >
+          <MessageSquare size={16} />
+          Message
+        </Link>
       </div>
 
-      {/* ✅ Tabs */}
+      {/* Tabs */}
       <div className="w-11/12 max-w-5xl mx-auto mt-6 flex overflow-x-auto border-b border-gray-200 scrollbar-hide">
         {["Products", "About", "Reviews"].map((tab) => (
           <button
@@ -135,7 +125,7 @@ const VendorPage: React.FC = () => {
         ))}
       </div>
 
-      {/* ✅ Products Tab */}
+      {/* Products Tab */}
       {activeTab === "Products" && (
         <div className="w-11/12 max-w-5xl mx-auto mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-10">
           {vendor.products.map((p) => (
@@ -145,7 +135,7 @@ const VendorPage: React.FC = () => {
             >
               <div className="w-full h-80 bg-gray-100 overflow-hidden mb-3">
                 <img
-                  src={p.image || "https://via.placeholder.com/400x400"}
+                  src={p.image ||  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=500&q=80"}
                   alt={p.name}
                   className="w-full h-80 object-cover rounded-t-lg hover:scale-110 transition-transform duration-500"
                 />
@@ -163,7 +153,7 @@ const VendorPage: React.FC = () => {
         </div>
       )}
 
-      {/* ✅ About Tab */}
+      {/* About Tab */}
       {activeTab === "About" && (
         <div className="w-11/12 max-w-4xl mx-auto mt-6 text-gray-700 pb-10 leading-relaxed">
           <p>
@@ -174,7 +164,7 @@ const VendorPage: React.FC = () => {
         </div>
       )}
 
-      {/* ✅ Reviews Tab */}
+      {/* Reviews Tab */}
       {activeTab === "Reviews" && (
         <div className="w-11/12 max-w-4xl mx-auto mt-6 text-gray-700 pb-10">
           <p>No reviews yet. Be the first to leave feedback!</p>

@@ -39,7 +39,7 @@ const dummyVendors: Vendor[] = [
     company_email: "info@woodworksrw.com",
     phone: "+250 789 654 321",
     image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_v5H5DBHuIl-dzqfFvIjSYvHSc7zVb_X8BA&s",
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=500&q=80",
     products: [
       { id: 3, name: "Classic Bookshelf", woodType: "Pine Wood", price: "F125,000" },
       { id: 4, name: "Rustic Coffee Table", woodType: "Mahogany", price: "F75,000" },
@@ -51,7 +51,7 @@ const dummyVendors: Vendor[] = [
     company_location: "Musanze, Rwanda",
     company_email: "hello@greenwood.com",
     phone: "+250 780 000 555",
-    image: "https://images.unsplash.com/photo-1602524200613-6b3b1fba3ef5?auto=format&fit=crop&w=600&q=80",
+    image:  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=500&q=80",
     products: [
       { id: 5, name: "Bed Frame Set", woodType: "Teak Wood", price: "F250,000" },
       { id: 6, name: "Side Cabinet", woodType: "Birch Wood", price: "F65,000" },
@@ -69,7 +69,7 @@ const VendorsPage: React.FC = () => {
         className="relative w-full h-60 bg-cover bg-center"
         style={{
           backgroundImage:
-            "url('https://images.unsplash.com/photo-1616628188467-8d1b6d29a60c?auto=format&fit=crop&w=1200&q=80')",
+            "url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSS_d3n2b819ECRjI5t_QJj6kk7Gz0HZZOlnA&s')",
         }}
       >
         <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center text-white">

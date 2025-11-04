@@ -12,6 +12,7 @@ import PasswordReset from './components/auth/passwordReset';
 import VendorForgotPassword from './components/auth/vendorForgotpassword';
 
 import VendorsPage from './pages/allVendors';
+import MessagingFormWrapper from "./components/WrapperComponent"; 
 import Explore from './pages/Explore';
 import VendorPage from './components/vendorPage';
 import VendorDashboard from './pages/VendorDashboard';
@@ -52,6 +53,8 @@ function App() {
         <Route path="/vendor/:vendorId" element={<VendorPage />} />
         <Route path="/vendorPage/:id" element={<VendorPage />} />
         <Route path='allVendors' element={<VendorsPage/>} />
+        <Route path="/vendors/:vendorId/contact" element={<MessagingFormWrapper />} />
+
         <Route path = 'explore' element={< Explore/>} />
         <Route path="/vendor-registration" element={<VendorRegistration />} />
       </Route>
