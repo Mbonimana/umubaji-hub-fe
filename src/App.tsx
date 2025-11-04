@@ -15,14 +15,15 @@ import VendorsPage from './pages/allVendors';
 import Explore from './pages/Explore';
 import VendorPage from './components/vendorPage';
 import VendorDashboard from './pages/VendorDashboard';
-import MyProducts from './pages/MyProducts';
-import ProductFormPage from './pages/ProductFormPage';
-import Orders from './pages/Orders';
-import Reviews from './pages/Reviews';
-import Analytics from './pages/Analytics.tsx';
-import Messages from './pages/Messages';
-import Earnings from './pages/Earnings';
-import Settings from './pages/Settings';
+import MyProducts from './pages/vendor/MyProducts';
+import ProductFormPage from './pages/vendor/ProductFormPage';
+import Orders from './pages/vendor/Orders';
+import Reviews from './pages/vendor/Reviews';
+import Analytics from './pages/vendor/Analytics.tsx';
+import Messages from './pages/vendor/Messages.tsx';
+import Earnings from './pages/vendor/Earnings.tsx';
+import Settings from './pages/vendor/Settings.tsx';
+import Profile from './pages/vendor/profile';
 
 // Customer dashboard pages
 import CustomerDashboard from './pages/CustomerDashboard';
@@ -33,7 +34,7 @@ import CustomerWishlist from './pages/customer/Wishlist';
 import NotFound from './pages/notFound';
 
 //Vendor routes
-import VendorRegistration from './pages/customer/vendor/vendorregistration';
+import VendorRegistration from './pages/vendor/vendorregistration.tsx';
 
 function App() {
   return (
@@ -67,6 +68,7 @@ function App() {
       <Route path="/messages" element={<Messages />} />
       <Route path="/earnings" element={<Earnings />} />
       <Route path="/settings" element={<Settings />} />
+      <Route path="/profile" element={<Profile />} />
       <Route path="/vendor-registration" element={<VendorRegistration />} />
 
       {/* Customer routes */}

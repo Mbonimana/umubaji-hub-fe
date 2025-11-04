@@ -1,8 +1,8 @@
-import Sidebar from '../components/vendorDashboard/Sidebar';
-import Navbar from '../components/vendorDashboard/Navbar';
+import Sidebar from '../../components/vendorDashboard/Sidebar';
+import Navbar from '../../components/vendorDashboard/Navbar';
 import { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
-import { getBaseUrl } from '../config/baseUrl';
+import { getBaseUrl } from '../../config/baseUrl';
 
 export default function Settings() {
   const [companyName, setCompanyName] = useState('');
@@ -61,8 +61,6 @@ export default function Settings() {
   }, [baseURL, vendorId]);
 
   const onSave = async () => {
-    // Placeholder: wire to API later
-    // eslint-disable-next-line no-alert
     try {
       if (!vendorId) return;
       setError(null);
@@ -75,7 +73,7 @@ export default function Settings() {
       setOriginalEmail(email);
       setOriginalPhone(phone);
       setEditMode(false);
-      alert('Settings saved (placeholder).');
+      alert('Settings saved.');
     } catch (e: any) {
       setError(e?.response?.data?.message || 'Failed to save settings');
     }

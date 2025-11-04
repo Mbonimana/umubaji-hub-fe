@@ -62,14 +62,14 @@ export default function Signup() {
         formData.append("national_id_file", nationalIdFile as Blob);
       }
 
-      await axios.post(`${baseUrl}/users/register`, formData, {
+      const res = await axios.post(`${baseUrl}/users/register`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
 
       Notiflix.Loading.remove();
-      Notiflix.Notify.success("Account created successfully!");
+      Notiflix.Notify.success("Account created successfully!",res.data.message || undefined);
 
       setTimeout(() => {
         window.location.href = "/login";

@@ -1,8 +1,8 @@
-import Sidebar from '../components/vendorDashboard/Sidebar';
-import Navbar from '../components/vendorDashboard/Navbar';
-import StatsCard from '../components/vendorDashboard/StatsCard';
-import BarChart from '../components/vendorDashboard/BarChart';
-import LineChart from '../components/vendorDashboard/LineChart';
+import Sidebar from '../../components/vendorDashboard/Sidebar';
+import Navbar from '../../components/vendorDashboard/Navbar';
+import StatsCard from '../../components/vendorDashboard/StatsCard';
+import BarChart from '../../components/vendorDashboard/BarChart';
+import LineChart from '../../components/vendorDashboard/LineChart';
 
 export default function Analytics() {
   const stats = [

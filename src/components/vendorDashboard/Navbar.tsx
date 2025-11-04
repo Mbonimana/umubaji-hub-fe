@@ -10,6 +10,11 @@ export default function Navbar() {
     window.dispatchEvent(new Event('userLoggedIn'));
     navigate('/');
   };
+  const goProfile = () => {
+    const storedId = localStorage.getItem('vendorId') || sessionStorage.getItem('vendorId') || '';
+    const qs = storedId ? `?vendorId=${storedId}` : '';
+    navigate(`/profile${qs}`);
+  };
   return (
     <header className="bg-white border-b border-gray-200">
       <div className="px-6 py-4 flex items-center justify-between">
@@ -26,7 +31,7 @@ export default function Navbar() {
             <Bell className="w-5 h-5 text-[#333333] hover:text-white " />
           </button>
           </div>
-          <button className="group flex items-center gap-2 px-3 py-2 bg-[#F5F5F5] rounded-lg hover:bg-[#4B341C] hover:text-white transition">
+          <button onClick={goProfile} className="group flex items-center gap-2 px-3 py-2 bg-[#F5F5F5] rounded-lg hover:bg-[#4B341C] hover:text-white transition" title="View Profile">
             <div className="w-6 h-6 bg-[#4B341C] rounded-full flex items-center justify-center text-white text-xs font-bold">
               MC
             </div>

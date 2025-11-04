@@ -45,15 +45,21 @@ export default function Sidebar() {
 
       {/* Bottom: User Profile */}
       <div className="p-4 border-t border-gray-200">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center">
-            <span className="text-gray-600 font-medium">V</span>
-          </div>
-          <div>
-            <p className="text-sm font-medium text-gray-800">Vendor Name</p>
-            <p className="text-xs text-gray-500">View Profile</p>
-          </div>
-        </div>
+        {(() => {
+          const storedId = localStorage.getItem('vendorId') || sessionStorage.getItem('vendorId') || '';
+          const qs = storedId ? `?vendorId=${storedId}` : '';
+          return (
+            <Link to={`/profile${qs}`} className="flex items-center gap-3 group">
+              <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center">
+                <span className="text-gray-600 font-medium">V</span>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-800 group-hover:text-[#4B341C]">Vendor Name</p>
+                <p className="text-xs text-gray-500 group-hover:text-[#4B341C] underline">View Profile</p>
+              </div>
+            </Link>
+          );
+        })()}
       </div>
     </aside>
   );
