@@ -20,7 +20,7 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  
+  const [userRole, setUserRole] = useState<"customer" | "vendor">("customer");
 
   // Vendor-specific Fields
   const [companyName, setCompanyName] = useState("");
@@ -62,7 +62,7 @@ export default function Signup() {
         formData.append("national_id_file", nationalIdFile as Blob);
       }
 
-      const res = await axios.post(`${baseUrl}/users/register`, formData, {
+      await axios.post(`${baseUrl}/users/register`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -70,18 +70,6 @@ export default function Signup() {
 
       Notiflix.Loading.remove();
       Notiflix.Notify.success("Account created successfully!");
-      const res = await axios.post(`${baseUrl}/users/register`, {
-        firstname: firstName,
-        lastname: lastName,
-        email,
-        phone,
-        password,
-        
-      });
-
-      Notiflix.Loading.remove();
-      Notiflix.Notify.success("Account created successfully Check your email to verify.");
-      console.log("Signup Success:", res.data);
 
       setTimeout(() => {
         window.location.href = "/login";
@@ -96,7 +84,9 @@ export default function Signup() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#f9f7f4] to-[#f0ece8] p-4">
       <div className="flex flex-col items-center mb-6">
-       
+        <div className="w-12 h-12 rounded-md bg-[#5c4338] flex items-center justify-center text-white font-semibold">
+          UH
+        </div>
         <h2 className="mt-3 text-gray-800 text-sm font-medium">Create an Account</h2>
         <p className="text-xs text-gray-500">Join UbubajiHub today</p>
       </div>
@@ -184,8 +174,17 @@ export default function Signup() {
           </div>
         </div>
 
-              
-  
+        <div>
+          <label className="text-xs text-gray-600">Register as</label>
+          <select
+            value={userRole}
+            onChange={(e) => setUserRole(e.target.value as "customer" | "vendor")}
+            className="w-full border rounded-md px-2 py-2 text-sm outline-none"
+          >
+            <option value="customer">Customer</option>
+            <option value="vendor">Vendor</option>
+          </select>
+        </div>
 
         {/* Vendor Fields */}
         {userRole === "vendor" && (
