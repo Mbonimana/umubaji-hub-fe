@@ -76,9 +76,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-[#f0ebe3] px-4">
-      <div className="bg-[#4B341C] w-16 h-16 flex items-center justify-center rounded-md mb-6 shadow">
-        <span className="text-white font-semibold text-lg">UH</span>
-      </div>
+     
 
       <h2 className="text-lg font-medium text-gray-700">Welcome Back</h2>
       <p className="text-sm text-gray-500 mb-6">Sign in to your account</p>
