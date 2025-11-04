@@ -61,6 +61,21 @@ export default function Signup() {
         formData.append("rdb_certificate", rdbCertificate as Blob);
         formData.append("national_id_file", nationalIdFile as Blob);
       }
+      // Optional redirect after successful signup
+      setTimeout(() => (window.location.href = "/login"), 1000);
+    } catch (err: any) {
+      Notiflix.Loading.remove();
+      console.error("Signup Failed:", err);
+      Notiflix.Notify.failure(err.response?.data?.message || "Signup failed ");
+    }
+  };
+
+  const handleVendorSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!adminName || !companyName || !companyEmail || !companyLocation || !vendorPhone || !vendorPassword) {
+      Notiflix.Notify.failure("Please fill in all fields ");
+      return;
+    }
 
       const res = await axios.post(`${baseUrl}/users/register`, formData, {
         headers: {
