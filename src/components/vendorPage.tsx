@@ -75,23 +75,25 @@ const VendorPage: React.FC = () => {
   if (!vendor)
     return <div className="text-center mt-10 text-gray-700">Vendor not found</div>;
 
+  const backgroundImage = vendor.products[0]?.image || vendor.image;
+
   return (
     <div className="min-h-screen w-full bg-gray-50 font-sans">
-      {/* Hero Section */}
-      <div
-        className="relative w-full h-72 bg-cover bg-center"
-        style={{
-          backgroundImage: `url(${vendor.products[0]?.image || vendor.image})`,
-        }}
-      >
+      {/* ✅ Hero Section (No inline CSS) */}
+      <div className="relative w-full h-72 rounded-2xl overflow-hidden">
+        <img
+          src={backgroundImage}
+          alt={`${vendor.company_name} background`}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
         <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-          <h1 className="text-white text-3xl sm:text-4xl font-bold">
+          <h1 className="text-white text-3xl sm:text-4xl font-bold text-center">
             {vendor.company_name}
           </h1>
         </div>
       </div>
 
-      {/* Vendor Profile */}
+      {/* ✅ Vendor Profile */}
       <div className="relative -mt-16 mx-auto w-11/12 max-w-5xl bg-white shadow-lg rounded-lg p-6 flex flex-col sm:flex-row items-center gap-6">
         <img
           src={vendor.image}
@@ -116,7 +118,7 @@ const VendorPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Tabs */}
+      {/* ✅ Tabs */}
       <div className="w-11/12 max-w-5xl mx-auto mt-6 flex overflow-x-auto border-b border-gray-200 scrollbar-hide">
         {["Products", "About", "Reviews"].map((tab) => (
           <button
@@ -133,7 +135,7 @@ const VendorPage: React.FC = () => {
         ))}
       </div>
 
-      {/* Products Tab */}
+      {/* ✅ Products Tab */}
       {activeTab === "Products" && (
         <div className="w-11/12 max-w-5xl mx-auto mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-10">
           {vendor.products.map((p) => (
@@ -161,7 +163,7 @@ const VendorPage: React.FC = () => {
         </div>
       )}
 
-      {/* About Tab */}
+      {/* ✅ About Tab */}
       {activeTab === "About" && (
         <div className="w-11/12 max-w-4xl mx-auto mt-6 text-gray-700 pb-10 leading-relaxed">
           <p>
@@ -172,7 +174,7 @@ const VendorPage: React.FC = () => {
         </div>
       )}
 
-      {/* Reviews Tab */}
+      {/* ✅ Reviews Tab */}
       {activeTab === "Reviews" && (
         <div className="w-11/12 max-w-4xl mx-auto mt-6 text-gray-700 pb-10">
           <p>No reviews yet. Be the first to leave feedback!</p>
@@ -183,4 +185,3 @@ const VendorPage: React.FC = () => {
 };
 
 export default VendorPage;
-
