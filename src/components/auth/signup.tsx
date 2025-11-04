@@ -21,6 +21,7 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [userRole, setUserRole] = useState<"customer" | "vendor">("customer");
 
   // Vendor fields
   const [adminName, setAdminName] = useState("");
@@ -53,6 +54,22 @@ export default function Signup() {
       Notiflix.Notify.success("Account created successfully 🎉");
       console.log("Customer Signup Success:", res.data);
 
+      Notiflix.Loading.circle("Creating your account...");
+
+      const formData = new FormData();
+      formData.append("firstname", firstName);
+      formData.append("lastname", lastName);
+      formData.append("email", email);
+      formData.append("phone", phone);
+      formData.append("password", password);
+      formData.append("user_role", userRole);
+
+      if (userRole === "vendor") {
+        formData.append("company_name", companyName);
+        formData.append("location", location);
+        formData.append("rdb_certificate", rdbCertificate as Blob);
+        formData.append("national_id_file", nationalIdFile as Blob);
+      }
       // Optional redirect after successful signup
       setTimeout(() => (window.location.href = "/login"), 1000);
     } catch (err: any) {
@@ -83,6 +100,14 @@ export default function Signup() {
       Notiflix.Loading.remove();
       Notiflix.Notify.success("Vendor registered successfully ");
       console.log("Vendor Signup Success:", res.data);
+      const res = await axios.post(`${baseUrl}/users/register`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      Notiflix.Loading.remove();
+      Notiflix.Notify.success("Account created successfully!",res.data.message || undefined);
 
       // Optional redirect
       setTimeout(() => (window.location.href = "/login"), 1000);
@@ -230,6 +255,17 @@ export default function Signup() {
                 />
               </div>
             </div>
+        <div>
+          <label className="text-xs text-gray-600">Register as</label>
+          <select
+            value={userRole}
+            onChange={(e) => setUserRole(e.target.value as "customer" | "vendor")}
+            className="w-full border rounded-md px-2 py-2 text-sm outline-none"
+          >
+            <option value="customer">Customer</option>
+            <option value="vendor">Vendor</option>
+          </select>
+        </div>
 
             <div>
               <label className="text-xs text-gray-600">Company Name</label>

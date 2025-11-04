@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
-import Sidebar from '../components/vendorDashboard/Sidebar';
-import Navbar from '../components/vendorDashboard/Navbar';
-import { getBaseUrl } from '../config/baseUrl';
+import Sidebar from '../../components/vendorDashboard/Sidebar';
+import Navbar from '../../components/vendorDashboard/Navbar';
+import { getBaseUrl } from '../../config/baseUrl';
 
 interface IMessage {
   id: number;

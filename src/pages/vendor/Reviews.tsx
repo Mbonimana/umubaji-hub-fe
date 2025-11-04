@@ -1,5 +1,5 @@
-import Sidebar from '../components/vendorDashboard/Sidebar';
-import Navbar from '../components/vendorDashboard/Navbar';
+import Sidebar from '../../components/vendorDashboard/Sidebar';
+import Navbar from '../../components/vendorDashboard/Navbar';
 
 export default function Reviews() {
   const reviews = [
