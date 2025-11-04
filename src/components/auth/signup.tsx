@@ -14,7 +14,7 @@ Notiflix.Notify.init({
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
 
-  // Common fields
+  // Common Fields
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -22,35 +22,61 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [userRole, setUserRole] = useState<"customer" | "vendor">("customer");
 
+  // Vendor-specific Fields
+  const [companyName, setCompanyName] = useState("");
+  const [location, setLocation] = useState("");
+  const [rdbCertificate, setRdbCertificate] = useState<File | null>(null);
+  const [nationalIdFile, setNationalIdFile] = useState<File | null>(null);
+
   const baseUrl = getBaseUrl();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!firstName || !lastName || !email || !phone || !password) {
-      return Notiflix.Notify.failure("Please fill in all fields");
+      return Notiflix.Notify.failure("Please fill in all required fields.");
     }
 
-    Notiflix.Loading.circle("Creating your account...");
+    if (
+      userRole === "vendor" &&
+      (!companyName || !location || !rdbCertificate || !nationalIdFile)
+    ) {
+      return Notiflix.Notify.failure("Please fill all vendor-required fields including uploads.");
+    }
+
     try {
-      const res = await axios.post(`${baseUrl}/users/register`, {
-        firstname: firstName,
-        lastname: lastName,
-        email,
-        phone,
-        password,
-        user_role: userRole, // send role to backend
+      Notiflix.Loading.circle("Creating your account...");
+
+      const formData = new FormData();
+      formData.append("firstname", firstName);
+      formData.append("lastname", lastName);
+      formData.append("email", email);
+      formData.append("phone", phone);
+      formData.append("password", password);
+      formData.append("user_role", userRole);
+
+      if (userRole === "vendor") {
+        formData.append("company_name", companyName);
+        formData.append("location", location);
+        formData.append("rdb_certificate", rdbCertificate as Blob);
+        formData.append("national_id_file", nationalIdFile as Blob);
+      }
+
+      const res = await axios.post(`${baseUrl}/users/register`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       Notiflix.Loading.remove();
-      Notiflix.Notify.success("Account created successfully ");
-      console.log("Signup Success:", res.data);
+      Notiflix.Notify.success("Account created successfully!");
 
-      // Redirect to login
-      setTimeout(() => (window.location.href = "/login"), 1000);
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 1000);
     } catch (err: any) {
       Notiflix.Loading.remove();
-      console.error("Signup Failed:", err);
+      console.error("Signup Error:", err);
       Notiflix.Notify.failure(err.response?.data?.message || "Signup failed");
     }
   };
@@ -68,7 +94,9 @@ export default function Signup() {
       <form
         className="bg-white p-6 rounded-xl shadow-sm w-full max-w-md space-y-4"
         onSubmit={handleSignup}
+        encType="multipart/form-data"
       >
+        {/* Common Fields */}
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="text-xs text-gray-600">First Name</label>
@@ -136,10 +164,7 @@ export default function Signup() {
               placeholder="••••••••"
               className="w-full py-2 outline-none text-sm"
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-            >
+            <button type="button" onClick={() => setShowPassword(!showPassword)}>
               {showPassword ? (
                 <EyeOff className="w-4 h-4 text-gray-500" />
               ) : (
@@ -160,6 +185,61 @@ export default function Signup() {
             <option value="vendor">Vendor</option>
           </select>
         </div>
+
+        {/* Vendor Fields */}
+        {userRole === "vendor" && (
+          <>
+            <div>
+              <label className="text-xs text-gray-600">Company Name</label>
+              <input
+                type="text"
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                placeholder="Ububaji Ltd"
+                className="w-full border rounded-md px-2 py-2 text-sm outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs text-gray-600">Company Location</label>
+              <input
+                type="text"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="Kigali, Rwanda"
+                className="w-full border rounded-md px-2 py-2 text-sm outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs text-gray-600">Upload National ID (PDF / Image)</label>
+              <input
+                type="file"
+                accept=".pdf,image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) setNationalIdFile(file);
+                }}
+                className="w-full border rounded-md px-2 py-2 text-sm file:mr-2"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="text-xs text-gray-600">Upload RDB Certificate (PDF)</label>
+              <input
+                type="file"
+                accept=".pdf"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) setRdbCertificate(file);
+                }}
+                className="w-full border rounded-md px-2 py-2 text-sm file:mr-2"
+                required
+              />
+            </div>
+          </>
+        )}
 
         <div className="flex items-center gap-2 text-xs text-gray-600 mt-2">
           <input type="checkbox" required />
