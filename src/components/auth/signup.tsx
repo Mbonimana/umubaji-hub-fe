@@ -53,7 +53,7 @@ export default function Signup() {
       Notiflix.Notify.success("Account created successfully 🎉");
       console.log("Customer Signup Success:", res.data);
 
-      // Optional redirect
+      // Optional redirect after successful signup
       setTimeout(() => (window.location.href = "/login"), 1000);
     } catch (err: any) {
       Notiflix.Loading.remove();
