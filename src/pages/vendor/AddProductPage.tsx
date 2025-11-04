@@ -2,9 +2,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, Upload } from 'lucide-react';
-import Sidebar from '../components/vendorDashboard/Sidebar';
-import Navbar from '../components/vendorDashboard/Navbar';
-import type { ProductWithImages } from '../types/product';
+import Sidebar from '../../components/vendorDashboard/Sidebar';
+import Navbar from '../../components/vendorDashboard/Navbar';
+import type { ProductWithImages } from '../../types/product';
 
 export default function AddProductPage() {
   const navigate = useNavigate();

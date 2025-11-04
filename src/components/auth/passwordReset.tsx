@@ -44,7 +44,7 @@ export default function PasswordReset() {
         confirmPassword,
       });
 
-      // ✅ Treat HTTP 200 as success
+      //  Treat HTTP 200 as success
       if (response.status === 200) {
         Notiflix.Notify.success(response.data?.message || "Password changed successfully!");
 
