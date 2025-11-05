@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from "react";
 import { Eye, EyeOff, Mail, Phone, User } from "lucide-react";
 import axios from "axios";
@@ -20,13 +22,15 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  
 
   // Vendor-specific Fields
   const [companyName, setCompanyName] = useState("");
   const [location, setLocation] = useState("");
   const [rdbCertificate, setRdbCertificate] = useState<File | null>(null);
   const [nationalIdFile, setNationalIdFile] = useState<File | null>(null);
+
+  // Role (for vendor-specific UI)
+  const [userRole, setUserRole] = useState<"user" | "vendor">("user");
 
   const baseUrl = getBaseUrl();
 
@@ -69,18 +73,7 @@ export default function Signup() {
       });
 
       Notiflix.Loading.remove();
-      Notiflix.Notify.success("Account created successfully!");
-      const res = await axios.post(`${baseUrl}/users/register`, {
-        firstname: firstName,
-        lastname: lastName,
-        email,
-        phone,
-        password,
-        
-      });
-
-      Notiflix.Loading.remove();
-      Notiflix.Notify.success("Account created successfully Check your email to verify.");
+      Notiflix.Notify.success("Account created successfully! Check your email to verify.");
       console.log("Signup Success:", res.data);
 
       setTimeout(() => {
@@ -96,9 +89,8 @@ export default function Signup() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#f9f7f4] to-[#f0ece8] p-4">
       <div className="flex flex-col items-center mb-6">
-       
         <h2 className="mt-3 text-gray-800 text-sm font-medium">Create an Account</h2>
-        <p className="text-xs text-gray-500">Join UbubajiHub today</p>
+        <p className="text-xs text-gray-500">Join UmubajiHub today</p>
       </div>
 
       <form
@@ -116,7 +108,7 @@ export default function Signup() {
                 type="text"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                placeholder="Manasseh"
+                placeholder="First Name"
                 className="w-full py-2 outline-none text-sm"
               />
             </div>
@@ -129,7 +121,7 @@ export default function Signup() {
                 type="text"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                placeholder="MBONIMANA"
+                placeholder="Last Name"
                 className="w-full py-2 outline-none text-sm"
               />
             </div>
@@ -184,10 +176,21 @@ export default function Signup() {
           </div>
         </div>
 
-              
-  
+        {/* Toggle role (optional feature) */}
+        {/* For testing: setVendor role manually */}
+        <div className="flex gap-2 text-xs mt-3">
+          <label>Sign up as:</label>
+          <select
+            value={userRole}
+            onChange={(e) => setUserRole(e.target.value as "user" | "vendor")}
+            className="border rounded px-2 py-1 text-xs"
+          >
+            <option value="user">Regular User</option>
+            <option value="vendor">Vendor</option>
+          </select>
+        </div>
 
-        {/* Vendor Fields */}
+        {/* Vendor Fields (conditionally shown) */}
         {userRole === "vendor" && (
           <>
             <div>
@@ -196,7 +199,7 @@ export default function Signup() {
                 type="text"
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
-                placeholder="Ububaji Ltd"
+                placeholder="Company Name"
                 className="w-full border rounded-md px-2 py-2 text-sm outline-none"
               />
             </div>
@@ -213,7 +216,7 @@ export default function Signup() {
             </div>
 
             <div>
-              <label className="text-xs text-gray-600">Upload National ID (PDF / Image)</label>
+              <label className="text-xs text-gray-600">Upload National ID (PDF/Image)</label>
               <input
                 type="file"
                 accept=".pdf,image/*"
@@ -247,15 +250,13 @@ export default function Signup() {
           <span>I agree to the Terms of Service and Privacy Policy</span>
         </div>
 
-        <button className="w-full bg-[#4B341C] text-white py-2 rounded-md text-sm font-medium hover:bg-[#4a372d] transition">
+        <button className="w-full bg-[#4B341C] text-white py-2 rounded-md text-sm font-medium hover:bg-[#432f19] transition">
           Create Account
         </button>
 
         <p className="text-xs text-center text-gray-600 mt-3">
           Already have an account?{" "}
-          <a href="/login" className="text-[#4B341C] font-medium">
-            Sign in
-          </a>
+          <a href="/login" className="text-[#4B341C] font-medium">Sign in</a>
         </p>
 
         <p className="text-[11px] text-center text-gray-400 mt-2">

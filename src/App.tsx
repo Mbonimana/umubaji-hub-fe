@@ -31,6 +31,8 @@ import CustomerMessages from './pages/customer/Messages';
 import CustomerSettings from './pages/customer/Settings';
 import CustomerWishlist from './pages/customer/Wishlist';
 import NotFound from './pages/notFound';
+//wishlist page
+import WishlistPage from './pages/WishlistPage';
 
 //Vendor routes
 import VendorRegistration from './pages/customer/vendor/vendorregistration';
@@ -52,7 +54,7 @@ function App() {
         <Route path="/vendor/:vendorId" element={<VendorPage />} />
         <Route path='allVendors' element={<VendorsPage/>} />
         <Route path = 'explore' element={< Explore/>} />
-        <Route path="/vendor-registration" element={<VendorRegistration />} />
+        <Route path="/wishlist" element={<WishlistPage />} />
       </Route>
 
       {/* Vendor routes */}
