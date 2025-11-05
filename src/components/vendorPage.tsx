@@ -101,7 +101,7 @@ const VendorPage: React.FC = () => {
         {/* Message Button */}
         <Link
           to={`/vendors/${vendor.id}/contact`}
-          className="inline-flex items-center gap-2 border border-gray-300 px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:scale-105 transition text-sm font-medium"
+          className="inline-flex items-center gap-2 border border-gray-300 px-4 py-2 rounded-lg text-gray-700 hover:bg-[#3a2917]/90  hover:scale-105 transition text-sm font-medium mt-4 sm:mt-0"
         >
           <MessageSquare size={16} />
           Message
@@ -117,7 +117,7 @@ const VendorPage: React.FC = () => {
             className={`px-4 py-2 font-medium flex-shrink-0 transition-all ${
               activeTab === tab
                 ? "text-[#4B341C] border-b-2 border-[#4B341C]"
-                : "text-gray-500 hover:text-[#4B341C]"
+                : "hover:bg-[#3a2917]/90  hover:text-[#4B341C]"
             }`}
           >
             {tab}
