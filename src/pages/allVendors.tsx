@@ -69,7 +69,7 @@ const VendorsPage: React.FC = () => {
         className="relative w-full h-60 bg-cover bg-center"
         style={{
           backgroundImage:
-            "url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSS_d3n2b819ECRjI5t_QJj6kk7Gz0HZZOlnA&s')",
+            "url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=500&q=80')",
         }}
       >
         <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center text-white">
@@ -80,17 +80,17 @@ const VendorsPage: React.FC = () => {
         </div>
       </div>
       {/* Vendor Grid */}
-      <div className="w-11/12 max-w-6xl mx-auto mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-10">
+      <div className="w-10/12 mx-auto mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-0.5 pb-10">
         {vendors.length > 0 ? (
           vendors.map((v) => (
             <div
               key={v.id}
-              className="bg-white shadow-sm hover:shadow-lg rounded-xl p-4 transition cursor-pointer flex flex-col"
+              className="bg-white w-80 shadow-sm gap-1 hover:shadow-lg rounded-xl p-1 transition cursor-pointer flex flex-col"
             >
               <img
                 src={v.image}
                 alt={v.company_name}
-                className="w-full h-52 object-cover rounded-lg"
+                className="w-full h-72 object-cover rounded-lg"
               />
               <div className="mt-3 flex-1 flex flex-col justify-between">
                 <div>
