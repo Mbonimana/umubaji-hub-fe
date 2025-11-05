@@ -39,6 +39,16 @@ import WishlistPage from './pages/WishlistPage';
 //Vendor routes
 import VendorRegistration from './pages/vendor/vendorregistration.tsx';
 
+// Admin imports
+import AdminDashboard from './pages/AdminDashboard';
+import AdminOverview from './pages/admin/Overview';
+import AdminVendors from './pages/admin/Vendors';
+import AdminCustomers from './pages/admin/Customers';
+import AdminProducts from './pages/admin/Products';
+import AdminOrders from './pages/admin/Orders';
+import AdminAnalytics from './pages/admin/Analytics';
+import AdminSettings from './pages/admin/Settings';
+
 function App() {
   return (
     <Routes>
@@ -60,6 +70,17 @@ function App() {
 
         <Route path = 'explore' element={< Explore/>} />
         <Route path="/wishlist" element={<WishlistPage />} />
+      </Route>
+
+      {/* Admin routes */}
+      <Route path="/admin" element={<AdminDashboard />}>
+        <Route index element={<AdminOverview />} />
+        <Route path="vendors" element={<AdminVendors />} />
+        <Route path="customers" element={<AdminCustomers />} />
+        <Route path="products" element={<AdminProducts />} />
+        <Route path="orders" element={<AdminOrders />} />
+        <Route path="analytics" element={<AdminAnalytics />} />
+        <Route path="settings" element={<AdminSettings />} />
       </Route>
 
       {/* Vendor routes */}
