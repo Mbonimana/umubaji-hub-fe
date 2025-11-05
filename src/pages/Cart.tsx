@@ -18,7 +18,7 @@ const Cart = () => {
     const navigate = useNavigate();
     const { cartItems, updateQuantity, removeFromCart } = useCart();
 
-    // ✅ Check login status before loading cart
+    //  Check login status before loading cart
     useEffect(() => {
         const user = localStorage.getItem("user");
         const vendor = localStorage.getItem("Vendor");
