@@ -28,6 +28,8 @@ export default function Signup() {
   const [location, setLocation] = useState("");
   const [rdbCertificate, setRdbCertificate] = useState<File | null>(null);
   const [nationalIdFile, setNationalIdFile] = useState<File | null>(null);
+  const [companyLogo, setCompanyLogo] = useState<File | null>(null);
+  const [companyCoverImage, setCompanyCoverImage] = useState<File | null>(null);
 
   // Role (for vendor-specific UI)
   const [userRole, setUserRole] = useState<"user" | "vendor">("user");
@@ -43,7 +45,7 @@ export default function Signup() {
 
     if (
       userRole === "vendor" &&
-      (!companyName || !location || !rdbCertificate || !nationalIdFile)
+      (!companyName || !location || !rdbCertificate || !nationalIdFile || !companyLogo || !companyCoverImage)
     ) {
       return Notiflix.Notify.failure("Please fill all vendor-required fields including uploads.");
     }
@@ -51,20 +53,22 @@ export default function Signup() {
     try {
       Notiflix.Loading.circle("Creating your account...");
 
-      const formData = new FormData();
-      formData.append("firstname", firstName);
-      formData.append("lastname", lastName);
-      formData.append("email", email);
-      formData.append("phone", phone);
-      formData.append("password", password);
-      formData.append("user_role", userRole);
+        const formData = new FormData();  
+formData.append("firstname", firstName);
+formData.append("lastname", lastName);
+formData.append("email", email);
+formData.append("phone", phone);
+formData.append("password", password);
+formData.append("user_role", userRole);
 
-      if (userRole === "vendor") {
-        formData.append("company_name", companyName);
-        formData.append("location", location);
-        formData.append("rdb_certificate", rdbCertificate as Blob);
-        formData.append("national_id_file", nationalIdFile as Blob);
-      }
+if (userRole === "vendor") {
+  formData.append("company_name", companyName);
+  formData.append("company_location", location);
+  formData.append("rdb_certificate", rdbCertificate as Blob);
+  formData.append("national_id_file", nationalIdFile as Blob);
+  formData.append("company_logo", companyLogo as Blob);
+  formData.append("company_cover_photo", companyCoverImage as Blob);
+}
 
       const res = await axios.post(`${baseUrl}/users/register`, formData, {
         headers: {
@@ -237,6 +241,32 @@ export default function Signup() {
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (file) setRdbCertificate(file);
+                }}
+                className="w-full border rounded-md px-2 py-2 text-sm file:mr-2"
+                required
+              />
+            </div>
+             <div>
+              <label className="text-xs text-gray-600">Upload Company Logo (Image)</label>
+              <input
+                type="file"
+                accept=".pdf,image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) setCompanyLogo(file);
+                }}
+                className="w-full border rounded-md px-2 py-2 text-sm file:mr-2"
+                required
+              />
+            </div>
+             <div>
+              <label className="text-xs text-gray-600">Upload Company Cover image (Image)</label>
+              <input
+                type="file"
+                accept=".pdf,image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) setCompanyCoverImage(file);
                 }}
                 className="w-full border rounded-md px-2 py-2 text-sm file:mr-2"
                 required
