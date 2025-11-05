@@ -1,173 +1,174 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ShoppingCartIcon, EyeIcon, HeartIcon } from "@heroicons/react/24/outline";
+import { useCart } from "../contexts/CartContext";
 
-
-interface Vendor {
+interface Product {
   id: number;
   name: string;
-  location: string;
-  rating: number;
-  reviews: number;
-  minPrice: number;
-  maxPrice: number;
-  image: string;
   category: string;
+  location: string;
+  material: string;
+  price: number;
+  img: string;
+  vendor: string;
+  rating: number;
 }
 
 const Explore: React.FC = () => {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [location, setLocation] = useState("All");
-  const [maxPrice, setMaxPrice] = useState(1000000);
+  const [maxPrice, setMaxPrice] = useState(100000);
   const [sortBy, setSortBy] = useState("Highest Rated");
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const navigate = useNavigate();
+  const { addToCart } = useCart();
 
-  const vendors: Vendor[] = [
+  // All products (from Home)
+  const products: Product[] = [
     {
       id: 1,
-      name: "Master Crafts Ltd",
-      location: "Lagos, Nigeria",
-      rating: 4.9,
-      reviews: 24,
-      minPrice: 400000,
-      maxPrice: 600000,
-      image: "https://images.unsplash.com/photo-1602526218301-8f79a73a9c3a",
-      category: "Furniture Makers",
+      name: "Modern Dining Table",
+      category: "Tables",
+      location: "Kigali",
+      material: "Oak Wood",
+      price: 85000,
+      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s",
+      vendor: "Master Woodworks",
+      rating: 4.8,
     },
     {
       id: 2,
-      name: "Woodwork Artisans",
-      location: "Abuja, Nigeria",
-      rating: 4.8,
-      reviews: 21,
-      minPrice: 350000,
-      maxPrice: 500000,
-      image: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f",
-      category: "Carpenters",
+      name: "Ergonomic Office Chair",
+      category: "Chairs",
+      location: "Huye",
+      material: "Walnut Wood",
+      price: 65000,
+      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s",
+      vendor: "Elite Furniture Co",
+      rating: 4.7,
     },
     {
       id: 3,
-      name: "Premium Furniture Co",
-      location: "Port Harcourt, Nigeria",
-      rating: 4.7,
-      reviews: 19,
-      minPrice: 400000,
-      maxPrice: 700000,
-      image: "https://images.unsplash.com/photo-1616628188591-8e5d07a9e3c5",
-      category: "Furniture Makers",
+      name: "Classic Bookshelf",
+      category: "Shelves",
+      location: "Musanze",
+      material: "Pine Wood",
+      price: 25000,
+      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s",
+      vendor: "Rwanda Craft Studio",
+      rating: 4.5,
     },
     {
       id: 4,
-      name: "Classic Carpentry",
-      location: "Lagos, Nigeria",
+      name: "Rustic Coffee Table",
+      category: "Tables",
+      location: "Rubavu",
+      material: "Mahogany",
+      price: 75000,
+      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s",
+      vendor: "Kivu Woodworks",
       rating: 4.6,
-      reviews: 17,
-      minPrice: 450000,
-      maxPrice: 650000,
-      image: "https://images.unsplash.com/photo-1570129477492-45c003edd2be",
-      category: "Carpenters",
     },
     {
       id: 5,
-      name: "Elite Woodworks",
-      location: "Enugu, Nigeria",
-      rating: 4.5,
-      reviews: 22,
-      minPrice: 300000,
-      maxPrice: 550000,
-      image: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4",
-      category: "Furniture Makers",
+      name: "Office Chair Pro",
+      category: "Chairs",
+      location: "Kigali",
+      material: "Leather & Metal",
+      price: 95000,
+      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s",
+      vendor: "Crafted Works",
+      rating: 4.9,
     },
     {
       id: 6,
-      name: "Custom Craft Studio",
-      location: "Kano, Nigeria",
-      rating: 4.9,
-      reviews: 26,
-      minPrice: 400000,
-      maxPrice: 800000,
-      image: "https://images.unsplash.com/photo-1598300055083-203d5c73443d",
-      category: "Carpenters",
+      name: "Mini Office Desk",
+      category: "Desks",
+      location: "Huye",
+      material: "Composite Wood",
+      price: 45000,
+      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s",
+      vendor: "WorkWell Studios",
+      rating: 4.3,
     },
   ];
 
-  // Filtering + Sorting logic
-  const filtered = vendors
-    .filter((v) => {
-      const matchesSearch = v.name.toLowerCase().includes(search.toLowerCase());
-      const matchesCategory = category === "All" || v.category === category;
-      const matchesLocation = location === "All" || v.location.includes(location);
-      const matchesPrice = v.maxPrice <= maxPrice;
+  // Filter logic
+  const filtered = products
+    .filter((p) => {
+      const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
+      const matchesCategory = category === "All" || p.category === category;
+      const matchesLocation = location === "All" || p.location === location;
+      const matchesPrice = p.price <= maxPrice;
       return matchesSearch && matchesCategory && matchesLocation && matchesPrice;
     })
     .sort((a, b) => {
       if (sortBy === "Highest Rated") return b.rating - a.rating;
-      if (sortBy === "Lowest Price") return a.minPrice - b.minPrice;
-      if (sortBy === "Highest Price") return b.maxPrice - a.maxPrice;
+      if (sortBy === "Lowest Price") return a.price - b.price;
+      if (sortBy === "Highest Price") return b.price - a.price;
       return 0;
     });
 
   return (
-    <div className="min-h-screen ">
+    <div className="min-h-screen bg-[#F5F5F5]">
       <main className="max-w-7xl mx-auto px-4 py-8">
-        <h2 className="text-2xl font-semibold mb-6">
-          Discover skilled carpenters and furniture makers
-        </h2>
+        <h2 className="text-2xl font-semibold mb-6 text-[#4B341C]">Explore All Products</h2>
 
         <div className="flex flex-col md:flex-row gap-6">
           {/* Sidebar Filters */}
           <aside className="md:w-1/4 bg-white p-4 rounded-md shadow-sm">
-            <h3 className="font-semibold mb-3">Filters</h3>
+            <h3 className="font-semibold mb-3 text-[#4B341C]">Filters</h3>
 
             <div className="space-y-4 text-sm">
               <div>
-                <label className="block font-medium">Category</label>
+                <label className="block font-medium text-[#4B341C]">Category</label>
                 <select
                   className="w-full border rounded-md p-2 mt-1"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                 >
                   <option>All</option>
-                  <option>Carpenters</option>
-                  <option>Furniture Makers</option>
+                  <option>Tables</option>
+                  <option>Chairs</option>
+                  <option>Desks</option>
+                  <option>Shelves</option>
                 </select>
               </div>
 
               <div>
-                <label className="block font-medium">Location</label>
+                <label className="block font-medium text-[#4B341C]">Location</label>
                 <select
                   className="w-full border rounded-md p-2 mt-1"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                 >
                   <option>All</option>
-                  <option>Lagos</option>
-                  <option>Abuja</option>
-                  <option>Port Harcourt</option>
-                  <option>Kano</option>
-                  <option>Enugu</option>
+                  <option>Kigali</option>
+                  <option>Huye</option>
+                  <option>Musanze</option>
+                  <option>Rubavu</option>
                 </select>
               </div>
 
               <div>
-                <label className="block font-medium">Price Range</label>
+                <label className="block font-medium text-[#4B341C]">Price Range</label>
                 <input
                   type="range"
-                  min="100000"
-                  max="1000000"
-                  step="50000"
+                  min="10000"
+                  max="100000"
+                  step="5000"
                   value={maxPrice}
                   onChange={(e) => setMaxPrice(Number(e.target.value))}
-                  className="w-full"
+                  className="w-full accent-[#4B341C]"
                 />
-                <p className="text-gray-600 mt-1">
-                  ₦ up to {maxPrice.toLocaleString()}
-                </p>
+                <p className="text-gray-600 mt-1">RWF up to {maxPrice.toLocaleString()}</p>
               </div>
 
               <div>
-                <label className="block font-medium">Sort By</label>
+                <label className="block font-medium text-[#4B341C]">Sort By</label>
                 <select
                   className="w-full border rounded-md p-2 mt-1"
                   value={sortBy}
@@ -181,46 +182,62 @@ const Explore: React.FC = () => {
             </div>
           </aside>
 
-          {/* Vendor Cards */}
+          {/* Product Grid */}
           <section className="flex-1">
             <input
               type="text"
-              placeholder="Search vendors..."
+              placeholder="Search products..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full border rounded-md p-2 mb-4"
             />
 
             {filtered.length === 0 ? (
-              <p className="text-gray-500">No vendors found.</p>
+              <p className="text-gray-500">No products found.</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filtered.map((v) => (
+                {filtered.map((product) => (
                   <div
-                    key={v.id}
+                    key={product.id}
                     className="bg-white rounded-md shadow-md overflow-hidden hover:shadow-lg transition-shadow"
                   >
-                    <img
-                      src={v.image}
-                      alt={v.name}
-                      className="h-48 w-full object-cover"
-                    />
+                    <img src={product.img} alt={product.name} className="h-48 w-full object-cover" />
                     <div className="p-4">
-                      <h3 className="font-semibold text-lg">{v.name}</h3>
-                      <p className="text-sm text-gray-500">{v.location}</p>
-                      <div className="flex items-center justify-between mt-2 text-sm text-gray-600">
-                        <p>⭐ {v.rating} ({v.reviews})</p>
-                        <p>
-                          ₦{v.minPrice.toLocaleString()} - ₦{v.maxPrice.toLocaleString()}
-                        </p>
-                      </div>
+                      <h3 className="font-semibold text-lg text-[#4B341C]">{product.name}</h3>
+                      <p className="text-sm text-gray-500">{product.material}</p>
+                      <p className="text-green-600 mt-1 font-semibold">RWF {product.price.toLocaleString()}</p>
 
-                      <button
-                        onClick={() => navigate(`/vendor/${v.id}`)}
-                        className="w-full mt-3 bg-[#4B341C] text-white py-2 rounded-md hover:bg-primary"
-                      >
-                        View Profile
-                      </button>
+                      <div className="flex gap-2 mt-3">
+                        <button
+                          onClick={() => setSelectedProduct(product)}
+                          className="flex items-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white text-xs px-3 py-1 rounded-md transition"
+                        >
+                          <EyeIcon className="w-4 h-4" />
+                          View
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            addToCart({
+                              id: product.id.toString(),
+                              name: product.name,
+                              price: product.price,
+                              vendor: product.vendor,
+                              img: product.img,
+                              quantity: 1,
+                            })
+                          }
+                          className="flex items-center gap-1 bg-[#4B341C] hover:bg-[#3b2a15] text-white text-xs px-3 py-1 rounded-md transition"
+                        >
+                          <ShoppingCartIcon className="w-4 h-4" />
+                          Add
+                        </button>
+
+                        <button className="flex items-center gap-1 px-3 py-1 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 text-xs transition">
+                          <HeartIcon className="w-4 h-4" />
+                          Wishlist
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -230,7 +247,44 @@ const Explore: React.FC = () => {
         </div>
       </main>
 
-     
+      {/* Product Popup */}
+      {selectedProduct && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-md max-w-md w-full relative shadow-lg">
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              onClick={() => setSelectedProduct(null)}
+            >
+              ✖
+            </button>
+            <img src={selectedProduct.img} alt={selectedProduct.name} className="w-full h-48 object-cover rounded-md mb-4" />
+            <h3 className="text-xl font-semibold text-[#4B341C]">{selectedProduct.name}</h3>
+            <p className="text-gray-600">{selectedProduct.material}</p>
+            <p className="text-green-600 font-bold mt-2">RWF {selectedProduct.price.toLocaleString()}</p>
+            <p className="text-gray-600 mt-2">
+              Vendor: <span className="font-semibold">{selectedProduct.vendor}</span>
+            </p>
+            <p className="text-gray-500">Location: {selectedProduct.location}</p>
+
+            <button
+              className="mt-4 bg-[#4B341C] text-white px-4 py-2 rounded-md w-full"
+              onClick={() => {
+                addToCart({
+                  id: selectedProduct.id.toString(),
+                  name: selectedProduct.name,
+                  price: selectedProduct.price,
+                  vendor: selectedProduct.vendor,
+                  img: selectedProduct.img,
+                  quantity: 1,
+                });
+                setSelectedProduct(null);
+              }}
+            >
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
