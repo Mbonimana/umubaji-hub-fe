@@ -33,6 +33,8 @@ import CustomerMessages from './pages/customer/Messages';
 import CustomerSettings from './pages/customer/Settings';
 import CustomerWishlist from './pages/customer/Wishlist';
 import NotFound from './pages/notFound';
+//wishlist page
+import WishlistPage from './pages/WishlistPage';
 
 //Vendor routes
 import VendorRegistration from './pages/vendor/vendorregistration.tsx';
@@ -57,7 +59,7 @@ function App() {
         <Route path="/vendors/:vendorId/contact" element={<MessagingFormWrapper />} />
 
         <Route path = 'explore' element={< Explore/>} />
-        <Route path="/vendor-registration" element={<VendorRegistration />} />
+        <Route path="/wishlist" element={<WishlistPage />} />
       </Route>
 
       {/* Vendor routes */}
