@@ -1,6 +1,6 @@
-import Sidebar from '../components/vendorDashboard/Sidebar';
-import Navbar from '../components/vendorDashboard/Navbar';
-import StatsCard from '../components/vendorDashboard/StatsCard';
+import Sidebar from '../../components/vendorDashboard/Sidebar';
+import Navbar from '../../components/vendorDashboard/Navbar';
+import StatsCard from '../../components/vendorDashboard/StatsCard';
 
 export default function Earnings() {
   const stats = [

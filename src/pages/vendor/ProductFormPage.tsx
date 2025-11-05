@@ -2,9 +2,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { X, Upload } from 'lucide-react';
-import Sidebar from '../components/vendorDashboard/Sidebar';
-import Navbar from '../components/vendorDashboard/Navbar';
-import type { ProductWithImages } from '../types/product';
+import Sidebar from '../../components/vendorDashboard/Sidebar';
+import Navbar from '../../components/vendorDashboard/Navbar';
+import type { ProductWithImages } from '../../types/product';
 
 export default function ProductFormPage() {
   const { id } = useParams<{ id?: string }>();

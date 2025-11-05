@@ -12,17 +12,19 @@ import PasswordReset from './components/auth/passwordReset';
 import VendorForgotPassword from './components/auth/vendorForgotpassword';
 
 import VendorsPage from './pages/allVendors';
+import MessagingFormWrapper from "./components/WrapperComponent"; 
 import Explore from './pages/Explore';
 import VendorPage from './components/vendorPage';
 import VendorDashboard from './pages/VendorDashboard';
-import MyProducts from './pages/MyProducts';
-import ProductFormPage from './pages/ProductFormPage';
-import Orders from './pages/Orders';
-import Reviews from './pages/Reviews';
-import Analytics from './pages/Analytics.tsx';
-import Messages from './pages/Messages';
-import Earnings from './pages/Earnings';
-import Settings from './pages/Settings';
+import MyProducts from './pages/vendor/MyProducts';
+import ProductFormPage from './pages/vendor/ProductFormPage';
+import Orders from './pages/vendor/Orders';
+import Reviews from './pages/vendor/Reviews';
+import Analytics from './pages/vendor/Analytics.tsx';
+import Messages from './pages/vendor/Messages.tsx';
+import Earnings from './pages/vendor/Earnings.tsx';
+import Settings from './pages/vendor/Settings.tsx';
+import Profile from './pages/vendor/profile';
 
 // Customer dashboard pages
 import CustomerDashboard from './pages/CustomerDashboard';
@@ -35,7 +37,7 @@ import NotFound from './pages/notFound';
 import WishlistPage from './pages/WishlistPage';
 
 //Vendor routes
-import VendorRegistration from './pages/customer/vendor/vendorregistration';
+import VendorRegistration from './pages/vendor/vendorregistration.tsx';
 
 function App() {
   return (
@@ -52,7 +54,10 @@ function App() {
         <Route path="/password-reset" element={<PasswordReset />} />
         <Route path="/vendor-forgot-password" element={<VendorForgotPassword />} />
         <Route path="/vendor/:vendorId" element={<VendorPage />} />
+        <Route path="/vendorPage/:id" element={<VendorPage />} />
         <Route path='allVendors' element={<VendorsPage/>} />
+        <Route path="/vendors/:vendorId/contact" element={<MessagingFormWrapper />} />
+
         <Route path = 'explore' element={< Explore/>} />
         <Route path="/wishlist" element={<WishlistPage />} />
       </Route>
@@ -68,6 +73,7 @@ function App() {
       <Route path="/messages" element={<Messages />} />
       <Route path="/earnings" element={<Earnings />} />
       <Route path="/settings" element={<Settings />} />
+      <Route path="/profile" element={<Profile />} />
       <Route path="/vendor-registration" element={<VendorRegistration />} />
 
       {/* Customer routes */}

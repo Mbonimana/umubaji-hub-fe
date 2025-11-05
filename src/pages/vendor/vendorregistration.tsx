@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { getBaseUrl } from "../../../config/baseUrl";
+import { getBaseUrl } from "../../config/baseUrl";
 import Notiflix from "notiflix";
 
 Notiflix.Notify.init({

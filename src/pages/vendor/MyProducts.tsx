@@ -1,9 +1,9 @@
 // src/pages/MyProducts.tsx
 import { useState, useEffect } from 'react';
-import Sidebar from '../components/vendorDashboard/Sidebar';
-import Navbar from '../components/vendorDashboard/Navbar';
-import ProductTable from '../components/vendorProducts/ProductTable';
-import type { ProductWithImages } from '../types/product';
+import Sidebar from '../../components/vendorDashboard/Sidebar';
+import Navbar from '../../components/vendorDashboard/Navbar';
+import ProductTable from '../../components/vendorProducts/ProductTable';
+import type { ProductWithImages } from '../../types/product';
 
 export default function MyProducts() {
   const [products, setProducts] = useState<ProductWithImages[]>([]);
