@@ -1,6 +1,12 @@
 import React, { useState } from "react";
-import { useParams, Link } from "react-router-dom"; // ✅ Link from react-router-dom
-import { Star, MessageSquare } from "lucide-react";
+import { useParams, Link } from "react-router-dom";
+import {
+  Star,
+  MessageSquare,
+  Eye as EyeIcon,
+  ShoppingCart as ShoppingCartIcon,
+  Heart as HeartIcon,
+} from "lucide-react";
 
 interface Product {
   id: number;
@@ -27,8 +33,54 @@ const dummyVendors: Vendor[] = [
     image:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSS_d3n2b819ECRjI5t_QJj6kk7Gz0HZZOlnA&s",
     products: [
-      { id: 1, name: "Modern Dining Table", woodType: "Oak Wood", price: "F85,000", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=500&q=80" },
-      { id: 2, name: "Ergonomic Office Chair", woodType: "Walnut Wood", price: "F95,000" },
+      {
+        id: 1,
+        name: "Modern Dining Table",
+        woodType: "Oak Wood",
+        price: "85,000",
+        image:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s",
+      },
+      {
+        id: 2,
+        name: "Ergonomic Office Chair",
+        woodType: "Walnut Wood",
+        price: "65,000",
+        image:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s",
+      },
+      {
+        id: 3,
+        name: "Classic Bookshelf",
+        woodType: "Pine Wood",
+        price: "25,000",
+        image:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s",
+      },
+      {
+        id: 4,
+        name: "Rustic Coffee Table",
+        woodType: "Mahogany",
+        price: "75,000",
+        image:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s",
+      },
+      {
+        id: 5,
+        name: "Office Chair Pro",
+        woodType: "Leather & Metal",
+        price: "95,000",
+        image:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s",
+      },
+      {
+        id: 6,
+        name: "Mini Office Desk",
+        woodType: "Composite Wood",
+        price: "45,000",
+        image:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s",
+      },
     ],
   },
   {
@@ -38,19 +90,22 @@ const dummyVendors: Vendor[] = [
     image:
       "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=500&q=80",
     products: [
-      { id: 3, name: "Classic Bookshelf", woodType: "Pine Wood", price: "F125,000" },
-      { id: 4, name: "Rustic Coffee Table", woodType: "Mahogany", price: "F75,000" },
-    ],
-  },
-  {
-    id: 3,
-    company_name: "Green WoodWorks",
-    company_location: "Musanze, Rwanda",
-    image:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=500&q=80",
-    products: [
-      { id: 5, name: "Vintage Wardrobe", woodType: "Cherry Wood", price: "F210,000" },
-      { id: 6, name: "Sleek Coffee Table", woodType: "Teak Wood", price: "F95,000" },
+      {
+        id: 7,
+        name: "Small Coffee Table",
+        woodType: "Bamboo & Rattan",
+        price: "32,000",
+        image:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s",
+      },
+      {
+        id: 8,
+        name: "Expandable Bookshelf",
+        woodType: "Engineered Wood",
+        price: "68,000",
+        image:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s",
+      },
     ],
   },
 ];
@@ -58,12 +113,16 @@ const dummyVendors: Vendor[] = [
 const VendorPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState("Products");
+
   const vendor = dummyVendors.find((v) => v.id === Number(id));
 
-  if (!vendor)
-    return <div className="text-center mt-10 text-gray-700">Vendor not found</div>;
+  if (!vendor) return <div className="text-center mt-10 text-gray-700">Vendor not found</div>;
 
   const backgroundImage = vendor.products[0]?.image || vendor.image;
+
+  const addToCart = (item: any) => {
+    console.log("🛒 Added to cart:", item);
+  };
 
   return (
     <div className="min-h-screen w-full bg-gray-50 font-sans">
@@ -81,7 +140,7 @@ const VendorPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Vendor Profile */}
+      {/* Vendor Profile Card */}
       <div className="relative -mt-16 mx-auto w-11/12 max-w-5xl bg-white shadow-lg rounded-lg p-6 flex flex-col sm:flex-row items-center gap-6">
         <img
           src={vendor.image}
@@ -97,11 +156,9 @@ const VendorPage: React.FC = () => {
           </div>
           <p className="text-gray-600 text-sm mt-1">{vendor.company_location}</p>
         </div>
-
-        {/* Message Button */}
         <Link
           to={`/vendors/${vendor.id}/contact`}
-          className="inline-flex items-center gap-2 border border-gray-300 px-4 py-2 rounded-lg text-gray-700 hover:bg-[#3a2917]/90  hover:scale-105 transition text-sm font-medium mt-4 sm:mt-0"
+          className="inline-flex items-center gap-2 border border-gray-300 px-4 py-2 rounded-lg text-gray-700 hover:text-white hover:bg-[#3a2917]/90 hover:scale-105 transition text-sm font-medium mt-4 sm:mt-0"
         >
           <MessageSquare size={16} />
           Message
@@ -117,7 +174,7 @@ const VendorPage: React.FC = () => {
             className={`px-4 py-2 font-medium flex-shrink-0 transition-all ${
               activeTab === tab
                 ? "text-[#4B341C] border-b-2 border-[#4B341C]"
-                : "hover:bg-[#3a2917]/90  hover:text-[#4B341C]"
+                : "hover:bg-[#3a2917]/90 hover:text-white"
             }`}
           >
             {tab}
@@ -125,37 +182,66 @@ const VendorPage: React.FC = () => {
         ))}
       </div>
 
-      {/* Products Tab */}
+      {/* Products Section */}
       {activeTab === "Products" && (
-        <div className="w-11/12 max-w-5xl mx-auto mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-10">
-          {vendor.products.map((p) => (
-            <div
-              key={p.id}
-              className="border-gray-200 rounded-lg shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all flex flex-col"
-            >
-              <div className="w-full h-80 bg-gray-100 overflow-hidden mb-3">
-                <img
-                  src={p.image ||  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=500&q=80"}
-                  alt={p.name}
-                  className="w-full h-80 object-cover rounded-t-lg hover:scale-110 transition-transform duration-500"
-                />
-              </div>
-              <div className="h-16 px-4 pb-4 flex-1 flex flex-col">
-                <h3 className="text-gray-800 font-semibold text-base">{p.name}</h3>
-                <p className="text-sm text-gray-500">{p.woodType}</p>
-                <p className="text-[#4B341C] font-semibold mt-1">{p.price}</p>
-                <button className="mt-3 bg-[#4B341C] text-white w-full py-2 rounded-lg hover:bg-[#3a2917]/90 hover:scale-105 transition font-medium text-sm">
-                  Add to Cart
-                </button>
-              </div>
+        <div className="py-16 bg-[#F5F5F5]">
+          <div className="mx-auto w-11/12 max-w-5xl">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+              {vendor.products.map((product, idx) => (
+                <div
+                  key={idx}
+                  className="w-full bg-white rounded-lg shadow hover:shadow-lg transition duration-300"
+                >
+                  <div className="overflow-hidden rounded-t-lg">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-48 object-cover hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                  <div className="p-2">
+                    <h4 className="font-medium text-lg text-[#4B341C]">{product.name}</h4>
+                    <p className="text-sm text-gray-600">{product.woodType}</p>
+                    <p className="text-green-600 text-base font-semibold mt-1">
+                      RWF {product.price}
+                    </p>
+                    <div className="flex flex-nowrap gap-1 mt-3">
+                      <button className="flex items-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white text-xs px-3 py-1 rounded-md transition">
+                        <EyeIcon className="w-4 h-4" />
+                        View
+                      </button>
+                      <button
+                        className="flex items-center gap-1 bg-[#4B341C] hover:bg-[#3b2a15] text-white text-xs px-3 py-1 rounded-md transition"
+                        onClick={() =>
+                          addToCart({
+                            id: `${product.name}-${idx}`,
+                            name: product.name,
+                            price: parseInt(product.price.replace(/,/g, "")),
+                            vendor: vendor.company_name,
+                            img: product.image ?? "",
+                            quantity: 1,
+                          })
+                        }
+                      >
+                        <ShoppingCartIcon className="w-4 h-4" />
+                        Add
+                      </button>
+                      <button className="flex items-center gap-1 px-2 py-1 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 text-xs transition">
+                        <HeartIcon className="w-3 h-4" />
+                        Wishlist
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       )}
 
       {/* About Tab */}
       {activeTab === "About" && (
-        <div className="w-11/12 max-w-4xl mx-auto mt-6 text-gray-700 pb-10 leading-relaxed">
+        <div className="w-11/12 max-w-5xl mx-auto mt-6 text-gray-700 pb-10 leading-relaxed">
           <p>
             {vendor.company_name} specializes in handcrafted wooden furniture,
             designed with precision and attention to detail to enhance homes and
@@ -166,7 +252,7 @@ const VendorPage: React.FC = () => {
 
       {/* Reviews Tab */}
       {activeTab === "Reviews" && (
-        <div className="w-11/12 max-w-4xl mx-auto mt-6 text-gray-700 pb-10">
+        <div className="w-11/12 max-w-5xl mx-auto mt-6 text-gray-700 pb-10">
           <p>No reviews yet. Be the first to leave feedback!</p>
         </div>
       )}
