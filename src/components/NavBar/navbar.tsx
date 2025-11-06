@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 
 import { useCart } from "../../contexts/CartContext";
-import { useWishlist } from "../../contexts/WishlistContext"; // ✅ NEW
+import { useWishlist } from "../../contexts/WishlistContext"; 
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -65,7 +65,7 @@ function Navbar() {
 
             {/* Left Section */}
             <div className="flex items-center space-x-4">
-              <Link to="/">
+              <Link to="/home">
                 <div className="logo bg-primary w-10 h-10 rounded-md flex items-center justify-center shadow-sm">
                   <span className="text-white font-bold">UH</span>
                 </div>
@@ -75,7 +75,7 @@ function Navbar() {
               <ul className="hidden sm:flex space-x-5 ml-6 text-[15px] font-medium text-gray-700">
                 {["Home", "Explore", "Vendors", "AboutUs"].map((item) => {
                   const paths: Record<string, string> = {
-                    Home: "/",
+                    Home: "/home",
                     Explore: "/explore",
                     Vendors: "/allvendors",
                     AboutUs: "/about-us",
