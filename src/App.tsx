@@ -3,6 +3,7 @@ import Layout from './layout/Layout';
 import Home from './pages/home';
 import Cart from './pages/Cart'; 
 import Checkout from './pages/Checkout';
+import Index from './pages/index.tsx';
 
 import Login from './components/auth/login';
 import Signup from './components/auth/signup';
@@ -53,7 +54,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
-        <Route index element={<Home />} />
+        <Route index element={<Index />} />
         <Route path="*" element={<NotFound />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
@@ -70,6 +71,7 @@ function App() {
 
         <Route path = 'explore' element={< Explore/>} />
         <Route path="/wishlist" element={<WishlistPage />} />
+        <Route path="/home" element={<Home />} />
       </Route>
 
       {/* Admin routes */}
