@@ -5,11 +5,11 @@ import {
   Menu,
   X,
   LogOut,
-  Heart,Home,LayoutDashboard 
+  Heart, LayoutDashboard
 } from "lucide-react";
 
 import { useCart } from "../../contexts/CartContext";
-import { useWishlist } from "../../contexts/WishlistContext"; 
+import { useWishlist } from "../../contexts/WishlistContext"; // ✅ NEW
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -59,142 +59,125 @@ function Navbar() {
 
   return (
     <>
-     <nav className="fixed top-0 left-0 w-full bg-white/40 backdrop-blur-md border-b border-white/20 shadow-sm z-50 transition-all duration-300">
-  <div className="max-w-7xl mx-auto px-[4%]">
-    <div className="flex justify-between h-16 items-center">
+      <nav className="fixed top-0 left-0 w-full bg-white/40 backdrop-blur-md border-b border-white/20 shadow-sm z-50 transition-all duration-300">
+        <div className="max-w-7xl mx-auto px-[4%]">
+          <div className="flex justify-between h-16 items-center">
 
-            {/* Left Section */}
-            <div className="flex items-center space-x-4">
-              <Link to="/home">
-                <div className="logo bg-primary w-10 h-10 rounded-md flex items-center justify-center shadow-sm">
-                  <span className="text-white font-bold">UH</span>
+            {/* Logo */}
+            <Link to="/home">
+              <div className="logo bg-primary w-10 h-10 rounded-md flex items-center justify-center shadow-sm">
+                <span className="text-white font-bold">UH</span>
+              </div>
+            </Link>
+
+            {/* Desktop Nav Links */}
+            <ul className="hidden sm:flex flex-1 justify-center space-x-5 text-[15px] font-medium text-gray-700">
+              {["Home", "Explore", "Vendors", "AboutUs"].map((item) => {
+                const paths: Record<string, string> = {
+                  Home: "/home",
+                  Explore: "/explore",
+                  Vendors: "/allvendors",
+                  AboutUs: "/about-us",
+                };
+
+                return (
+                  <li key={item}>
+                    <Link
+                      to={paths[item]}
+                      className="relative hover:text-primary transition-colors duration-200 after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-primary after:bottom-[-3px] after:left-0 hover:after:w-full after:transition-all after:duration-300"
+                    >
+                      {item}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+
+            {/* Right Section (Wishlist, Cart, Login/User) */}
+            <div className="flex items-center gap-5">
+              {user ? (
+                <div className="flex items-center gap-6 text-sm text-slate-700">
+
+                  <Link
+                    to="/customer-dashboard"
+                    className="hidden sm:inline-block font-medium text-gray-700 hover:text-primary transition-colors duration-200"
+                  >
+                    <LayoutDashboard size={16} className=" w-5 h-5 sm:w-6 sm:h-6 text-slate-700 group-hover:text-primary transition duration-200 group-hover:scale-110" />
+                  </Link>
+
+                  {/* Wishlist */}
+                  <Link to="/wishlist" className="relative group" title="My Wishlist">
+                    <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-slate-700 group-hover:text-primary transition duration-200 group-hover:scale-110" />
+                    {wishlistCount > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full shadow-sm">
+                        {wishlistCount}
+                      </span>
+                    )}
+                  </Link>
+
+                  {/* Cart */}
+                  <Link to="/cart" className="relative group" title="View Cart">
+                    <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-slate-700 group-hover:text-primary transition duration-200 group-hover:scale-110" />
+                    {cartCount > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-secondary text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full shadow-sm">
+                        {cartCount}
+                      </span>
+                    )}
+                  </Link>
+
+                  <button
+                    onClick={handleLogout}
+                    className="hidden sm:inline-flex items-center justify-center h-8 px-4 rounded-md border border-slate-300 bg-slate-50 text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-black transition duration-200"
+                    title="Logout"
+                  >
+                    <LogOut size={18} className="mr-1" />
+                    Logout
+                  </button>
                 </div>
-              </Link>
+              ) : (
+                <>
+                  {/* Wishlist */}
+                  <Link to="/wishlist" className="relative group" title="My Wishlist">
+                    <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-slate-700 group-hover:text-primary transition duration-200 group-hover:scale-110" />
+                    {wishlistCount > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full shadow-sm">
+                        {wishlistCount}
+                      </span>
+                    )}
+                  </Link>
 
-              {/* Desktop Nav Links */}
-              <ul className="hidden sm:flex space-x-5 ml-6 text-[15px] font-medium text-gray-700">
-                {["Home", "Explore", "Vendors", "AboutUs"].map((item) => {
-                  const paths: Record<string, string> = {
-                    Home: "/home",
-                    Explore: "/explore",
-                    Vendors: "/allvendors",
-                    AboutUs: "/about-us",
-                  };
-      {/* Logo */}
-      <Link to="/">
-        <div className="logo bg-primary w-10 h-10 rounded-md flex items-center justify-center shadow-sm">
-          <span className="text-white font-bold">UH</span>
-        </div>
-      </Link>
+                  {/* Cart */}
+                  <Link to="/cart" className="relative group" title="View Cart">
+                    <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-slate-700 group-hover:text-primary transition duration-200 group-hover:scale-110" />
+                    {cartCount > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-secondary text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full shadow-sm">
+                        {cartCount}
+                      </span>
+                    )}
+                  </Link>
 
-      {/* Desktop Nav Links */}
-      <ul className="hidden sm:flex flex-1 justify-center space-x-5 text-[15px] font-medium text-gray-700">
-        {["Home", "Explore", "Vendors", "AboutUs"].map((item) => {
-          const paths: Record<string, string> = {
-            Home: "/",
-            Explore: "/explore",
-            Vendors: "/allvendors",
-            AboutUs: "/about-us",
-          };
+                  {/* Login */}
+                  <Link to="/Login">
+                    <button className="hidden sm:inline-flex items-center justify-center h-8 w-20 rounded-md border border-slate-300 bg-white text-sm font-medium text-slate-700 hover:bg-slate-100 transition">
+                      Login
+                    </button>
+                  </Link>
+                </>
+              )}
 
-          return (
-            <li key={item}>
-              <Link
-                to={paths[item]}
-                className="relative hover:text-primary transition-colors duration-200 after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-primary after:bottom-[-3px] after:left-0 hover:after:w-full after:transition-all after:duration-300"
+              {/* Hamburger */}
+              <button
+                className="sm:hidden p-2 rounded-md text-slate-700 hover:bg-slate-100 transition"
+                onClick={() => setIsOpen(!isOpen)}
               >
-                {item}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-
-      {/* Right Section (Wishlist, Cart, Login/User) */}
-      <div className="flex items-center gap-5">
-        {user ? (
-          <div className="flex items-center gap-6 text-sm text-slate-700">
-            
-            <Link
-              to="/customer-dashboard"
-              className="hidden sm:inline-block font-medium text-gray-700 hover:text-primary transition-colors duration-200"
-            >
-                <LayoutDashboard  size={16} className=" w-5 h-5 sm:w-6 sm:h-6 text-slate-700 group-hover:text-primary transition duration-200 group-hover:scale-110"/>
-            </Link>
-
-            {/* Wishlist */}
-            <Link to="/wishlist" className="relative group" title="My Wishlist">
-              <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-slate-700 group-hover:text-primary transition duration-200 group-hover:scale-110" />
-              {wishlistCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full shadow-sm">
-                  {wishlistCount}
-                </span>
-              )}
-            </Link>
-
-            {/* Cart */}
-            <Link to="/cart" className="relative group" title="View Cart">
-              <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-slate-700 group-hover:text-primary transition duration-200 group-hover:scale-110" />
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-secondary text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full shadow-sm">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-
-            <button
-              onClick={handleLogout}
-              className="hidden sm:inline-flex items-center justify-center h-8 px-4 rounded-md border border-slate-300 bg-slate-50 text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-black transition duration-200"
-              title="Logout"
-            >
-              <LogOut size={18} className="mr-1" />
-              Logout
-            </button>
-          </div>
-        ) : (
-          <>
-            {/* Wishlist */}
-            <Link to="/wishlist" className="relative group" title="My Wishlist">
-              <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-slate-700 group-hover:text-primary transition duration-200 group-hover:scale-110" />
-              {wishlistCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full shadow-sm">
-                  {wishlistCount}
-                </span>
-              )}
-            </Link>
-
-            {/* Cart */}
-            <Link to="/cart" className="relative group" title="View Cart">
-              <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-slate-700 group-hover:text-primary transition duration-200 group-hover:scale-110" />
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-secondary text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full shadow-sm">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-
-            {/* Login */}
-            <Link to="/Login">
-              <button className="hidden sm:inline-flex items-center justify-center h-8 w-20 rounded-md border border-slate-300 bg-white text-sm font-medium text-slate-700 hover:bg-slate-100 transition">
-                Login
+                {isOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
-            </Link>
-          </>
-        )}
+            </div>
+          </div>
+        </div>
 
-        {/* Hamburger */}
-        <button
-          className="sm:hidden p-2 rounded-md text-slate-700 hover:bg-slate-100 transition"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-    </div>
-  </div>
-
-  {/* Mobile menu and spacer unchanged */}
-    {/* 📱 Mobile Menu */}
+        {/* Mobile menu and spacer unchanged */}
+        {/* 📱 Mobile Menu */}
         {isOpen && (
           <div className="sm:hidden bg-white border-t border-slate-200 animate-slideDown shadow-md">
             <ul className="flex flex-col space-y-3 p-4 text-gray-700 text-sm font-medium">
@@ -246,7 +229,7 @@ function Navbar() {
                       onClick={() => setIsOpen(false)}
                       className="block w-full h-10 rounded-md bg-gray-50 text-slate-700 text-center font-medium hover:bg-primary hover:text-white transition"
                     >
-                   Go to Dashboard
+                      Go to Dashboard
                     </Link>
                   </li>
 
@@ -269,8 +252,8 @@ function Navbar() {
             </ul>
           </div>
         )}
-</nav>
-<div className="h-16" />
+      </nav>
+      <div className="h-16" />
 
     </>
   );
