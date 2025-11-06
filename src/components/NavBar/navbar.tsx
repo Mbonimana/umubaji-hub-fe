@@ -17,10 +17,10 @@ function Navbar() {
   const navigate = useNavigate();
 
   const { cartItems } = useCart();
-  const { wishlist } = useWishlist(); // ✅ NEW
+  const { wishlist } = useWishlist(); 
 
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const wishlistCount = wishlist.length; // ✅ NEW
+  const wishlistCount = wishlist.length; 
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
