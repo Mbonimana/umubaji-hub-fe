@@ -13,9 +13,9 @@ import "slick-carousel/slick/slick-theme.css";
 
 const Index: React.FC = () => {
     const heroImages = [
-        "https://i.ytimg.com/vi/h2rUYMbW3_I/hq720.jpg",
-        "https://lirp.cdn-website.com/222dffe2/dms3rep/multi/opt/Advert-homeoffice-1920w.jpg",
-        "https://images.unsplash.com/photo-1605281039559-1d3d4000e8af?auto=format&fit=crop&w=1470&q=80",
+        "/ph10.jpg",
+        "/ph5.jpg",
+        "/ph2.jpg",
     ];
 
     const sliderSettings = {
@@ -126,7 +126,7 @@ const Index: React.FC = () => {
 
                     <div className="w-full lg:w-1/2">
                         <img
-                            src="https://i.ytimg.com/vi/h2rUYMbW3_I/hq720.jpg"
+                            src="/ph10.jpg"
                             alt="Artisan at work"
                             className="rounded-lg object-cover w-full shadow-lg max-h-[470px]"
                         />

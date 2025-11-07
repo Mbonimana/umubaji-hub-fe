@@ -14,11 +14,11 @@ import 'slick-carousel/slick/slick-theme.css';
 
 const heroImages = [
     {
-        url: 'https://i.ytimg.com/vi/h2rUYMbW3_I/hq720.jpg',
+        url: '/ph5.jpg',
         text: 'Connect with Skilled Carpenters',
     },
     {
-        url: 'https://lirp.cdn-website.com/222dffe2/dms3rep/multi/opt/Advert-homeoffice-1920w.jpg',
+        url: '/ph9.jpg',
         text: 'Modern Furniture Builds for Your Lifestyle',
     },
 ];
@@ -42,56 +42,47 @@ const Home: React.FC = () => {
             name: 'Modern Dining Table',
             material: 'Oak Wood',
             price: '85,000',
-            img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s',
-        },
+            img:"/ph5.jpg"        },
         {
             name: 'Ergonomic Office Chair',
             material: 'Walnut Wood',
             price: '65,000',
-            img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s',
-        },
+              img:"/ph6.jpg"          },
         {
             name: 'Classic Bookshelf',
             material: 'Pine Wood',
             price: '25,000',
-            img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s',
-        },
+           img:"/ph7.jpg"          },
         {
             name: 'Rustic Coffee Table',
             material: 'Mahogany',
             price: '75,000',
-            img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s',
-        },
+              img:"/ph8.jpg"          },
         {
             name: 'Modern Dining Table 2',
             material: 'Oak Wood',
             price: '85,000',
-            img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s',
-        },
+             img:"/ph9.jpg"          },
         {
             name: 'Office Chair Pro',
             material: 'Leather & Metal',
             price: '95,000',
-            img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s',
-        },
+               img:"/ph10.jpg"          },
         {
             name: 'Mini Office Desk',
             material: 'Composite Wood',
             price: '45,000',
-            img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s',
-        },
+             img:"/ph11.jpg"          },
         {
             name: 'Small Coffee Table',
             material: 'Bamboo & Rattan',
             price: '32,000',
-            img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s',
-        },
+              img:"/ph12.jpg"          },
         {
             name: 'Expandable Bookshelf',
             material: 'Engineered Wood',
             price: '68,000',
-            img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReHXEpc0BlvP4w98XP0nLbk2AYG_yNNPHW9g&s',
-        },
+             img:"/ph13.jpg"          },
     ];
 
     const displayedProducts = showAll ? products : products.slice(0, 8);
@@ -129,7 +120,7 @@ const Home: React.FC = () => {
     <div className="max-w-7xl mx-auto px-[4%] flex flex-col lg:flex-row items-center gap-10">
       <div className="w-full lg:w-1/2">
         <img
-          src="https://i.ytimg.com/vi/h2rUYMbW3_I/hq720.jpg"
+          src="/ph10.jpg"
           alt="Craftsman at work"
           className="rounded-lg w-full object-cover shadow-lg"
         />
