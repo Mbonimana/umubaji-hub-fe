@@ -10,6 +10,7 @@ import Signup from './components/auth/signup';
 import ForgotPassword from './components/auth/forgotpassword';
 import OtpVerification from './components/auth/verifyotp';
 import PasswordReset from './components/auth/passwordReset';
+import AboutUs from './pages/about.tsx';
 import VendorForgotPassword from './components/auth/vendorForgotpassword';
 
 import VendorsPage from './pages/allVendors';
@@ -67,6 +68,7 @@ function App() {
         <Route path="/vendor/:vendorId" element={<VendorPage />} />
         <Route path="/vendorPage/:id" element={<VendorPage />} />
         <Route path='allVendors' element={<VendorsPage/>} />
+        <Route path='/about' element={<AboutUs/>}/>
         <Route path="/vendors/:vendorId/contact" element={<MessagingFormWrapper />} />
 
         <Route path = 'explore' element={< Explore/>} />

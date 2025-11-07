@@ -23,7 +23,7 @@ function Footer() {
               <li><Link to="/" className="hover:text-secondary transition">Home</Link></li>
               <li><Link to="/explore" className="hover:text-secondary transition">Explore</Link></li>
               <li><Link to="/allvendors" className="hover:text-secondary transition">Vendors</Link></li>
-              <li><Link to="/about-us" className="hover:text-secondary transition">About Us</Link></li>
+              <li><Link to="/about" className="hover:text-secondary transition">About Us</Link></li>
             </ul>
           </div>
 
