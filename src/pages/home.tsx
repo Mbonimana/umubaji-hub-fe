@@ -14,11 +14,11 @@ import 'slick-carousel/slick/slick-theme.css';
 
 const heroImages = [
     {
-        url: '/ph5.jpg',
+        url: '/ph9.jpg',
         text: 'Connect with Skilled Carpenters',
     },
     {
-        url: '/ph9.jpg',
+        url: '/ph5.jpg',
         text: 'Modern Furniture Builds for Your Lifestyle',
     },
 ];
