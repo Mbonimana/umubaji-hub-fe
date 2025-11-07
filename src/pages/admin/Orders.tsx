@@ -5,7 +5,7 @@ export default function AdminOrders() {
     { id: 'ORD-10023', customer: 'Eric N.', vendor: 'Bugesera Doors', amount: 320000, status: 'Pending' },
   ];
 
-  const currency = (v: number) => `₦${v.toLocaleString()}`;
+  const currency = (v: number) => `RF${v.toLocaleString()}`;
   const badge = (s: string) =>
     s === 'Completed'
       ? 'bg-green-50 text-green-700'
