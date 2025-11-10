@@ -100,6 +100,7 @@ export default function AdminVendors() {
 
   return (
     <div className="space-y-4">
+     
       <div className="flex items-center justify-between mt-5">
         <h2 className="text-lg font-semibold text-gray-800">Vendors</h2>
         <button onClick={() => navigate('/signup')} className="bg-[#4B341C] text-white px-4 py-2 rounded-lg text-sm">

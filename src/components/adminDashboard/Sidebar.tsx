@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
-import { Home, Users, Package, ShoppingCart, BarChart3, Settings } from 'lucide-react';
+import { Home, Users, Package, ShoppingCart, Settings, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const items = [
   { to: '/admin', label: 'Overview', icon: Home, end: true },
@@ -7,11 +8,22 @@ const items = [
   { to: '/admin/customers', label: 'Customers', icon: Users },
   { to: '/admin/products', label: 'Products', icon: Package },
   { to: '/admin/orders', label: 'Orders', icon: ShoppingCart },
-  { to: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
   { to: '/admin/settings', label: 'Settings', icon: Settings },
 ];
 
 export default function AdminSidebar() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('user');
+    window.dispatchEvent(new Event('userLoggedOut'));
+    navigate('/');
+  };
+
+  // Reusable link/button style
+  const linkClasses = 'flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-gray-700 hover:bg-gray-100';
+
   return (
     <aside className="w-64 bg-white h-screen flex flex-col justify-between border-r border-gray-200">
       <div>
@@ -19,6 +31,7 @@ export default function AdminSidebar() {
           <h2 className="text-xl font-semibold text-gray-800">UbubajiHub</h2>
           <p className="text-xs text-gray-500">Admin Panel</p>
         </div>
+
         <nav className="py-3 px-2 space-y-1">
           {items.map((item) => (
             <NavLink
@@ -35,8 +48,19 @@ export default function AdminSidebar() {
               <span>{item.label}</span>
             </NavLink>
           ))}
+
+          {/* Logout button styled like nav links */}
+          <button
+            onClick={handleLogout}
+            className={`${linkClasses} w-full text-left`}
+            title="Logout"
+          >
+            <LogOut className="w-5 h-5" />
+            <span>Logout</span>
+          </button>
         </nav>
       </div>
+
       <div className="p-4 border-t border-gray-200">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-gray-600">AD</div>

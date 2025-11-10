@@ -4,6 +4,7 @@ import Home from './pages/home';
 import Cart from './pages/Cart'; 
 import Checkout from './pages/Checkout';
 import Index from './pages/index.tsx';
+import Unauthorized from './pages/NotAuthorized.tsx';
 
 import Login from './components/auth/login';
 import Signup from './components/auth/signup';
@@ -28,6 +29,7 @@ import Earnings from './pages/vendor/Earnings.tsx';
 import Settings from './pages/vendor/Settings.tsx';
 import Profile from './pages/vendor/profile';
 
+
 // Customer dashboard pages
 import CustomerDashboard from './pages/CustomerDashboard';
 import CustomerOrders from './pages/customer/Orders';
@@ -50,6 +52,7 @@ import AdminProducts from './pages/admin/Products';
 import AdminOrders from './pages/admin/Orders';
 import AdminAnalytics from './pages/admin/Analytics';
 import AdminSettings from './pages/admin/Settings';
+import ProtectedRoute from './routes/ProtectedRoute.tsx';
 
 function App() {
   return (
@@ -57,6 +60,7 @@ function App() {
       <Route path="/" element={<Layout />}>
         <Route index element={<Index />} />
         <Route path="*" element={<NotFound />} />
+        <Route path="/unauthorized" element={<Unauthorized />} /> 
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/login" element={<Login />} />
@@ -77,7 +81,7 @@ function App() {
       </Route>
 
       {/* Admin routes */}
-      <Route path="/admin" element={<AdminDashboard />}>
+      <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute> }>
         <Route index element={<AdminOverview />} />
         <Route path="vendors" element={<AdminVendors />} />
         <Route path="customers" element={<AdminCustomers />} />
