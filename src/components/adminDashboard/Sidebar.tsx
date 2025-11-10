@@ -1,6 +1,8 @@
 import { NavLink } from 'react-router-dom';
 import { Home, Users, Package, ShoppingCart, Settings, LogOut } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+import { useState, useEffect } from 'react';
 
 const items = [
   { to: '/admin', label: 'Overview', icon: Home, end: true },
@@ -12,8 +14,26 @@ const items = [
 ];
 
 export default function AdminSidebar() {
-  const navigate = useNavigate();
+  
+  const [adminName, setAdminName] = useState('');
+  const [adminEmail,setAdminEmail] = useState('');
 
+  useEffect(()=>{
+    const token = localStorage.getItem('jwtToken');
+    if(!token) return;
+    try{
+      const decoded: any = jwtDecode(token);
+      setAdminName(`${decoded.firstname} ${decoded.lastname}`);
+      setAdminEmail(decoded.email);
+
+    }
+    catch(err){
+      console.error('Invalid JWT');
+
+    }
+  }, []);
+
+  const navigate = useNavigate();
   const handleLogout = () => {
     localStorage.removeItem('jwtToken');
     localStorage.removeItem('user');
@@ -63,10 +83,12 @@ export default function AdminSidebar() {
 
       <div className="p-4 border-t border-gray-200">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-gray-600">AD</div>
+          <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-gray-600">
+             {adminName .split(' ').map((n) => n[0]).join('')}</div>
           <div>
-            <p className="text-sm font-medium text-gray-800">Admin User</p>
-            <p className="text-xs text-gray-500">admin@ububaji.com</p>
+           
+            <p className="text-sm font-medium text-gray-800">{adminName}</p>
+            <p className="text-xs text-gray-500">{adminEmail}</p>
           </div>
         </div>
       </div>
