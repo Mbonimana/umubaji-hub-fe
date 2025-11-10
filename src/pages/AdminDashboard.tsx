@@ -2,7 +2,9 @@ import { Outlet } from 'react-router-dom';
 import AdminSidebar from '../components/adminDashboard/Sidebar';
 import AdminNavbar from '../components/adminDashboard/Navbar';
 
+
 export default function AdminDashboard() {
+
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex">
       {/* Sidebar */}
