@@ -1,10 +1,8 @@
-import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { getBaseUrl } from '../../config/baseUrl';
 
 export default function AdminVendors() {
-  const navigate = useNavigate();
 
   const [vendors, setVendors] = useState<any[]>([]);
   const [filtered, setFiltered] = useState<any[]>([]);
@@ -17,6 +15,9 @@ export default function AdminVendors() {
   const [reason, setReason] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  // Search State
+  const [search, setSearch] = useState('');
+
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -27,6 +28,13 @@ export default function AdminVendors() {
       : s === 'pending'
       ? 'bg-yellow-50 text-yellow-700'
       : 'bg-red-50 text-red-700';
+
+  // 🔍 Highlight Function
+  const highlight = (text: string, query: string) => {
+    if (!query) return text;
+    const regex = new RegExp(`(${query})`, "gi");
+    return text?.toString().replace(regex, "<mark>$1</mark>");
+  };
 
   // Load Vendors
   useEffect(() => {
@@ -63,13 +71,28 @@ export default function AdminVendors() {
     fetchVendors();
   }, []);
 
-  // Apply Filter
+  // Apply Filter + Search
   const applyFilter = (status: 'all' | 'pending' | 'verified' | 'rejected') => {
     setFilter(status);
-    setCurrentPage(1); // reset page when filter changes
-    if (status === 'all') setFiltered(vendors);
-    else setFiltered(vendors.filter((v) => v.status === status));
+    setCurrentPage(1);
+
+    let base = vendors;
+    if (status !== 'all') {
+      base = base.filter((v) => v.status === status);
+    }
+
+    const searched = base.filter((v) =>
+      [v.vendor_name, v.vendor_sname, v.company_name, v.email, v.phone]
+        .some((field) => field?.toLowerCase().includes(search.toLowerCase()))
+    );
+
+    setFiltered(searched);
   };
+
+  // Reapply search on typing
+  useEffect(() => {
+    applyFilter(filter);
+  }, [search]);
 
   // Verify Vendor
   const verifyVendor = async (id: number) => {
@@ -118,12 +141,20 @@ export default function AdminVendors() {
     <div className="space-y-4">
       <div className="flex items-center justify-between mt-5">
         <h2 className="text-lg font-semibold text-gray-800">Vendors</h2>
-        <button
-          onClick={() => navigate('/signup')}
-          className="bg-[#4B341C] text-white px-4 py-2 rounded-lg text-sm"
-        >
-          Add Vendor
-        </button>
+        <div className="flex items-center gap-2">
+          <input
+            placeholder="Search vendors"
+            className="border rounded-md px-3 py-2 text-sm"
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
+          />
+          <button
+            className="px-3 py-2 bg-primary w-24 h-8 flex items-center justify-center text-white rounded-md hover:bg-primary-dark transition"
+            onClick={() => { setSearch(''); setCurrentPage(1); }}
+          >
+            Clear
+          </button>
+        </div>
       </div>
 
       {/* FILTER BUTTONS */}
@@ -167,9 +198,18 @@ export default function AdminVendors() {
               <tbody className="divide-y">
                 {paginatedVendors.map((v) => (
                   <tr key={v.id} className="text-gray-700">
-                    <td className="px-4 py-3">{v.company_name}</td>
-                    <td className="px-4 py-3">{v.email}</td>
-                    <td className="px-4 py-3">{v.vendor_name} {v.vendor_sname}</td>
+                    <td
+                      className="px-4 py-3"
+                      dangerouslySetInnerHTML={{ __html: highlight(v.company_name, search) }}
+                    />
+                    <td
+                      className="px-4 py-3"
+                      dangerouslySetInnerHTML={{ __html: highlight(v.email, search) }}
+                    />
+                    <td
+                      className="px-4 py-3"
+                      dangerouslySetInnerHTML={{ __html: highlight(`${v.vendor_name} ${v.vendor_sname}`, search) }}
+                    />
                     <td className="px-4 py-3">{v.products}</td>
                     <td className="px-4 py-3">
                       <span className={`px-2 py-1 rounded-md text-xs ${badge(v.status)}`}>{v.status}</span>
@@ -229,7 +269,6 @@ export default function AdminVendors() {
         </div>
       </div>
 
-      {/* MODAL */}
       {showDetails && selected && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/40" onClick={() => { setShowDetails(false); setSelected(null); }} />
