@@ -9,13 +9,17 @@ export default function AdminVendors() {
   const [vendors, setVendors] = useState<any[]>([]);
   const [filtered, setFiltered] = useState<any[]>([]);
   const [filter, setFilter] = useState<'all' | 'pending' | 'verified' | 'rejected'>('all');
-  const [loading, setLoading] = useState(true); // loading state
+  const [loading, setLoading] = useState(true);
 
   const [selected, setSelected] = useState<any>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [canManage, setCanManage] = useState(false);
   const [reason, setReason] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   const badge = (s: string) =>
     s === 'verified'
@@ -62,6 +66,7 @@ export default function AdminVendors() {
   // Apply Filter
   const applyFilter = (status: 'all' | 'pending' | 'verified' | 'rejected') => {
     setFilter(status);
+    setCurrentPage(1); // reset page when filter changes
     if (status === 'all') setFiltered(vendors);
     else setFiltered(vendors.filter((v) => v.status === status));
   };
@@ -71,7 +76,9 @@ export default function AdminVendors() {
     setSubmitting(true);
     try {
       await axios.put(`${getBaseUrl()}/users/verify/${id}`);
-      setVendors((prev) => prev.map((v) => (v.id === id ? { ...v, status: 'verified', reason: undefined } : v)));
+      setVendors((prev) =>
+        prev.map((v) => (v.id === id ? { ...v, status: 'verified', reason: undefined } : v))
+      );
       applyFilter(filter);
     } finally {
       setSubmitting(false);
@@ -87,7 +94,9 @@ export default function AdminVendors() {
     setSubmitting(true);
     try {
       await axios.put(`${getBaseUrl()}/users/reject/${id}`, { reason });
-      setVendors((prev) => prev.map((v) => (v.id === id ? { ...v, status: 'rejected', reason } : v)));
+      setVendors((prev) =>
+        prev.map((v) => (v.id === id ? { ...v, status: 'rejected', reason } : v))
+      );
       applyFilter(filter);
     } finally {
       setSubmitting(false);
@@ -98,12 +107,21 @@ export default function AdminVendors() {
     }
   };
 
+  // Pagination logic
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const paginatedVendors = filtered.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <div className="space-y-4">
-     
       <div className="flex items-center justify-between mt-5">
         <h2 className="text-lg font-semibold text-gray-800">Vendors</h2>
-        <button onClick={() => navigate('/signup')} className="bg-[#4B341C] text-white px-4 py-2 rounded-lg text-sm">
+        <button
+          onClick={() => navigate('/signup')}
+          className="bg-[#4B341C] text-white px-4 py-2 rounded-lg text-sm"
+        >
           Add Vendor
         </button>
       </div>
@@ -132,7 +150,7 @@ export default function AdminVendors() {
               <div className="w-8 h-8 border-4 border-gray-300 border-t-[#4B341C] rounded-full animate-spin"></div>
               <span className="ml-3 text-gray-500 text-sm">Loading vendors...</span>
             </div>
-          ) : filtered.length === 0 ? (
+          ) : paginatedVendors.length === 0 ? (
             <div className="text-center py-6 text-gray-500">No vendors found.</div>
           ) : (
             <table className="min-w-full text-sm">
@@ -147,7 +165,7 @@ export default function AdminVendors() {
                 </tr>
               </thead>
               <tbody className="divide-y">
-                {filtered.map((v) => (
+                {paginatedVendors.map((v) => (
                   <tr key={v.id} className="text-gray-700">
                     <td className="px-4 py-3">{v.company_name}</td>
                     <td className="px-4 py-3">{v.email}</td>
@@ -188,6 +206,27 @@ export default function AdminVendors() {
             </table>
           )}
         </div>
+
+        {/* Pagination */}
+        <div className="flex justify-end items-center gap-2 p-4">
+          <button
+            className="px-3 py-1 rounded border text-gray-700 disabled:opacity-50"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+          >
+            Prev
+          </button>
+          <span className="text-sm text-gray-600">
+            Page {currentPage} of {totalPages || 1}
+          </span>
+          <button
+            className="px-3 py-1 rounded border text-gray-700 disabled:opacity-50"
+            disabled={currentPage === totalPages || totalPages === 0}
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+          >
+            Next
+          </button>
+        </div>
       </div>
 
       {/* MODAL */}
@@ -206,7 +245,7 @@ export default function AdminVendors() {
             </div>
 
             <div className="space-y-3 text-sm text-gray-700">
-                <div className="flex justify-between"><span>Vendor Name</span><span>{selected.vendor_name} {selected.vendor_sname}</span></div>
+              <div className="flex justify-between"><span>Vendor Name</span><span>{selected.vendor_name} {selected.vendor_sname}</span></div>
               <div className="flex justify-between"><span>Company Name</span><span>{selected.company_name}</span></div>
               <div className="flex justify-between"><span>Phone</span><span>{selected.phone}</span></div>
               <div className="flex justify-between"><span>Email</span><span>{selected.email}</span></div>
