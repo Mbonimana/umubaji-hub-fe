@@ -3,34 +3,47 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { MapPin } from "lucide-react";
 import { getBaseUrl } from "../config/baseUrl";
+
+interface Product {
+  id: number;
+  name: string;
+  woodType: string;
+  price: string;
+  image?: string;
+}
+
 interface Vendor {
   id: number;
   company_name: string;
   company_email: string;
   company_location: string;
   image?: string;
+  products?: Product[]; // include products if they exist
 }
+
 const VendorsPage: React.FC = () => {
   const navigate = useNavigate();
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     const fetchVendors = async () => {
       try {
         const baseURL = getBaseUrl();
         const response = await axios.get(`${baseURL}/users/verified`);
         console.log("Vendors API response:", response.data);
-        // Access the array under "users"
+
         const vendorListRaw = response.data.users ?? [];
-        // Map only the fields we need
         const vendorList = vendorListRaw.map((v: any) => ({
           id: v.id,
           company_name: v.company_name,
           company_email: v.email,
           company_location: v.company_location,
           image: v.company_logo || "",
+          products: v.products || [], // fetch existing products if any
         }));
+
         setVendors(vendorList);
       } catch (err: any) {
         console.error("Error fetching vendors:", err);
@@ -42,6 +55,7 @@ const VendorsPage: React.FC = () => {
     };
     fetchVendors();
   }, []);
+
   return (
     <div className="min-h-screen w-full bg-gray-50 font-sans">
       {/* Header */}
@@ -61,6 +75,7 @@ const VendorsPage: React.FC = () => {
           </p>
         </div>
       </div>
+
       {/* Vendor Grid */}
       <div className="w-11/12 sm:w-10/12 mx-auto mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-10">
         {loading ? (
@@ -92,7 +107,9 @@ const VendorsPage: React.FC = () => {
                   </p>
                 </div>
                 <button
-                  onClick={() => navigate(`/vendorPage/${v.id}`)}
+                  onClick={() =>
+                    navigate(`/vendorPage/${v.id}`, { state: { vendor: v } })
+                  }
                   className="w-full bg-[#4B341C] text-white mt-4 py-2 rounded-lg font-medium hover:bg-[#3A2917]/90 transition text-sm sm:text-base"
                 >
                   View Profile
@@ -109,4 +126,5 @@ const VendorsPage: React.FC = () => {
     </div>
   );
 };
+
 export default VendorsPage;
