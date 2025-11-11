@@ -3,7 +3,7 @@ import LineChart from '../../components/adminDashboard/LineChart';
 import PieChart from '../../components/adminDashboard/PieChart';
 import Vendors from '../../components/adminDashboard/Vendors';
 import RecentActivitty from '../../components/adminDashboard/RecentActivitty';
-import { jwtDecode } from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 import { useEffect, useState } from 'react';
 import { getBaseUrl } from '../../config/baseUrl';
 
@@ -21,6 +21,11 @@ export default function AdminOverview() {
   const [, setPrevCustomerCount] = useState<number>(0);
   const [customerChange, setCustomerChange] = useState<number>(0);
   const [loadingCustomers, setLoadingCustomers] = useState(false);
+
+  const [vendorCount, setVendorCount] = useState<number>(0);
+  const [, setPrevVendorCount] = useState<number>(0);
+  const [vendorChange, setVendorChange] = useState<number>(0);
+  const [loadingVendors, setLoadingVendors] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('jwtToken');
@@ -50,11 +55,40 @@ export default function AdminOverview() {
       }
     };
 
+    const fetchVendors = async () => {
+      setLoadingVendors(true);
+      try {
+        const response = await fetch(`${getBaseUrl()}/users/allvendors`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const data = await response.json();
+
+        const prev = vendorCount;
+        setPrevVendorCount(prev);
+        setVendorCount(data.count);
+        setVendorChange(data.count - prev);
+      } catch (error) {
+        console.error('Error fetching vendors:', error);
+        setVendorCount(0);
+        setVendorChange(0);
+      } finally {
+        setLoadingVendors(false);
+      }
+    };
+
     fetchCustomers();
+    fetchVendors();
   }, []);
 
   const stats: StatItem[] = [
-    { title: 'Total Vendors', value: 248, change: '+12 this month', icon: <Store className="w-5 h-5" /> },
+    { 
+      title: 'Total Vendors', 
+      value: vendorCount,
+      change: vendorChange >= 0 ? `+${vendorChange} this month` : `${vendorChange} this month`,
+      icon: <Store className="w-5 h-5" />,
+      loading: loadingVendors,
+    },
     { 
       title: 'Total Customers', 
       value: customerCount,
@@ -70,10 +104,7 @@ export default function AdminOverview() {
     <div className="pt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {items.map((item, index) => (
         <div key={index} className="bg-white shadow rounded-lg p-4 flex flex-col justify-between">
-          {/* Title on top */}
           <p className="text-gray-500 text-sm mb-2">{item.title}</p>
-
-          {/* Icon, value, change on the same horizontal line */}
           <div className="flex items-center justify-between space-x-3">
             <span className="text-xl flex items-center">{item.icon}</span>
             <span className="text-xl font-semibold">
