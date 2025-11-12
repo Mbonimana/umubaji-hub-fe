@@ -4,52 +4,80 @@ import { useNavigate } from 'react-router-dom';
 import { X, Upload } from 'lucide-react';
 import Sidebar from '../../components/vendorDashboard/Sidebar';
 import Navbar from '../../components/vendorDashboard/Navbar';
-import type { ProductWithImages } from '../../types/product';
+import { createProduct } from '../../services/vendorProductsApi';
+import Notiflix from 'notiflix';
 
 export default function AddProductPage() {
   const navigate = useNavigate();
-  const [form, setForm] = useState<Partial<ProductWithImages>>({
+  const [form, setForm] = useState({
     name: '',
-    price: 0,
+    price: '',
     description: '',
     category: '',
-    stock: 0,
+    stock: '',
   });
-  const [images, setImages] = useState<any[]>([]);
-  const [uploading, setUploading] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setUploading(true);
+    setImageFile(file);
     const url = URL.createObjectURL(file);
-    const newImg = {
-      id: crypto.randomUUID(),
-      productId: 0,
-      url,
-      publicId: `local-${Date.now()}`,
-      createdAt: new Date().toISOString(),
-    };
-    setTimeout(() => {
-      setImages(prev => [...prev, newImg]);
-      setUploading(false);
-    }, 800);
+    setImagePreview(url);
   };
 
-  const handleSubmit = () => {
-    const product: ProductWithImages = {
-      id: Date.now(),
-      ...form,
-      vendor_id: 1,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      images,
-    } as ProductWithImages;
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    if (imagePreview) {
+      URL.revokeObjectURL(imagePreview);
+    }
+    setImagePreview(null);
+  };
 
-    const saved = JSON.parse(localStorage.getItem('vendor_products') || '[]');
-    localStorage.setItem('vendor_products', JSON.stringify([...saved, product]));
-    navigate('/my-products');
+  const handleSubmit = async () => {
+    if (!form.name || !form.price) {
+      Notiflix.Notify.failure('Please fill in Product Name and Price.');
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      Notiflix.Loading.dots('Creating product...');
+
+      await createProduct(
+        {
+          name: form.name,
+          price: form.price,
+          description: form.description || undefined,
+          category: form.category || undefined,
+          stock: form.stock || undefined,
+        },
+        imageFile || undefined
+      );
+
+      Notiflix.Loading.remove();
+      Notiflix.Notify.success('Product created successfully!');
+      
+      // Set flash message
+      localStorage.setItem(
+        'flash',
+        JSON.stringify({
+          type: 'success',
+          message: 'Product added successfully.',
+        })
+      );
+
+      navigate('/my-products');
+    } catch (error: any) {
+      Notiflix.Loading.remove();
+      console.error('Error creating product:', error);
+      Notiflix.Notify.failure(error.message || 'Failed to create product');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -86,12 +114,14 @@ export default function AddProductPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Price (₦)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Price (RWF)</label>
                   <input
                     type="number"
                     className="w-full border rounded-lg px-4 py-2"
                     value={form.price}
-                    onChange={e => setForm({ ...form, price: Number(e.target.value) })}
+                    onChange={e => setForm({ ...form, price: e.target.value })}
+                    min="0"
+                    step="0.01"
                   />
                 </div>
                 <div>
@@ -108,7 +138,8 @@ export default function AddProductPage() {
                     type="number"
                     className="w-full border rounded-lg px-4 py-2"
                     value={form.stock}
-                    onChange={e => setForm({ ...form, stock: Number(e.target.value) })}
+                    onChange={e => setForm({ ...form, stock: e.target.value })}
+                    min="0"
                   />
                 </div>
               </div>
@@ -124,7 +155,7 @@ export default function AddProductPage() {
               </div>
 
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Product Images</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Product Image</label>
                 <div className="border-2 border-dashed rounded-lg p-6 text-center">
                   <input
                     type="file"
@@ -134,29 +165,24 @@ export default function AddProductPage() {
                     id="upload"
                   />
                   <label htmlFor="upload" className="cursor-pointer">
-                    {uploading ? (
-                      <p className="text-gray-500">Uploading...</p>
-                    ) : (
-                      <div>
-                        <Upload className="w-10 h-10 text-gray-400 mx-auto mb-3" />
-                        <p className="text-sm text-[#4B341C]">Click to upload</p>
-                      </div>
-                    )}
+                    <div>
+                      <Upload className="w-10 h-10 text-gray-400 mx-auto mb-3" />
+                      <p className="text-sm text-[#4B341C]">Click to upload image</p>
+                      <p className="text-xs text-gray-500 mt-1">(Optional)</p>
+                    </div>
                   </label>
                 </div>
-                <div className="flex gap-3 mt-4 flex-wrap">
-                  {images.map(img => (
-                    <div key={img.id} className="relative">
-                      <img src={img.url} alt="" className="w-24 h-24 object-cover rounded-lg" />
-                      <button
-                        onClick={() => setImages(prev => prev.filter(i => i.id !== img.id))}
-                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
+                {imagePreview && (
+                  <div className="mt-4 relative inline-block">
+                    <img src={imagePreview} alt="Preview" className="w-24 h-24 object-cover rounded-lg" />
+                    <button
+                      onClick={handleRemoveImage}
+                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="flex justify-end gap-3">
@@ -168,9 +194,10 @@ export default function AddProductPage() {
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="px-6 py-2 bg-[#4B341C] text-white rounded-lg hover:bg-amber-600"
+                  disabled={submitting}
+                  className="px-6 py-2 bg-[#4B341C] text-white rounded-lg hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Save Product
+                  {submitting ? 'Creating...' : 'Save Product'}
                 </button>
               </div>
             </div>
