@@ -63,7 +63,7 @@ formData.append("user_role", userRole);
 
 if (userRole === "vendor") {
   formData.append("company_name", companyName);
-  formData.append("company_location", location);
+  formData.append("company_location",location);
   formData.append("rdb_certificate", rdbCertificate as Blob);
   formData.append("national_id_file", nationalIdFile as Blob);
   formData.append("company_logo", companyLogo as Blob);

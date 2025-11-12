@@ -10,15 +10,6 @@ export default function Navbar() {
     window.dispatchEvent(new Event('userLoggedIn'));
     navigate('/');
   };
-  const goProfile = () => {
-    const storedId = localStorage.getItem('vendorId') || sessionStorage.getItem('vendorId') || '';
-    const qs = storedId ? `?vendorId=${storedId}` : '';
-    navigate(`/profile${qs}`);
-  };
-
- 
- 
-
 
   
   return (
