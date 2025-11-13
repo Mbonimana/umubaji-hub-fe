@@ -105,7 +105,7 @@ export default function AddProductModal({ onSave, onClose }: Props) {
 
         {/* Image Upload */}
         <div className="mb-4">
-          <label className="block text-sm font-medium mb-2">Product Images</label>
+          <label className="block text-sm font-medium mb-2">Product iImages</label>
           <div className="border-2 border-dashed rounded-lg p-4 text-center">
             <input
               type="file"

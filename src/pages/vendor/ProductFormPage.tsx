@@ -4,104 +4,148 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { X, Upload } from 'lucide-react';
 import Sidebar from '../../components/vendorDashboard/Sidebar';
 import Navbar from '../../components/vendorDashboard/Navbar';
-import type { ProductWithImages } from '../../types/product';
+import { createProduct, updateProduct } from '../../services/vendorProductsApi';
+import { getBaseUrl } from '../../config/baseUrl';
+import axios from 'axios';
+import Notiflix from 'notiflix';
 
 export default function ProductFormPage() {
   const { id } = useParams<{ id?: string }>();
   const navigate = useNavigate();
   const isEdit = !!id;
 
-  const [form, setForm] = useState<Partial<ProductWithImages>>({
+  const [form, setForm] = useState({
     name: '',
-    price: 0,
+    price: '',
     description: '',
     category: '',
-    stock: 0,
+    stock: '',
   });
-  const [images, setImages] = useState<any[]>([]);
-  const [uploading, setUploading] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(isEdit);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Load product if editing
   useEffect(() => {
-    if (isEdit) {
-      const saved = JSON.parse(localStorage.getItem('vendor_products') || '[]');
-      const product = saved.find((p: ProductWithImages) => p.id === Number(id));
-      if (product) {
-        setForm({
-          name: product.name,
-          price: product.price,
-          description: product.description,
-          category: product.category,
-          stock: product.stock,
-          created_at: product.created_at,
-        });
-        setImages(product.images || []);
-        
-      }
+    if (isEdit && id) {
+      const fetchProduct = async () => {
+        try {
+          setLoading(true);
+          const baseUrl = getBaseUrl();
+          const token = localStorage.getItem('jwtToken');
+          
+          const response = await axios.get(`${baseUrl}/products/getProduct/${id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+
+          const product = response.data;
+          setForm({
+            name: product.name || '',
+            price: product.price?.toString() || '',
+            description: product.description || '',
+            category: product.category || '',
+            stock: product.stock?.toString() || '',
+          });
+
+          // Set existing image if available
+          if (product.images && product.images.length > 0) {
+            if (typeof product.images[0] === 'string') {
+              setExistingImageUrl(product.images[0]);
+            } else if (product.images[0].url) {
+              setExistingImageUrl(product.images[0].url);
+            }
+          }
+        } catch (error: any) {
+          console.error('Error fetching product:', error);
+          Notiflix.Notify.failure(error.response?.data?.error || 'Failed to load product');
+          navigate('/my-products');
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchProduct();
     }
-  }, [id, isEdit]);
+  }, [id, isEdit, navigate]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setUploading(true);
+    setImageFile(file);
     const url = URL.createObjectURL(file);
-    const newImg = {
-      id: crypto.randomUUID(),
-      productId: 0,
-      url,
-      publicId: `local-${Date.now()}`,
-      createdAt: new Date().toISOString(),
-    };
-    setTimeout(() => {
-      setImages(prev => [...prev, newImg]);
-      setUploading(false);
-    }, 800);
+    setImagePreview(url);
+    setExistingImageUrl(null); // Clear existing image when new one is selected
   };
 
-  const handleRemoveImage = (imageId: string) => {
-    setImages(prev => prev.filter(i => i.id !== imageId));
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    if (imagePreview) {
+      URL.revokeObjectURL(imagePreview);
+    }
+    setImagePreview(null);
+    setExistingImageUrl(null);
   };
 
-  const handleSubmit = () => {
-    // Minimal validation
-    if (!form.name || !form.category) {
-      alert('Please fill in Product Name and Category.');
+  const handleSubmit = async () => {
+    if (!form.name || !form.price) {
+      Notiflix.Notify.failure('Please fill in Product Name and Price.');
       return;
     }
 
-    setIsSubmitting(true);
-const product: ProductWithImages = {
-  id: isEdit ? Number(id) : Date.now(),
-  ...form,
-  price: Number(form.price) || 0,
-  stock: Number(form.stock) || 0,
-  vendor_id: 1,
-  created_at: isEdit ? form.created_at : new Date().toISOString(),
-  updated_at: new Date().toISOString(),
-  images,
-} as ProductWithImages;
+    try {
+      setIsSubmitting(true);
+      Notiflix.Loading.dots(isEdit ? 'Updating product...' : 'Creating product...');
 
-    const saved = JSON.parse(localStorage.getItem('vendor_products') || '[]');
-    const newList = isEdit
-      ? saved.map((p: ProductWithImages) => (p.id === product.id ? product : p))
-      : [...saved, product];
+      if (isEdit && id) {
+        await updateProduct(
+          Number(id),
+          {
+            name: form.name,
+            price: form.price,
+            description: form.description || undefined,
+            category: form.category || undefined,
+            stock: form.stock || undefined,
+          },
+          imageFile || undefined
+        );
+      } else {
+        await createProduct(
+          {
+            name: form.name,
+            price: form.price,
+            description: form.description || undefined,
+            category: form.category || undefined,
+            stock: form.stock || undefined,
+          },
+          imageFile || undefined
+        );
+      }
 
-    localStorage.setItem('vendor_products', JSON.stringify(newList));
+      Notiflix.Loading.remove();
+      Notiflix.Notify.success(isEdit ? 'Product updated successfully!' : 'Product created successfully!');
+      
+      // Set flash message
+      localStorage.setItem(
+        'flash',
+        JSON.stringify({
+          type: 'success',
+          message: isEdit ? 'Product updated successfully.' : 'Product added successfully.',
+        })
+      );
 
-    // Flash message for MyProducts toast
-    localStorage.setItem(
-      'flash',
-      JSON.stringify({
-        type: 'success',
-        message: isEdit ? 'Product updated successfully.' : 'Product added successfully.',
-      })
-    );
-
-    setIsSubmitting(false);
-    navigate('/my-products');
+      navigate('/my-products');
+    } catch (error: any) {
+      Notiflix.Loading.remove();
+      console.error('Error saving product:', error);
+      Notiflix.Notify.failure(error.message || 'Failed to save product');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -130,11 +174,15 @@ const product: ProductWithImages = {
                 </button>
               </div>
 
+              {loading ? (
+                <div className="text-center py-12">
+                  <p className="text-gray-500">Loading product...</p>
+                </div>
+              ) : (
+                <>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Product Name
-                  </label>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
                   <input
                     className="w-full border rounded-lg px-4 py-2 text-gray-900 placeholder-gray-400"
@@ -144,7 +192,7 @@ const product: ProductWithImages = {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Price (₦)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Price (RWF)</label>
                   <input
                     type="number"
                     min={0}
@@ -152,7 +200,7 @@ const product: ProductWithImages = {
                     className="w-full border rounded-lg px-4 py-2 text-gray-900 placeholder-gray-400"
                     placeholder="0"
                     value={form.price}
-                    onChange={e => setForm({ ...form, price: Number(e.target.value) })}
+                    onChange={e => setForm({ ...form, price: e.target.value })}
                   />
                 </div>
                 <div>
@@ -172,15 +220,12 @@ const product: ProductWithImages = {
                     className="w-full border rounded-lg px-4 py-2 text-gray-900 placeholder-gray-400"
                     placeholder="0"
                     value={form.stock}
-                    onChange={e => setForm({ ...form, stock: Number(e.target.value) })}
+                    onChange={e => setForm({ ...form, stock: e.target.value })}
                   />
                 </div>
               </div>
 
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Description (optional)
-                </label>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Description (optional)</label>
                 <textarea
                   rows={4}
@@ -192,7 +237,7 @@ const product: ProductWithImages = {
               </div>
 
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Product Images</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Product Image</label>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                   <input
                     type="file"
@@ -202,44 +247,28 @@ const product: ProductWithImages = {
                     id="upload"
                   />
                   <label htmlFor="upload" className="cursor-pointer">
-                    {uploading ? (
-                      <p className="text-gray-500">Uploading...</p>
-                    ) : (
-                      <div>
-                        <Upload className="w-10 h-10 text-gray-400 mx-auto mb-3" />
-                        <p className="text-sm text-gray-600">Click to upload</p>
-                      </div>
-                    )}
+                    <div>
+                      <Upload className="w-10 h-10 text-gray-400 mx-auto mb-3" />
+                      <p className="text-sm text-gray-600">Click to upload image</p>
+                      <p className="text-xs text-gray-500 mt-1">(Optional - will replace existing image)</p>
+                    </div>
                   </label>
                 </div>
-                {images.length > 0 && (
-                  <div className="flex gap-3 mt-4 flex-wrap">
-                    {images.map(img => (
-                      <div key={img.id} className="relative">
-                        <img src={img.url} alt="" className="w-24 h-24 object-cover rounded-lg" />
-                        <button
-                          onClick={() => handleRemoveImage(img.id)}
-                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </div>
-                    ))}
+                {(imagePreview || existingImageUrl) && (
+                  <div className="mt-4 relative inline-block">
+                    <img 
+                      src={imagePreview || existingImageUrl || ''} 
+                      alt="Preview" 
+                      className="w-24 h-24 object-cover rounded-lg" 
+                    />
+                    <button
+                      onClick={handleRemoveImage}
+                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
                   </div>
                 )}
-                <div className="flex gap-3 mt-4 flex-wrap">
-                  {images.map(img => (
-                    <div key={img.id} className="relative">
-                      <img src={img.url} alt="" className="w-24 h-24 object-cover rounded-lg" />
-                      <button
-                        onClick={() => setImages(prev => prev.filter(i => i.id !== img.id))}
-                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
               </div>
 
               <div className="flex justify-end gap-3">
@@ -252,13 +281,15 @@ const product: ProductWithImages = {
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="px-6 py-2 bg-[#4B341C] text-white rounded-lg hover:bg-amber-600 font-medium"
+                  className="px-6 py-2 bg-[#4B341C] text-white rounded-lg hover:bg-amber-600 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={isSubmitting}
                   type="button"
                 >
-                  {isEdit ? 'Save Changes' : 'Save Product'}
+                  {isSubmitting ? (isEdit ? 'Updating...' : 'Creating...') : (isEdit ? 'Save Changes' : 'Save Product')}
                 </button>
               </div>
+                </>
+              )}
             </div>
           </div>
         </main>
