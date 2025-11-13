@@ -49,7 +49,7 @@ export default function Login() {
 
       // Store in localStorage
       localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("token", token);
+      localStorage.setItem("jwtToken", token);
       window.dispatchEvent(new Event("userLoggedIn"));
 
       Notiflix.Notify.success(`${user.user_role} logged in successfully`);
@@ -129,7 +129,7 @@ export default function Login() {
         <span className="text-xs text-gray-500 mt-2">Demo Credentials:</span>
         <p className="text-xs text-gray-500 mt-2">Customer - email: customer@umubajihub.com</p>
         <p className="text-xs text-gray-500 mt-2">Vendor - email: vendor@umubajihub.com</p>
-        <p className="text-xs text-gray-500 mt-2">Admin - email: admin@umubajihub.com</p>
+        <p className="text-xs text-gray-500 mt-2">Admin - email: itangishatsemusa@gmail.com</p>
         <p className="text-xs text-gray-500 mt-2">Password: okok</p>
       </div>
       </form>

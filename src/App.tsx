@@ -1,15 +1,19 @@
+
 import { Routes, Route } from 'react-router-dom';
 import Layout from './layout/Layout';
 import Home from './pages/home';
 import Cart from './pages/Cart'; 
 import Checkout from './pages/Checkout';
 import Index from './pages/index.tsx';
+import Unauthorized from './pages/NotAuthorized.tsx';
+import ScrollToTop from './components/ScrollToTop.tsx';
 
 import Login from './components/auth/login';
 import Signup from './components/auth/signup';
 import ForgotPassword from './components/auth/forgotpassword';
 import OtpVerification from './components/auth/verifyotp';
 import PasswordReset from './components/auth/passwordReset';
+import AboutUs from './pages/about.tsx';
 import VendorForgotPassword from './components/auth/vendorForgotpassword';
 
 import VendorsPage from './pages/allVendors';
@@ -26,6 +30,7 @@ import Messages from './pages/vendor/Messages.tsx';
 import Earnings from './pages/vendor/Earnings.tsx';
 import Settings from './pages/vendor/Settings.tsx';
 import Profile from './pages/vendor/profile';
+
 
 // Customer dashboard pages
 import CustomerDashboard from './pages/CustomerDashboard';
@@ -49,13 +54,17 @@ import AdminProducts from './pages/admin/Products';
 import AdminOrders from './pages/admin/Orders';
 import AdminAnalytics from './pages/admin/Analytics';
 import AdminSettings from './pages/admin/Settings';
+import ProtectedRoute from './routes/ProtectedRoute.tsx';
 
 function App() {
   return (
+    <>
+    <ScrollToTop />
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={<Index />} />
         <Route path="*" element={<NotFound />} />
+        <Route path="/unauthorized" element={<Unauthorized />} /> 
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/login" element={<Login />} />
@@ -67,6 +76,7 @@ function App() {
         <Route path="/vendor/:vendorId" element={<VendorPage />} />
         <Route path="/vendorPage/:id" element={<VendorPage />} />
         <Route path='allVendors' element={<VendorsPage/>} />
+        <Route path='/about' element={<AboutUs/>}/>
         <Route path="/vendors/:vendorId/contact" element={<MessagingFormWrapper />} />
 
         <Route path = 'explore' element={< Explore/>} />
@@ -75,7 +85,7 @@ function App() {
       </Route>
 
       {/* Admin routes */}
-      <Route path="/admin" element={<AdminDashboard />}>
+      <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute> }>
         <Route index element={<AdminOverview />} />
         <Route path="vendors" element={<AdminVendors />} />
         <Route path="customers" element={<AdminCustomers />} />
@@ -106,6 +116,7 @@ function App() {
       <Route path="/customer/settings" element={<CustomerSettings />} />
       <Route path="/customer/wishlist" element={<CustomerWishlist />} />
     </Routes>
+    </>
   );
 }
 

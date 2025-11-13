@@ -7,8 +7,10 @@ export interface Product {
   category?: string;
   stock?: number;
   vendor_id?: number;
+  user_id?: number;
   created_at?: string;
   updated_at?: string;
+  images?: string[]; // Array of image URLs from backend
 }
 
 export interface Image {
@@ -19,6 +21,6 @@ export interface Image {
   createdAt: string;
 }
 
-export interface ProductWithImages extends Product {
+export interface ProductWithImages extends Omit<Product, 'images'> {
   images: Image[];
 }

@@ -32,7 +32,7 @@ export default function Signup() {
   const [companyCoverImage, setCompanyCoverImage] = useState<File | null>(null);
 
   // Role (for vendor-specific UI)
-  const [userRole, setUserRole] = useState<"user" | "vendor">("user");
+  const [userRole, setUserRole] = useState<"customer" | "vendor">("customer");
 
   const baseUrl = getBaseUrl();
 
@@ -63,7 +63,7 @@ formData.append("user_role", userRole);
 
 if (userRole === "vendor") {
   formData.append("company_name", companyName);
-  formData.append("company_location", location);
+  formData.append("company_location",location);
   formData.append("rdb_certificate", rdbCertificate as Blob);
   formData.append("national_id_file", nationalIdFile as Blob);
   formData.append("company_logo", companyLogo as Blob);
@@ -186,10 +186,10 @@ if (userRole === "vendor") {
           <label>Sign up as:</label>
           <select
             value={userRole}
-            onChange={(e) => setUserRole(e.target.value as "user" | "vendor")}
+            onChange={(e) => setUserRole(e.target.value as "customer" | "vendor")}
             className="border rounded px-2 py-1 text-xs"
           >
-            <option value="user">Regular User</option>
+            <option value="customer">Regular User</option>
             <option value="vendor">Vendor</option>
           </select>
         </div>

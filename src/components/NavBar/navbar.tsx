@@ -77,7 +77,7 @@ function Navbar() {
                   Home: "/home",
                   Explore: "/explore",
                   Vendors: "/allvendors",
-                  AboutUs: "/about-us",
+                  AboutUs: "/about",
                 };
 
                 return (
