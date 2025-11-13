@@ -10,14 +10,13 @@ const ProductRowComponent = ProductRow as React.ComponentType<any>;
 
 interface Props {
   products: ProductWithImages[];
-  onAdd: (p: ProductWithImages) => void;
   onUpdate: (p: ProductWithImages) => void;
   onDelete: (id: number) => void;
+  onStockUpdate: (id: number, stock: number) => void;
 }
 
-export default function ProductTable({ products, onDelete }: Props) {
+export default function ProductTable({ products, onDelete, onStockUpdate }: Props) {
   const navigate = useNavigate();
-  const [] = useState(false);
 
   return (
     <div className=" bg-[#F5F5F5]">
@@ -59,8 +58,9 @@ export default function ProductTable({ products, onDelete }: Props) {
                 <ProductRowComponent
                   key={product.id}
                   product={product}
-                  onEdit={() => navigate(`/my-products/edit/${product.id}`)} // Fixed: proper type
+                  onEdit={() => navigate(`/my-products/edit/${product.id}`)}
                   onDelete={onDelete}
+                  onStockUpdate={onStockUpdate}
                 />
               ))
             )}

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { ShoppingCartIcon, EyeIcon, HeartIcon } from "@heroicons/react/24/outline";
 import { useCart } from "../contexts/CartContext";
 
@@ -23,7 +22,6 @@ const Explore: React.FC = () => {
   const [sortBy, setSortBy] = useState("Highest Rated");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  const navigate = useNavigate();
   const { addToCart } = useCart();
 
   const products: Product[] = [

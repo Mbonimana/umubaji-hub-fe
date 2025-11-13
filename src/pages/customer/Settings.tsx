@@ -17,7 +17,7 @@ interface CustomerProfile {
 
 export default function CustomerSettings() {
   const [profile, setProfile] = useState<CustomerProfile>({ status: 'Active' });
-  const [original, setOriginal] = useState<CustomerProfile>({});
+  const [, setOriginal] = useState<CustomerProfile>({});
   const [tab, setTab] = useState<'personal' | 'security'>('personal');
 
   useEffect(() => {
