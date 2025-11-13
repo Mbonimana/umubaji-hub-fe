@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { X, Upload } from 'lucide-react';
 import Sidebar from '../../components/vendorDashboard/Sidebar';
 import Navbar from '../../components/vendorDashboard/Navbar';
-import { updateProduct } from '../../services/vendorProductsApi';
+import { createProduct, updateProduct } from '../../services/vendorProductsApi';
 import { getBaseUrl } from '../../config/baseUrl';
 import axios from 'axios';
 import Notiflix from 'notiflix';
@@ -104,6 +104,17 @@ export default function ProductFormPage() {
       if (isEdit && id) {
         await updateProduct(
           Number(id),
+          {
+            name: form.name,
+            price: form.price,
+            description: form.description || undefined,
+            category: form.category || undefined,
+            stock: form.stock || undefined,
+          },
+          imageFile || undefined
+        );
+      } else {
+        await createProduct(
           {
             name: form.name,
             price: form.price,
