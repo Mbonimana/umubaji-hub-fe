@@ -238,7 +238,7 @@ const Home: React.FC = () => {
         Join <span className="font-bold">UmubajiHub</span> and grow your business.
       </p>
       <Link to="/Signup">
-        <button className="inline-block bg-[#4B341C] text-[#F5F5F5] text-base sm:text-lg font-semibold px-6 py-3 rounded-md shadow hover:bg-[#3b2a15] transition duration-300">
+                        <button className="px-6 py-2 bg-[#4B341C] text-white rounded-md text-sm font-semibold hover:bg-[#3b2a15] transition">
           Become a Vendor
         </button>
       </Link>
