@@ -5,6 +5,7 @@ import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import Index from './pages/index.tsx';
 import Unauthorized from './pages/NotAuthorized.tsx';
+import ScrollToTop from './components/ScrollToTop.tsx';
 
 import Login from './components/auth/login';
 import Signup from './components/auth/signup';
@@ -56,6 +57,8 @@ import ProtectedRoute from './routes/ProtectedRoute.tsx';
 
 function App() {
   return (
+    <>
+    <ScrollToTop />
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={<Index />} />
@@ -112,6 +115,7 @@ function App() {
       <Route path="/customer/settings" element={<CustomerSettings />} />
       <Route path="/customer/wishlist" element={<CustomerWishlist />} />
     </Routes>
+    </>
   );
 }
 
