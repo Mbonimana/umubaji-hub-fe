@@ -16,6 +16,7 @@ interface Vendor {
   company_email?: string;
   company_location: string;
   image?: string;
+  cover_image?: string;
   products?: Product[];
 }
 
@@ -30,7 +31,7 @@ const VendorPage: React.FC = () => {
   }
 
   // Use vendor logo as hero background and profile image
-  const backgroundImage = vendor.image || "https://via.placeholder.com/1200x400?text=Vendor+Background";
+  const backgroundImage = vendor.cover_image || "https://via.placeholder.com/1200x400?text=Vendor+Background";
 
   return (
     <div className="min-h-screen w-full bg-gray-50 font-sans">
