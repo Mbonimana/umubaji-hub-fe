@@ -31,27 +31,33 @@ const VendorsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // MODAL STATES
   const [openModal, setOpenModal] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState<number | null>(null);
 
-  // REVIEW MODAL STATES
   const [reviews, setReviews] = useState<any[]>([]);
   const [average, setAverage] = useState(0);
   const [total, setTotal] = useState(0);
 
   const [title, setTitle] = useState("");
-  const [rating, setRating] = useState(5);
+  const [rating, setRating] = useState(1);
   const [comment, setComment] = useState("");
   const [loadingReview, setLoadingReview] = useState(false);
 
   const baseURL = getBaseUrl();
   const user_id = JSON.parse(localStorage.getItem("user") || "{}")?.id;
 
+  // Helper: get color based on rating
+  const getRatingColor = (r: number) => {
+    if (r <= 1) return "text-red-500 fill-red-500";
+    if (r <= 3) return "text-yellow-400 fill-yellow-400";
+    return "text-green-500 fill-green-500";
+  };
+
   // Fetch vendors
   useEffect(() => {
     const fetchVendors = async () => {
       try {
+        setLoading(true);
         const response = await axios.get(`${baseURL}/users/verified`);
         const vendorListRaw = response.data.users ?? [];
 
@@ -98,24 +104,26 @@ const VendorsPage: React.FC = () => {
     fetchVendors();
   }, []);
 
-  // Fetch reviews for a vendor (modal)
   const fetchVendorReviews = async (vendorId: number) => {
     try {
+      Notiflix.Loading.standard("Loading reviews...");
       const res = await axios.get(`${baseURL}/reviews/${vendorId}`);
       setReviews(res.data.reviews);
       setAverage(parseFloat(res.data.average_rating));
       setTotal(res.data.total_reviews);
     } catch (error) {
       console.error("Failed to load reviews", error);
+    } finally {
+      Notiflix.Loading.remove();
     }
   };
 
-  // Submit review with Notiflix
   const submitReview = async () => {
-    if (!title || !comment || !rating) return Notiflix.Notify.failure("All fields are required");
+    if (!title || !comment || !rating)
+      return Notiflix.Notify.failure("All fields are required");
 
-    Notiflix.Loading.circle("Submitting review...");
     setLoadingReview(true);
+    Notiflix.Loading.standard("Submitting review...");
 
     try {
       await axios.post(`${baseURL}/reviews/create-review`, {
@@ -128,19 +136,19 @@ const VendorsPage: React.FC = () => {
 
       setTitle("");
       setComment("");
-      setRating(5);
+      setRating(1);
 
       await fetchVendorReviews(selectedVendor!);
 
       Notiflix.Loading.remove();
-      Notiflix.Notify.success("Your review was submitted!");
+      Notiflix.Notify.success("Review submitted!");
     } catch (err) {
       console.error(err);
       Notiflix.Loading.remove();
       Notiflix.Notify.failure("Failed to submit review");
+    } finally {
+      setLoadingReview(false);
     }
-
-    setLoadingReview(false);
   };
 
   return (
@@ -170,8 +178,8 @@ const VendorsPage: React.FC = () => {
         </h2>
 
         {loading ? (
-          <div className="flex justify-center items-center h-32">
-            <div className="w-12 h-12 border-4 border-gray-300 border-t-[#4B341C] rounded-full animate-spin"></div>
+          <div className="flex justify-center">
+            <div className="w-10 h-10 border-4 border-gray-300 border-t-[#4B341C] rounded-full animate-spin"></div>
           </div>
         ) : error ? (
           <p className="text-center text-red-500">{error}</p>
@@ -209,10 +217,10 @@ const VendorsPage: React.FC = () => {
                       {[...Array(5)].map((_, i) => (
                         <Star
                           key={i}
-                          size={14} 
+                          size={14}
                           className={`mr-1 ${
                             v.reviews && i < Math.round(v.rating || 0)
-                              ? "text-yellow-400 fill-yellow-400"
+                              ? getRatingColor(Math.round(v.rating || 0))
                               : "text-gray-300"
                           }`}
                         />
@@ -272,7 +280,7 @@ const VendorsPage: React.FC = () => {
                   size={20}
                   className={`mr-1 ${
                     i < Math.round(average)
-                      ? "text-yellow-400 fill-yellow-400"
+                      ? getRatingColor(Math.round(average))
                       : "text-gray-300"
                   }`}
                 />
@@ -290,7 +298,6 @@ const VendorsPage: React.FC = () => {
                 reviews.map((r) => (
                   <div key={r.id} className="border-b py-2">
                     <p className="font-semibold">{r.title}</p>
-
                     <div className="flex">
                       {[...Array(r.rating)].map((_, i) => (
                         <Star
@@ -300,10 +307,9 @@ const VendorsPage: React.FC = () => {
                         />
                       ))}
                     </div>
-
-                    <p className="text-gray-700 text-sm">{r.comment}</p>
-                    <p className="text-xs text-gray-500">
-                      by {r.customer_firstname} {r.customer_lastname}
+                    <p className="text-gray-700 text-sm ">{r.comment}</p>
+                    <p className="text-xs text-gray-500 font-bold ">
+                      By {r.customer_firstname} {r.customer_lastname}
                     </p>
                   </div>
                 ))
@@ -336,12 +342,12 @@ const VendorsPage: React.FC = () => {
                   size={22}
                   onClick={() => setRating(s)}
                   className={`cursor-pointer ${
-                    s <= rating
-                      ? "text-yellow-400 fill-yellow-400"
-                      : "text-gray-300"
+                    s <= rating ? getRatingColor(rating) : "text-gray-300"
                   }`}
                 />
               ))}
+             
+             <span className="text-sm italic ml-8">"Tip: Enter star rating for this vendor"</span>
             </div>
 
             <button
