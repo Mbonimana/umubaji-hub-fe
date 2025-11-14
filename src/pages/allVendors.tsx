@@ -63,8 +63,8 @@ const VendorsPage: React.FC = () => {
           image: v.company_logo || "",
           cover_image: v.company_cover_photo || "",
           products: v.products || [],
-          rating: 0, // temporary, will be updated
-          reviews: 0, // temporary, will be updated
+          rating: 0,
+          reviews: 0,
         }));
 
         setVendors(vendorList);
@@ -168,7 +168,9 @@ const VendorsPage: React.FC = () => {
         </h2>
 
         {loading ? (
-          <p className="text-center text-gray-500">Loading vendors...</p>
+          <div className="flex justify-center items-center h-32">
+            <div className="w-12 h-12 border-4 border-gray-300 border-t-[#4B341C] rounded-full animate-spin"></div>
+          </div>
         ) : error ? (
           <p className="text-center text-red-500">{error}</p>
         ) : vendors.length > 0 ? (
