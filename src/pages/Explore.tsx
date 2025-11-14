@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ShoppingCartIcon, EyeIcon, HeartIcon } from "@heroicons/react/24/outline";
 import { useCart } from "../contexts/CartContext";
+import { getBaseUrl } from "../config/baseUrl";
 
 interface Product {
   id: number;
@@ -24,14 +25,23 @@ const Explore: React.FC = () => {
 
   const { addToCart } = useCart();
 
-  const products: Product[] = [
-    { id: 1, name: "Modern Dining Table", category: "Tables", location: "Kigali", material: "Oak Wood", price: 85000, img: "/ph1.jpg", vendor: "Master Woodworks", rating: 4.8 },
-    { id: 2, name: "Ergonomic Office Chair", category: "Chairs", location: "Huye", material: "Walnut Wood", price: 65000, img: "/ph3.jpg", vendor: "Elite Furniture Co", rating: 4.7 },
-    { id: 3, name: "Classic Bookshelf", category: "Shelves", location: "Musanze", material: "Pine Wood", price: 25000, img: "/photo4.jpg", vendor: "Rwanda Craft Studio", rating: 4.5 },
-    { id: 4, name: "Rustic Coffee Table", category: "Tables", location: "Rubavu", material: "Mahogany", price: 75000, img: "/ph5.jpg", vendor: "Kivu Woodworks", rating: 4.6 },
-    { id: 5, name: "Office Chair Pro", category: "Chairs", location: "Kigali", material: "Leather & Metal", price: 95000, img: "/ph7.jpg", vendor: "Crafted Works", rating: 4.9 },
-    { id: 6, name: "Mini Office Desk", category: "Desks", location: "Huye", material: "Composite Wood", price: 45000, img: "/photo2.jpg", vendor: "WorkWell Studios", rating: 4.3 },
-  ];
+  // ⭐ REPLACE STATIC DATA WITH FETCHED PRODUCTS
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+  const fetchProducts = async () => {
+    try {
+      const Baseurl = getBaseUrl();
+      const res = await fetch(`${Baseurl}/products/getproducts`);
+      const data = await res.json();
+      setProducts(data);
+    } catch (err) {
+      console.error("Failed to load products:", err);
+    }
+  };
+
+  fetchProducts();
+}, []);
 
   const filtered = products
     .filter((p) => 
@@ -99,11 +109,17 @@ const Explore: React.FC = () => {
                       <h3 className="font-semibold text-lg text-[#4B341C]">{product.name}</h3>
                       <p className="text-sm text-gray-500">{product.material}</p>
                       <p className="text-green-600 mt-1 font-semibold">RWF {product.price.toLocaleString()}</p>
-                      {/* Buttons in a single horizontal line */}
+
                       <div className="flex gap-2 mt-3">
-                        <button onClick={() => setSelectedProduct(product)} className="flex items-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white text-xs px-3 py-1 rounded-md transition"><EyeIcon className="w-4 h-4" /> View</button>
-                        <button onClick={() => addToCart({ id: product.id.toString(), name: product.name, price: product.price, vendor: product.vendor, img: product.img, quantity: 1 })} className="flex items-center gap-1 bg-[#4B341C] hover:bg-[#3b2a15] text-white text-xs px-3 py-1 rounded-md transition"><ShoppingCartIcon className="w-4 h-4" /> Add</button>
-                        <button className="flex items-center gap-1 px-3 py-1 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 text-xs transition"><HeartIcon className="w-4 h-4" /> Wishlist</button>
+                        <button onClick={() => setSelectedProduct(product)} className="flex items-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white text-xs px-3 py-1 rounded-md transition">
+                          <EyeIcon className="w-4 h-4" /> View
+                        </button>
+                        <button onClick={() => addToCart({ id: product.id.toString(), name: product.name, price: product.price, vendor: product.vendor, img: product.img, quantity: 1 })} className="flex items-center gap-1 bg-[#4B341C] hover:bg-[#3b2a15] text-white text-xs px-3 py-1 rounded-md transition">
+                          <ShoppingCartIcon className="w-4 h-4" /> Add
+                        </button>
+                        <button className="flex items-center gap-1 px-3 py-1 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 text-xs transition">
+                          <HeartIcon className="w-4 h-4" /> Wishlist
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -114,7 +130,6 @@ const Explore: React.FC = () => {
         </div>
       </main>
 
-      {/* Product Modal */}
       {selectedProduct && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-md max-w-md w-full relative shadow-lg">
@@ -125,7 +140,13 @@ const Explore: React.FC = () => {
             <p className="text-green-600 font-bold mt-2">RWF {selectedProduct.price.toLocaleString()}</p>
             <p className="text-gray-600 mt-2">Vendor: <span className="font-semibold">{selectedProduct.vendor}</span></p>
             <p className="text-gray-500">Location: {selectedProduct.location}</p>
-            <button className="mt-4 bg-[#4B341C] text-white px-4 py-2 rounded-md w-full" onClick={() => { addToCart({ id: selectedProduct.id.toString(), name: selectedProduct.name, price: selectedProduct.price, vendor: selectedProduct.vendor, img: selectedProduct.img, quantity: 1 }); setSelectedProduct(null); }}>Add to Cart</button>
+            <button className="mt-4 bg-[#4B341C] text-white px-4 py-2 rounded-md w-full"
+              onClick={() => {
+                addToCart({ id: selectedProduct.id.toString(), name: selectedProduct.name, price: selectedProduct.price, vendor: selectedProduct.vendor, img: selectedProduct.img, quantity: 1 });
+                setSelectedProduct(null);
+              }}>
+              Add to Cart
+            </button>
           </div>
         </div>
       )}
