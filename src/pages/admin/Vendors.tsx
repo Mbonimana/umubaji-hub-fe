@@ -3,7 +3,6 @@ import axios from 'axios';
 import { getBaseUrl } from '../../config/baseUrl';
 
 export default function AdminVendors() {
-
   const [vendors, setVendors] = useState<any[]>([]);
   const [filtered, setFiltered] = useState<any[]>([]);
   const [filter, setFilter] = useState<'all' | 'pending' | 'verified' | 'rejected'>('all');
@@ -29,11 +28,11 @@ export default function AdminVendors() {
       ? 'bg-yellow-50 text-yellow-700'
       : 'bg-red-50 text-red-700';
 
-  // 🔍 Highlight Function
+  // Highlight Function
   const highlight = (text: string, query: string) => {
     if (!query) return text;
-    const regex = new RegExp(`(${query})`, "gi");
-    return text?.toString().replace(regex, "<mark>$1</mark>");
+    const regex = new RegExp(`(${query})`, 'gi');
+    return text?.toString().replace(regex, '<mark>$1</mark>');
   };
 
   // Load Vendors
@@ -56,7 +55,7 @@ export default function AdminVendors() {
           rdb_certificate: v.rdb_certificate,
           national_id_file: v.national_id_file,
           company_logo: v.company_logo,
-          company_cover_photo: v.company_cover_photo
+          company_cover_photo: v.company_cover_photo,
         }));
         setVendors(vendorsData);
         setFiltered(vendorsData);
@@ -82,8 +81,9 @@ export default function AdminVendors() {
     }
 
     const searched = base.filter((v) =>
-      [v.vendor_name, v.vendor_sname, v.company_name, v.email, v.phone]
-        .some((field) => field?.toLowerCase().includes(search.toLowerCase()))
+      [v.vendor_name, v.vendor_sname, v.company_name, v.email, v.phone].some((field) =>
+        field?.toLowerCase().includes(search.toLowerCase())
+      )
     );
 
     setFiltered(searched);
@@ -146,11 +146,17 @@ export default function AdminVendors() {
             placeholder="Search vendors"
             className="border rounded-md px-3 py-2 text-sm"
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCurrentPage(1);
+            }}
           />
           <button
             className="px-3 py-2 bg-primary w-24 h-8 flex items-center justify-center text-white rounded-md hover:bg-primary-dark transition"
-            onClick={() => { setSearch(''); setCurrentPage(1); }}
+            onClick={() => {
+              setSearch('');
+              setCurrentPage(1);
+            }}
           >
             Clear
           </button>
@@ -208,7 +214,9 @@ export default function AdminVendors() {
                     />
                     <td
                       className="px-4 py-3"
-                      dangerouslySetInnerHTML={{ __html: highlight(`${v.vendor_name} ${v.vendor_sname}`, search) }}
+                      dangerouslySetInnerHTML={{
+                        __html: highlight(`${v.vendor_name} ${v.vendor_sname}`, search),
+                      }}
                     />
                     <td className="px-4 py-3">{v.products}</td>
                     <td className="px-4 py-3">
@@ -271,25 +279,54 @@ export default function AdminVendors() {
 
       {showDetails && selected && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/40" onClick={() => { setShowDetails(false); setSelected(null); }} />
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => {
+              setShowDetails(false);
+              setSelected(null);
+            }}
+          />
           <div className="relative bg-white w-full max-w-lg rounded-xl shadow-lg max-h-[90vh] overflow-y-auto p-6">
             <div className="flex items-start justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-800">Vendor Details</h3>
               <button
                 className="px-3 py-1.5 rounded-md border text-gray-700"
-                onClick={() => { setShowDetails(false); setSelected(null); }}
+                onClick={() => {
+                  setShowDetails(false);
+                  setSelected(null);
+                }}
               >
                 Close
               </button>
             </div>
 
             <div className="space-y-3 text-sm text-gray-700">
-              <div className="flex justify-between"><span>Vendor Name</span><span>{selected.vendor_name} {selected.vendor_sname}</span></div>
-              <div className="flex justify-between"><span>Company Name</span><span>{selected.company_name}</span></div>
-              <div className="flex justify-between"><span>Phone</span><span>{selected.phone}</span></div>
-              <div className="flex justify-between"><span>Email</span><span>{selected.email}</span></div>
-              <div className="flex justify-between"><span>Location</span><span>{selected.location}</span></div>
-              <div className="flex justify-between"><span>Status</span><span>{selected.status}</span></div>
+              <div className="flex justify-between">
+                <span>Vendor Name</span>
+                <span>
+                  {selected.vendor_name} {selected.vendor_sname}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>Company Name</span>
+                <span>{selected.company_name}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Phone</span>
+                <span>{selected.phone}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Email</span>
+                <span>{selected.email}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Location</span>
+                <span>{selected.location}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Status</span>
+                <span>{selected.status}</span>
+              </div>
 
               {selected.company_logo && (
                 <div>
@@ -301,7 +338,10 @@ export default function AdminVendors() {
               {selected.company_cover_photo && (
                 <div>
                   <p className="text-gray-500 mb-1">Cover Photo</p>
-                  <img src={selected.company_cover_photo} className="w-full max-h-40 object-cover border rounded" />
+                  <img
+                    src={selected.company_cover_photo}
+                    className="w-full max-h-40 object-cover border rounded"
+                  />
                 </div>
               )}
 
@@ -309,11 +349,15 @@ export default function AdminVendors() {
                 <p className="text-gray-500">Documents:</p>
 
                 {selected.rdb_certificate && (
-                  <a href={selected.rdb_certificate} target="_blank" className="text-[#4B341C] underline block">View RDB Certificate</a>
+                  <a href={selected.rdb_certificate} target="_blank" className="text-[#4B341C] underline block">
+                    View RDB Certificate
+                  </a>
                 )}
 
                 {selected.national_id_file && (
-                  <a href={selected.national_id_file} target="_blank" className="text-[#4B341C] underline block">View National ID</a>
+                  <a href={selected.national_id_file} target="_blank" className="text-[#4B341C] underline block">
+                    View National ID
+                  </a>
                 )}
               </div>
             </div>
@@ -328,24 +372,35 @@ export default function AdminVendors() {
                 />
 
                 <div className="flex items-center justify-end gap-2">
-                  <button className="px-3 py-2 rounded-lg border text-gray-700" onClick={() => setCanManage(false)}>
+                  <button
+                    className="px-3 py-2 rounded-lg border text-gray-700"
+                    onClick={() => setCanManage(false)}
+                  >
                     Cancel
                   </button>
 
                   <button
-                    className="px-3 py-2 rounded-lg bg-green-600 text-white"
+                    className="px-3 py-2 rounded-lg bg-green-600 text-white flex items-center justify-center gap-2"
                     disabled={submitting}
                     onClick={() => verifyVendor(selected.id)}
                   >
-                    Approve
+                    {submitting ? (
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      'Approve'
+                    )}
                   </button>
 
                   <button
-                    className="px-3 py-2 rounded-lg bg-red-600 text-white disabled:opacity-50"
+                    className="px-3 py-2 rounded-lg bg-red-600 text-white disabled:opacity-50 flex items-center justify-center gap-2"
                     disabled={submitting || reason.trim().length === 0}
                     onClick={() => rejectVendor(selected.id)}
                   >
-                    Reject
+                    {submitting ? (
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      'Reject'
+                    )}
                   </button>
                 </div>
               </div>
