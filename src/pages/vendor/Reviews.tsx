@@ -1,12 +1,35 @@
+import { useEffect, useState } from 'react';
 import Sidebar from '../../components/vendorDashboard/Sidebar';
 import Navbar from '../../components/vendorDashboard/Navbar';
 
+interface Review {
+  id: number;
+  customer_firstname: string;
+  customer_lastname: string;
+  rating: number;
+  comment: string;
+  created_at: string;
+}
+
 export default function Reviews() {
-  const reviews = [
-    { id: 'R-1001', customer: 'Ralph Edwards', rating: 5, comment: 'Excellent quality!', date: '12-07-2023 23:26' },
-    { id: 'R-1002', customer: 'Theresa Webb', rating: 4, comment: 'Very good, will buy again.', date: '12-30-2023 05:18' },
-    { id: 'R-1003', customer: 'Cameron Williamson', rating: 3, comment: 'Average experience.', date: '11-30-2023 23:14' },
-  ];
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await fetch('{{ _.base }}reviews/24');
+        const data = await response.json();
+        setReviews(data.reviews); // maps the reviews array from backend
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex">
@@ -24,28 +47,38 @@ export default function Reviews() {
 
           <div className="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="min-w-full text-left text-sm">
-                <thead className="bg-[#f9fafb] text-gray-600">
-                  <tr>
-                    <th className="px-4 py-3">Review ID</th>
-                    <th className="px-4 py-3">Customer</th>
-                    <th className="px-4 py-3">Rating</th>
-                    <th className="px-4 py-3">Comment</th>
-                    <th className="px-4 py-3">Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {reviews.map((r, idx) => (
-                    <tr key={r.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-[#fcfcfc]'}>
-                      <td className="px-4 py-3 font-medium text-gray-800">{r.id}</td>
-                      <td className="px-4 py-3 text-gray-800">{r.customer}</td>
-                      <td className="px-4 py-3 text-gray-800">{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</td>
-                      <td className="px-4 py-3 text-gray-600">{r.comment}</td>
-                      <td className="px-4 py-3 text-gray-600">{r.date}</td>
+              {loading ? (
+                <p className="p-4 text-gray-500">Loading reviews...</p>
+              ) : reviews.length === 0 ? (
+                <p className="p-4 text-gray-500">No reviews yet.</p>
+              ) : (
+                <table className="min-w-full text-left text-sm">
+                  <thead className="bg-[#f9fafb] text-gray-600">
+                    <tr>
+                      <th className="px-4 py-3">Review ID</th>
+                      <th className="px-4 py-3">Customer</th>
+                      <th className="px-4 py-3">Rating</th>
+                      <th className="px-4 py-3">Comment</th>
+                      <th className="px-4 py-3">Date</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {reviews.map((r, idx) => (
+                      <tr key={r.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-[#fcfcfc]'}>
+                        <td className="px-4 py-3 font-medium text-gray-800">{r.id}</td>
+                        <td className="px-4 py-3 text-gray-800">{`${r.customer_firstname} ${r.customer_lastname}`}</td>
+                        <td className="px-4 py-3 text-gray-800">
+                          {'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}
+                        </td>
+                        <td className="px-4 py-3 text-gray-600">{r.comment}</td>
+                        <td className="px-4 py-3 text-gray-600">
+                          {new Date(r.created_at).toLocaleString()}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
         </main>
