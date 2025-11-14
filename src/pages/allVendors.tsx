@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { MapPin, Star } from "lucide-react";
 import { getBaseUrl } from "../config/baseUrl";
+import Notiflix from "notiflix";
 
 interface Product {
   id: number;
@@ -54,7 +55,6 @@ const VendorsPage: React.FC = () => {
         const response = await axios.get(`${baseURL}/users/verified`);
         const vendorListRaw = response.data.users ?? [];
 
-        // Map vendors with initial data
         const vendorList: Vendor[] = vendorListRaw.map((v: any) => ({
           id: v.id,
           company_name: v.company_name,
@@ -69,7 +69,6 @@ const VendorsPage: React.FC = () => {
 
         setVendors(vendorList);
 
-        // Fetch reviews for each vendor
         await Promise.all(
           vendorList.map(async (v) => {
             try {
@@ -111,10 +110,11 @@ const VendorsPage: React.FC = () => {
     }
   };
 
-  // Submit review
+  // Submit review with Notiflix
   const submitReview = async () => {
-    if (!title || !comment || !rating) return alert("All fields are required");
+    if (!title || !comment || !rating) return Notiflix.Notify.failure("All fields are required");
 
+    Notiflix.Loading.circle("Submitting review...");
     setLoadingReview(true);
 
     try {
@@ -132,10 +132,12 @@ const VendorsPage: React.FC = () => {
 
       await fetchVendorReviews(selectedVendor!);
 
-      alert("Review submitted!");
+      Notiflix.Loading.remove();
+      Notiflix.Notify.success("Your review was submitted!");
     } catch (err) {
       console.error(err);
-      alert("Failed to submit review");
+      Notiflix.Loading.remove();
+      Notiflix.Notify.failure("Failed to submit review");
     }
 
     setLoadingReview(false);
@@ -207,7 +209,7 @@ const VendorsPage: React.FC = () => {
                       {[...Array(5)].map((_, i) => (
                         <Star
                           key={i}
-                          size={14} // smaller stars
+                          size={14} 
                           className={`mr-1 ${
                             v.reviews && i < Math.round(v.rating || 0)
                               ? "text-yellow-400 fill-yellow-400"
