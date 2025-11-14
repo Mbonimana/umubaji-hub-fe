@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { MapPin, Star } from "lucide-react";
@@ -30,14 +30,32 @@ const VendorsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // MODAL STATES
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedVendor, setSelectedVendor] = useState<number | null>(null);
+
+  // REVIEW MODAL STATES
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [average, setAverage] = useState(0);
+  const [total, setTotal] = useState(0);
+
+  const [title, setTitle] = useState("");
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState("");
+  const [loadingReview, setLoadingReview] = useState(false);
+
+  const baseURL = getBaseUrl();
+  const user_id = JSON.parse(localStorage.getItem("user") || "{}")?.id;
+
+  // Fetch vendors
   useEffect(() => {
     const fetchVendors = async () => {
       try {
-        const baseURL = getBaseUrl();
         const response = await axios.get(`${baseURL}/users/verified`);
-
         const vendorListRaw = response.data.users ?? [];
-        const vendorList = vendorListRaw.map((v: any) => ({
+
+        // Map vendors with initial data
+        const vendorList: Vendor[] = vendorListRaw.map((v: any) => ({
           id: v.id,
           company_name: v.company_name,
           company_email: v.email,
@@ -45,15 +63,35 @@ const VendorsPage: React.FC = () => {
           image: v.company_logo || "",
           cover_image: v.company_cover_photo || "",
           products: v.products || [],
-          rating: parseFloat((Math.random() * 1.5 + 3.5).toFixed(1)), // 3.5 - 5.0
-          reviews: Math.floor(Math.random() * 200) + 20, // 20 - 220 reviews
+          rating: 0, // temporary, will be updated
+          reviews: 0, // temporary, will be updated
         }));
 
         setVendors(vendorList);
-      } catch (err: any) {
-        console.error("Error fetching vendors:", err);
-        setError("Failed to load vendors. Please try again later.");
-        setVendors([]);
+
+        // Fetch reviews for each vendor
+        await Promise.all(
+          vendorList.map(async (v) => {
+            try {
+              const res = await axios.get(`${baseURL}/reviews/${v.id}`);
+              const avg = parseFloat(res.data.average_rating);
+              const totalReviews = res.data.total_reviews;
+
+              setVendors((prev) =>
+                prev.map((vendor) =>
+                  vendor.id === v.id
+                    ? { ...vendor, rating: avg, reviews: totalReviews }
+                    : vendor
+                )
+              );
+            } catch (err) {
+              console.error(`Failed to fetch reviews for vendor ${v.id}`, err);
+            }
+          })
+        );
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load vendors.");
       } finally {
         setLoading(false);
       }
@@ -61,9 +99,51 @@ const VendorsPage: React.FC = () => {
     fetchVendors();
   }, []);
 
+  // Fetch reviews for a vendor (modal)
+  const fetchVendorReviews = async (vendorId: number) => {
+    try {
+      const res = await axios.get(`${baseURL}/reviews/${vendorId}`);
+      setReviews(res.data.reviews);
+      setAverage(parseFloat(res.data.average_rating));
+      setTotal(res.data.total_reviews);
+    } catch (error) {
+      console.error("Failed to load reviews", error);
+    }
+  };
+
+  // Submit review
+  const submitReview = async () => {
+    if (!title || !comment || !rating) return alert("All fields are required");
+
+    setLoadingReview(true);
+
+    try {
+      await axios.post(`${baseURL}/reviews/create-review`, {
+        vendor_id: selectedVendor,
+        user_id,
+        title,
+        rating,
+        comment,
+      });
+
+      setTitle("");
+      setComment("");
+      setRating(5);
+
+      await fetchVendorReviews(selectedVendor!);
+
+      alert("Review submitted!");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to submit review");
+    }
+
+    setLoadingReview(false);
+  };
+
   return (
     <div>
-      {/* Header Section */}
+      {/* Header */}
       <div
         className="relative w-full h-[400px] bg-cover bg-center"
         style={{
@@ -81,7 +161,7 @@ const VendorsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Vendor Cards Section */}
+      {/* Vendors */}
       <section className="max-w-7xl mx-auto px-[4%] py-16">
         <h2 className="text-xl font-semibold mb-8 text-[#4B341C]">
           Our Verified Vendors
@@ -96,9 +176,8 @@ const VendorsPage: React.FC = () => {
             {vendors.map((v) => (
               <div
                 key={v.id}
-                className="bg-white rounded-lg shadow hover:shadow-lg transition duration-300 overflow-hidden flex flex-col cursor-pointer"
+                className="bg-white rounded-lg shadow hover:shadow-lg transition duration-300 overflow-hidden flex flex-col"
               >
-                {/* Image */}
                 <div className="h-48 overflow-hidden">
                   <img
                     src={
@@ -110,33 +189,47 @@ const VendorsPage: React.FC = () => {
                   />
                 </div>
 
-                {/* Info */}
                 <div className="p-4 flex flex-col justify-between flex-grow">
                   <div>
                     <h3 className="font-semibold text-lg text-[#4B341C] truncate">
                       {v.company_name}
                     </h3>
+
                     <p className="text-sm text-gray-600 flex items-center mt-1">
                       <MapPin size={14} className="mr-1 text-[#4B341C]" />
                       {v.company_location}
                     </p>
 
-                    {/* ⭐ Rating Display */}
+                    {/* Rating */}
                     <div className="flex items-center mt-2">
-                      <Star
-                        size={18}
-                        className="text-yellow-400 fill-yellow-400 mr-1"
-                      />
-                      <span className="font-semibold text-gray-800">
-                        {v.rating?.toFixed(1)}
-                      </span>
-                      <span className="text-sm text-gray-500 ml-1">
-                        ({v.reviews} reviews)
-                      </span>
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          size={14} // smaller stars
+                          className={`mr-1 ${
+                            v.reviews && i < Math.round(v.rating || 0)
+                              ? "text-yellow-400 fill-yellow-400"
+                              : "text-gray-300"
+                          }`}
+                        />
+                      ))}
+
+                      {/* Show button for adding/seeing reviews */}
+                      <button
+                        onClick={() => {
+                          setSelectedVendor(v.id);
+                          fetchVendorReviews(v.id);
+                          setOpenModal(true);
+                        }}
+                        className="ml-2 text-sm text-blue-600 underline"
+                      >
+                        {v.reviews && v.reviews > 0
+                          ? `See reviews (${v.reviews})`
+                          : "Add Review"}
+                      </button>
                     </div>
                   </div>
 
-                  {/* Button */}
                   <button
                     onClick={() =>
                       navigate(`/vendorPage/${v.id}`, { state: { vendor: v } })
@@ -153,6 +246,110 @@ const VendorsPage: React.FC = () => {
           <p className="text-center text-gray-500">No vendors found.</p>
         )}
       </section>
+
+      {/* REVIEW MODAL */}
+      {openModal && (
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+          <div className="bg-white w-full max-w-lg rounded-lg p-6 shadow relative">
+            <button
+              onClick={() => setOpenModal(false)}
+              className="absolute right-4 top-3 text-gray-500 hover:text-black"
+            >
+              ✕
+            </button>
+
+            <h2 className="text-xl font-semibold mb-2">Vendor Reviews</h2>
+
+            {/* Average */}
+            <div className="flex items-center mb-4">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  size={20}
+                  className={`mr-1 ${
+                    i < Math.round(average)
+                      ? "text-yellow-400 fill-yellow-400"
+                      : "text-gray-300"
+                  }`}
+                />
+              ))}
+              <span className="ml-2 font-semibold text-gray-700">
+                {average.toFixed(1)} ({total})
+              </span>
+            </div>
+
+            {/* Reviews List */}
+            <div className="max-h-60 overflow-y-auto border p-3 rounded mb-4">
+              {reviews.length === 0 ? (
+                <p className="text-gray-500">No reviews yet.</p>
+              ) : (
+                reviews.map((r) => (
+                  <div key={r.id} className="border-b py-2">
+                    <p className="font-semibold">{r.title}</p>
+
+                    <div className="flex">
+                      {[...Array(r.rating)].map((_, i) => (
+                        <Star
+                          key={i}
+                          size={16}
+                          className="text-yellow-400 fill-yellow-400"
+                        />
+                      ))}
+                    </div>
+
+                    <p className="text-gray-700 text-sm">{r.comment}</p>
+                    <p className="text-xs text-gray-500">
+                      by {r.customer_firstname} {r.customer_lastname}
+                    </p>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Add Review */}
+            <h3 className="font-semibold mb-2">Write a Review</h3>
+
+            <input
+              className="w-full border p-2 rounded mb-2"
+              placeholder="Title..."
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+
+            <textarea
+              className="w-full border p-2 rounded mb-2"
+              placeholder="Comment..."
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+            />
+
+            {/* Rating Selector */}
+            <div className="flex items-center mb-3">
+              <span className="mr-3">Rating:</span>
+              {[1, 2, 3, 4, 5].map((s) => (
+                <Star
+                  key={s}
+                  size={22}
+                  onClick={() => setRating(s)}
+                  className={`cursor-pointer ${
+                    s <= rating
+                      ? "text-yellow-400 fill-yellow-400"
+                      : "text-gray-300"
+                  }`}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={submitReview}
+              disabled={loadingReview}
+              className="w-full bg-[#4B341C] hover:bg-[#3b2a15] text-white py-2 rounded"
+            >
+              {loadingReview ? "Submitting..." : "Submit Review"}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
