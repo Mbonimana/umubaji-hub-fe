@@ -4,10 +4,10 @@ import StatsCard from '../../components/vendorDashboard/StatsCard';
 
 export default function Earnings() {
   const stats = [
-    { title: 'Total Earnings', value: '₦3,245,800', change: '+6.4%', icon: 'sales' as const },
-    { title: 'Pending Payouts', value: '₦245,300', change: 'Awaiting clearance', icon: 'orders' as const },
-    { title: 'This Month', value: '₦812,400', change: '+2.1%', icon: 'sales' as const },
-    { title: 'Last Payout', value: '₦520,000', change: 'Oct 15, 2025', icon: 'views' as const },
+    { title: 'Total Earnings', value: 'RF3,245,800', change: '+6.4%', icon: 'sales' as const },
+    { title: 'Pending Payouts', value: 'RF245,300', change: 'Awaiting clearance', icon: 'orders' as const },
+    { title: 'This Month', value: 'RF812,400', change: '+2.1%', icon: 'sales' as const },
+    { title: 'Last Payout', value: 'RF520,000', change: 'Oct 15, 2025', icon: 'views' as const },
   ];
 
   const payouts = [
@@ -56,7 +56,7 @@ export default function Earnings() {
                     <tr key={p.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-[#fcfcfc]'}>
                       <td className="px-4 py-3 font-medium text-gray-800">{p.id}</td>
                       <td className="px-4 py-3 text-gray-600">{new Date(p.date).toLocaleDateString()}</td>
-                      <td className="px-4 py-3 text-gray-800">₦{p.amount.toLocaleString()}</td>
+                      <td className="px-4 py-3 text-gray-800">RF{p.amount.toLocaleString()}</td>
                       <td className="px-4 py-3">
                         <span className="px-3 py-1 rounded-full text-xs font-medium bg-[#E6F7EF] text-[#0F9D58] border border-[#BFE9D6]">
                           {p.status}

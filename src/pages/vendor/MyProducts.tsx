@@ -1,4 +1,3 @@
-// src/pages/MyProducts.tsx
 import { useState, useEffect } from 'react';
 import Sidebar from '../../components/vendorDashboard/Sidebar';
 import Navbar from '../../components/vendorDashboard/Navbar';
@@ -126,8 +125,10 @@ export default function MyProducts() {
        
         <main className="flex-1 pt-20 p-6 overflow-y-auto ">
           {loading ? (
-            <div className="text-center py-12">
-              <p className="text-gray-500">Loading products...</p>
+            <div className="text-center py-12 flex flex-col items-center justify-center">
+              {/* Spinning Loader for Product Fetching */}
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+              <p className="mt-4 text-gray-700 font-medium">Loading products...</p>
             </div>
           ) : (
             <ProductTable
