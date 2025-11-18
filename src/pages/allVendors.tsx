@@ -64,7 +64,6 @@ const VendorsPage: React.FC = () => {
         const vendorList: Vendor[] = vendorListRaw.map((v: any) => ({
           id: v.id,
           company_name: v.company_name,
-          company_email: v.email,
           company_location: v.company_location,
           image: v.company_logo || "",
           cover_image: v.company_cover_photo || "",
