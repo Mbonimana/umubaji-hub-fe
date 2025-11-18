@@ -121,67 +121,66 @@ const Home: React.FC = () => {
             </div>
           ) : (
             <>
-             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-  {displayedProducts.map((product, idx) => (
-    <div
-      key={product.id || idx}
-      className="flex flex-col bg-white rounded-lg shadow hover:shadow-lg transition duration-300 overflow-hidden w-full h-[400px]"
-    >
-      <div className="overflow-hidden rounded-t-lg h-48">
-        <img
-          src={product.images && product.images.length > 0 ? product.images[0] : '/ph12.jpg'}
-          alt={product.name}
-          className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-        />
-      </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {displayedProducts.map((product, idx) => (
+                  <div
+                    key={product.id || idx}
+                    className="flex flex-col bg-white rounded-lg shadow hover:shadow-lg transition duration-300 overflow-hidden w-full h-[350px]" // reduced height
+                  >
+                    <div className="overflow-hidden rounded-t-lg h-40"> {/* reduced image height */}
+                      <img
+                        src={product.images && product.images.length > 0 ? product.images[0] : '/ph12.jpg'}
+                        alt={product.name}
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
 
-      <div className="p-4 flex flex-col gap-2 flex-1">
-        <h4 className="font-medium text-lg text-[#4B341C] truncate">{product.name}</h4>
+                    <div className="p-4 flex flex-col gap-2 flex-1">
+                      <h4 className="font-medium text-lg text-[#4B341C] truncate">{product.name}</h4>
 
-        {/* Category */}
-        <p className="text-sm text-gray-600 flex flex-row space-x-2">
-          <Tag size={20} className="text-gray-400" /> <span className="font-medium">{product.category}</span>
-        </p>
+                      <p className="text-sm text-gray-600 flex items-center space-x-2">
+                         <Tag size={15} className="text-gray-400" /> 
+                             <span className="font-medium">{product.category}</span>
+                                 </p>
+                      
+                                            <p className="text-sm text-gray-400 flex space-x-2">
+                                            <MapPin size={15} className="text-gray-400" style={{ verticalAlign: 'middle' }} />
+                                             <span className="align-baseline">{product.company_location }</span>
+                                               </p>
+                      <p className="text-green-600 font-bold mt-2">RWF {product.price}</p>
 
-        {/* Location */}
-        <p className="text-sm text-gray-400 flex flex-row space-x-2">
-          <MapPin size={20} className="text-gray-400" /> {product.company_location || 'Unknown'}
-        </p>
+                      <div className="flex gap-2 mt-3">
+                        <button
+                          className="flex items-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white text-xs px-3 py-1 rounded-md transition"
+                          onClick={() => setSelectedProduct(product)}
+                        >
+                          <EyeIcon className="w-4 h-4" /> View
+                        </button>
 
-        <p className="text-green-600 font-bold mt-2">RWF {product.price}</p>
+                        <button
+                          className="flex items-center gap-1 bg-[#4B341C] hover:bg-[#3b2a15] text-white text-xs px-3 py-1 rounded-md transition"
+                          onClick={() =>
+                            addToCart({
+                              id: product.id,
+                              name: product.name,
+                              price: parseFloat(product.price),
+                              vendor: "Default Vendor",
+                              img: product.images?.[0] ?? "",
+                              quantity: 1,
+                            })
+                          }
+                        >
+                          <ShoppingCartIcon className="w-4 h-4" /> Add
+                        </button>
 
-        <div className="flex gap-2 mt-3">
-          <button
-            className="flex items-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white text-sm px-3 py-1 rounded-md transition"
-            onClick={() => setSelectedProduct(product)}
-          >
-            <EyeIcon className="w-4 h-4" /> View
-          </button>
-
-          <button
-            className="flex items-center gap-1 bg-[#4B341C] hover:bg-[#3b2a15] text-white text-sm px-3 py-1 rounded-md transition"
-            onClick={() =>
-              addToCart({
-                id: product.id,
-                name: product.name,
-                price: parseFloat(product.price),
-                vendor: "Default Vendor",
-                img: product.images?.[0] ?? "",
-                quantity: 1,
-              })
-            }
-          >
-            <ShoppingCartIcon className="w-4 h-4" /> Add
-          </button>
-
-          <button className="flex items-center gap-1 px-3 py-1 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 text-sm transition">
-            <HeartIcon className="w-4 h-4" /> Wishlist
-          </button>
-        </div>
-      </div>
-    </div>
-  ))}
-</div>
+                        <button className="flex items-center gap-1 px-3 py-1 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 text-xs transition">
+                          <HeartIcon className="w-4 h-4" /> Wishlist
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
 
               {!showAll && products.length > 8 && (
                 <div className="mt-10 text-center">
