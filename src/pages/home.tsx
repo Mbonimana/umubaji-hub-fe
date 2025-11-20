@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import {
   ShoppingCartIcon,
-  HeartIcon,
   EyeIcon,
+  HeartIcon,
 } from '@heroicons/react/24/outline';
 import { useCart } from '../contexts/CartContext';
-import { Link } from 'react-router-dom';
+import { useWishlist } from '../contexts/WishlistContext';
+
 import Slider from 'react-slick';
 import axios from 'axios';
-import { getBaseUrl } from '../config/baseUrl'; 
-import { MapPin, Tag } from 'lucide-react'; 
+import { getBaseUrl } from '../config/baseUrl';
+import { MapPin, Tag } from 'lucide-react';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -21,6 +22,12 @@ const heroImages = [
 
 const Home: React.FC = () => {
   const { addToCart } = useCart();
+  const {
+    addToWishlist,
+    removeFromWishlist,
+    isWishlisted,
+  } = useWishlist();
+
   const [showAll, setShowAll] = useState(false);
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -40,7 +47,7 @@ const Home: React.FC = () => {
     const fetchProducts = async () => {
       try {
         const res = await axios.get(`${getBaseUrl()}/products/getProducts`);
-        setProducts(res.data || []);
+        setProducts(res.data);
       } catch (error) {
         console.error('Error fetching products:', error);
       } finally {
@@ -80,34 +87,6 @@ const Home: React.FC = () => {
         </Slider>
       </section>
 
-      {/* Promotional Section */}
-      <section className="bg-[#FFF3EC] py-16">
-        <div className="max-w-7xl mx-auto px-[4%] flex flex-col lg:flex-row items-center gap-10">
-          <div className="w-full lg:w-1/2">
-            <img
-              src="/ph10.jpg"
-              alt="Craftsman at work"
-              className="rounded-lg w-full object-cover shadow-lg"
-            />
-          </div>
-
-          <div className="w-full lg:w-1/2">
-            <p className="text-sm text-[#7C5C3D] mb-2 uppercase tracking-wide font-semibold">
-              Transform Your Space with Custom Furniture from Local Artisans
-            </p>
-            <h2 className="text-2xl md:text-3xl font-bold text-[#4B341C] mb-4">
-              Elevate Your Living with Exceptional Craftsmanship
-            </h2>
-            <p className="text-gray-700 text-base leading-relaxed mb-6">
-              From personalized dining tables to custom office shelving, our experts design with intention, precision, and heart.
-            </p>
-            <button className="bg-[#4B341C] text-white px-6 py-3 rounded-md hover:bg-[#5C4025] transition duration-300 font-medium shadow">
-              Discover More
-            </button>
-          </div>
-        </div>
-      </section>
-
       {/* Trending Products */}
       <section className="py-16 bg-[#F5F5F5]">
         <div className="max-w-7xl mx-auto px-[4%]">
@@ -125,75 +104,103 @@ const Home: React.FC = () => {
                 {displayedProducts.map((product, idx) => (
                   <div
                     key={product.id || idx}
-                    className="flex flex-col bg-white rounded-lg shadow hover:shadow-lg transition duration-300 overflow-hidden w-full h-[350px]" // reduced height
+                    className="flex flex-col bg-white rounded-lg shadow hover:shadow-lg transition duration-300 overflow-hidden"
                   >
-                    <div className="overflow-hidden rounded-t-lg h-40"> {/* reduced image height */}
+                    {/* Image */}
+                    <div className="overflow-hidden rounded-t-lg h-40">
                       <img
-                        src={product.images && product.images.length > 0 ? product.images[0] : '/ph12.jpg'}
+                        src={product.images?.[0] ?? '/ph12.jpg'}
                         alt={product.name}
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                       />
                     </div>
 
+                    {/* Info */}
                     <div className="p-4 flex flex-col gap-2 flex-1">
-                      <h4 className="font-medium text-lg text-[#4B341C] truncate">{product.name}</h4>
+                      <h4 className="font-medium text-lg text-[#4B341C] truncate">
+                        {product.name}
+                      </h4>
 
-                      <p className="text-sm text-gray-600 flex items-center space-x-2">
-                         <Tag size={15} className="text-gray-400" /> 
-                             <span className="font-medium">{product.category}</span>
-                                 </p>
-                      
-                                            <p className="text-sm text-gray-400 flex space-x-2">
-                                            <MapPin size={15} className="text-gray-400" style={{ verticalAlign: 'middle' }} />
-                                             <span className="align-baseline">{product.company_location }</span>
-                                               </p>
-                      <p className="text-green-600 font-bold mt-2">RWF {product.price}</p>
+                      <p className="text-sm text-gray-600 flex items-center gap-1">
+                        <Tag size={15} className="text-gray-400" />
+                        {product.category}
+                      </p>
+                      <p className="text-sm text-gray-500 flex items-center gap-1">
+                        <MapPin size={15} className="text-gray-400" />
+                        {product.company_location || "Unknown"}
+                      </p>
 
-                      <div className="flex gap-2 mt-3">
+                      <p className="text-green-600 font-bold mt-1">
+                        RWF {product.price}
+                      </p>
+
+                      <div className="flex gap-2 mt-auto pt-3">
+                        {/* View Button */}
                         <button
-                          className="flex items-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white text-xs px-3 py-1 rounded-md transition"
+                          className="flex items-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white text-xs px-3 py-1 rounded transition"
                           onClick={() => setSelectedProduct(product)}
                         >
                           <EyeIcon className="w-4 h-4" /> View
                         </button>
 
+                        {/* Add to cart button */}
                         <button
-                          className="flex-1 flex items-center justify-center gap-1 bg-[#4B341C] hover:bg-[#3b2a15] text-white text-sm px-2 py-1 rounded-md transition"
+                          className="flex items-center gap-1 flex-1 justify-center bg-[#4B341C] text-white px-3 py-1 text-sm rounded hover:bg-[#3b2a15] transition"
                           onClick={async () => {
                             const item = {
                               id: product.id,
                               name: product.name,
                               price: parseFloat(product.price),
                               vendor: "Default Vendor",
-                              img: product.images?.[0] ?? "",
-                              quantity: 1,
+                              img: product.images?.[0] ?? '',
+                              quantity: 1
                             };
+                            addToCart(item);
 
-                            addToCart(item); // save to frontend
-
-                            const storedUser = JSON.parse(localStorage.getItem("user") || "null");
-
+                            const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
                             if (storedUser?.id) {
                               try {
-                                await axios.post("http://localhost:3000/api/cart/add", {
+                                await axios.post(`http://localhost:3000/api/cart/add`, {
                                   user_id: storedUser.id,
-                                  product_id: item.id,
-                                  quantity: item.quantity,
+                                  product_id: product.id,
+                                  quantity: 1
                                 });
-                                console.log("🛒 Synced to DB");
                               } catch (err) {
-                                console.error("Error syncing cart item to DB", err);
+                                console.error("Cart Sync Error", err);
                               }
-                            } else {
-                              console.log("🛒 Added to local cart (user not logged in)");
                             }
                           }}
                         >
                           <ShoppingCartIcon className="w-4 h-4" /> Add
                         </button>
 
-                        <button className="flex items-center gap-1 px-3 py-1 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 text-xs transition">
-                          <HeartIcon className="w-4 h-4" /> Wishlist
+                        {/* Wishlist Button */}
+                        <button
+                          onClick={() => {
+                            const wishlistItem = {
+                              id: product.id,
+                              name: product.name,
+                              price: parseFloat(product.price),
+                              img: product.images?.[0] ?? "",
+                              material: product.material || "",
+                            };
+
+                            if (isWishlisted(product.id)) {
+                              removeFromWishlist(product.id);
+                            } else {
+                              addToWishlist(wishlistItem);
+                            }
+                          }}
+                          className={`flex items-center gap-1 px-3 py-1 rounded-md border text-xs transition ${isWishlisted(product.id)
+                              ? "border-red-600 text-red-600 bg-red-50"
+                              : "border-gray-300 text-gray-700 hover:bg-gray-100"
+                            }`}
+                        >
+                          <HeartIcon
+                            className={`w-4 h-4 ${isWishlisted(product.id) ? "text-red-600 fill-red-600" : ""
+                              }`}
+                          />
+                          {isWishlisted(product.id) ? "Wishlisted" : "Wishlist"}
                         </button>
                       </div>
                     </div>
@@ -228,17 +235,15 @@ const Home: React.FC = () => {
             </button>
 
             <img
-              src={selectedProduct.images?.[0] ?? '/ph12.jpg'}
+              src={selectedProduct.images?.[0] ?? "/ph12.jpg"}
               alt={selectedProduct.name}
               className="w-full h-48 object-cover rounded-md mb-4"
             />
 
-            <h3 className="text-xl font-semibold text-[#4B341C]">
-              {selectedProduct.name}
-            </h3>
+            <h3 className="text-xl font-semibold text-[#4B341C]">{selectedProduct.name}</h3>
 
             <p className="text-gray-600 mt-2">
-              {selectedProduct.description ?? 'No description available.'}
+              {selectedProduct.description ?? "No description available."}
             </p>
 
             <p className="text-green-600 font-bold mt-2">
@@ -246,49 +251,32 @@ const Home: React.FC = () => {
             </p>
 
             <p className="text-gray-600 mt-2">
-              Vendor: <span className="font-semibold">Default Vendor</span>
+              Vendor: <span className="font-semibold">Unknown Vendor</span>
             </p>
 
-            <p className="text-gray-500 mt-1">
-              Location: {selectedProduct.company_location ?? 'Unknown'}
-            </p>
+            <p className="text-gray-500">Location: {selectedProduct.company_location}</p>
 
-            <button
-              className="mt-4 bg-[#4B341C] text-white px-4 py-2 rounded-md w-full"
-              onClick={() => {
-                addToCart({
-                  id: selectedProduct.id,
-                  name: selectedProduct.name,
-                  price: parseFloat(selectedProduct.price),
-                  vendor: "Default Vendor",
-                  img: selectedProduct.images?.[0] ?? "",
-                  quantity: 1,
-                });
-                setSelectedProduct(null);
-              }}
-            >
-              Add to Cart
-            </button>
+            <div className="mt-4">
+              <button
+                onClick={() => {
+                  addToCart({
+                    id: selectedProduct.id,
+                    name: selectedProduct.name,
+                    price: parseFloat(selectedProduct.price),
+                    vendor: "Default Vendor",
+                    img: selectedProduct.images?.[0] ?? "",
+                    quantity: 1,
+                  });
+                  setSelectedProduct(null);
+                }}
+                className="w-full bg-[#4B341C] text-white py-2 rounded hover:bg-[#3b2a15]"
+              >
+                Add to Cart
+              </button>
+            </div>
           </div>
         </div>
       )}
-
-      {/* CTA */}
-      <section className="bg-[#F5F5F5] text-center py-16">
-        <div className="max-w-7xl mx-auto px-[4%] flex flex-col items-center gap-6">
-          <h2 className="text-3xl sm:text-4xl font-bold text-[#4B341C]">
-            Are You a Talented Carpenter or Furniture Maker?
-          </h2>
-          <p className="text-lg sm:text-xl text-[#4B341C] font-medium max-w-2xl mx-w-2x1">
-            Join <span className="font-bold">UmubajiHub</span> and grow your business.
-          </p>
-          <Link to="/Signup">
-            <button className="mt-4 inline-block bg-[#4B341C] text-[#F5F5F5] text-base sm:text-lg font-semibold px-6 py-3 rounded-md shadow hover:bg-[#3b2a15] transition duration-300">
-              Become a Vendor
-            </button>
-          </Link>
-        </div>
-      </section>
     </div>
   );
 };
