@@ -110,7 +110,6 @@ const VendorPage: React.FC = () => {
                 <div className="h-4 bg-gray-300 rounded w-1/4"></div>
                 <div className="h-4 bg-gray-300 rounded w-1/5"></div>
               </div>
-              <div className="w-28 h-10 rounded bg-gray-300 animate-pulse"></div>
             </>
           ) : (
             <>
@@ -127,7 +126,6 @@ const VendorPage: React.FC = () => {
                   <span className="text-gray-500 text-sm ml-1">({totalReviews} reviews)</span>
                 </div>
                 <p className="text-gray-600 mt-1">{vendor.company_location}</p>
-                
               </div>
             </>
           )}
@@ -161,7 +159,6 @@ const VendorPage: React.FC = () => {
             </h2>
 
             {loadingProducts ? (
-              // Skeleton loading
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
                 {Array.from({ length: 8 }).map((_, i) => (
                   <div
@@ -182,7 +179,6 @@ const VendorPage: React.FC = () => {
                     key={product.id}
                     className="flex flex-col bg-white rounded-lg shadow hover:shadow-lg transition duration-300 overflow-hidden"
                   >
-                    {/* Image */}
                     <div className="overflow-hidden rounded-t-lg h-48">
                       <img
                         src={
@@ -195,7 +191,6 @@ const VendorPage: React.FC = () => {
                       />
                     </div>
 
-                    {/* Info */}
                     <div className="p-4 flex flex-col gap-2">
                       <h4 className="font-medium text-lg text-[#4B341C] truncate">
                         {product.name}
@@ -209,7 +204,6 @@ const VendorPage: React.FC = () => {
                         RWF {product.price}
                       </p>
 
-                      {/* Buttons */}
                       <div className="flex justify-between gap-2 mt-3 flex-nowrap">
                         <button className="flex-1 flex items-center justify-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white text-sm px-2 py-1 rounded-md transition">
                           View
@@ -241,28 +235,51 @@ const VendorPage: React.FC = () => {
         </div>
       )}
 
-      {/* Reviews */}
+      {/* ⭐ NEW REVIEWS SECTION */}
       {activeTab === "Reviews" && (
-        <div className="w-11/12 max-w-4xl mx-auto mt-6 p-4 bg-white rounded-lg shadow">
-          {reviews.length === 0 ? (
-            <p className="text-gray-500">No reviews yet.</p>
-          ) : (
-            reviews.map((r) => (
-              <div key={r.id} className="border-b py-3">
-                <p className="font-semibold">{r.title}</p>
-                <div className="flex">
-                  {[...Array(r.rating)].map((_, i) => (
-                    <Star key={i} className="text-yellow-400 fill-yellow-400" />
-                  ))}
-                </div>
-                <p>{r.comment}</p>
-                <p className="text-sm text-gray-500">
-                  By {r.customer_firstname} {r.customer_lastname}
-                </p>
+        <section className="pt-10 bg-[#F5F5F5]">
+          <div className="max-w-7xl mx-auto px-[4%]">
+
+            <h2 className="text-xl font-semibold mb-6 text-[#4B341C]">
+              Reviews
+            </h2>
+
+            {reviews.length === 0 ? (
+              <p className="text-gray-500">No reviews yet.</p>
+            ) : (
+              <div className="space-y-6">
+                {reviews.map((r) => (
+                  <div key={r.id} className="pb-4 border-b border-gray-300">
+
+                    {/* Review title */}
+                    <p className="font-semibold text-[#4B341C] text-lg">
+                      {r.title}
+                    </p>
+
+                    {/* Stars */}
+                    <div className="flex mt-1">
+                      {[...Array(r.rating)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className="text-yellow-500 fill-yellow-500 h-5 w-5"
+                        />
+                      ))}
+                    </div>
+
+                    {/* Comment */}
+                    <p className="text-gray-700 mt-2">{r.comment}</p>
+
+                    {/* User */}
+                    <p className="text-sm text-gray-500 mt-1">
+                      By {r.customer_firstname} {r.customer_lastname}
+                    </p>
+
+                  </div>
+                ))}
               </div>
-            ))
-          )}
-        </div>
+            )}
+          </div>
+        </section>
       )}
 
     </div>
