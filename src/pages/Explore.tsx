@@ -1,3 +1,4 @@
+// Explore.tsx
 import React, { useState, useEffect } from "react";
 import {
   ShoppingCartIcon,
@@ -5,6 +6,7 @@ import {
   HeartIcon,
 } from "@heroicons/react/24/outline";
 import { useCart } from "../contexts/CartContext";
+import { useWishlist } from "../contexts/WishlistContext";
 import { getBaseUrl } from "../config/baseUrl";
 import { MapPin, Tag } from 'lucide-react';
 
@@ -18,7 +20,7 @@ interface Product {
   img: string;
   vendor: string;
   rating: number;
-  vendor_id:number;
+  vendor_id: number;
 }
 
 const Explore: React.FC = () => {
@@ -28,18 +30,17 @@ const Explore: React.FC = () => {
   const [maxPrice, setMaxPrice] = useState(100000000);
   const [sortBy, setSortBy] = useState("Highest Rated");
   const [loading, setLoading] = useState(true);
-
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
 
   const { addToCart } = useCart();
-  const [products, setProducts] = useState<Product[]>([]);
+  const { addToWishlist, removeFromWishlist, isWishlisted } = useWishlist(); 
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const Baseurl = getBaseUrl();
         const res = await fetch(`${Baseurl}/products/getproducts`);
-
         const data = await res.json();
 
         const mapped = data.map((p: any) => ({
@@ -50,15 +51,16 @@ const Explore: React.FC = () => {
           material: p.description || "No description available",
           price: Number(p.price),
           img: p.images?.[0] || "/placeholder.jpg",
-          vendor: p.company_name ,
+          vendor: p.company_name,
           vendor_id: p.user_id,
           rating: Math.floor(Math.random() * 5) + 1,
-
         }));
 
         setProducts(mapped);
       } catch (err) {
         console.error("Failed to load products:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -77,10 +79,10 @@ const Explore: React.FC = () => {
       sortBy === "Highest Rated"
         ? b.rating - a.rating
         : sortBy === "Lowest Price"
-        ? a.price - b.price
-        : sortBy === "Highest Price"
-        ? b.price - a.price
-        : 0
+          ? a.price - b.price
+          : sortBy === "Highest Price"
+            ? b.price - a.price
+            : 0
     );
 
   return (
@@ -96,11 +98,10 @@ const Explore: React.FC = () => {
             <div className="bg-white p-4 rounded-md shadow-sm sticky top-20">
               <h3 className="font-semibold mb-3 text-[#4B341C]">Filters</h3>
 
+              {/* Filters */}
               <div className="space-y-4 text-sm">
                 <div>
-                  <label className="block font-medium text-[#4B341C]">
-                    Category
-                  </label>
+                  <label className="block font-medium text-[#4B341C]">Category</label>
                   <select
                     className="w-full border rounded-md p-2 mt-1"
                     value={category}
@@ -115,9 +116,7 @@ const Explore: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block font-medium text-[#4B341C]">
-                    Location
-                  </label>
+                  <label className="block font-medium text-[#4B341C]">Location</label>
                   <select
                     className="w-full border rounded-md p-2 mt-1"
                     value={location}
@@ -132,9 +131,7 @@ const Explore: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block font-medium text-[#4B341C]">
-                    Price Range
-                  </label>
+                  <label className="block font-medium text-[#4B341C]">Price Range</label>
                   <input
                     type="range"
                     min="1"
@@ -143,15 +140,11 @@ const Explore: React.FC = () => {
                     onChange={(e) => setMaxPrice(Number(e.target.value))}
                     className="w-full accent-[#4B341C]"
                   />
-                  <p className="text-gray-600 mt-1">
-                    RWF up to {maxPrice.toLocaleString()}
-                  </p>
+                  <p className="text-gray-600 mt-1">RWF up to {maxPrice.toLocaleString()}</p>
                 </div>
 
                 <div>
-                  <label className="block font-medium text-[#4B341C]">
-                    Sort By
-                  </label>
+                  <label className="block font-medium text-[#4B341C]">Sort By</label>
                   <select
                     className="w-full border rounded-md p-2 mt-1"
                     value={sortBy}
@@ -177,18 +170,18 @@ const Explore: React.FC = () => {
             />
 
             {filtered.length === 0 ? (
-              <p className="text-gray-500">loading ...</p>
+              <p className="text-gray-500">Loading . . .</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {filtered.map((product) => (
                   <div
                     key={product.id}
-                    className="bg-white rounded-md shadow-md overflow-hidden hover:shadow-lg transition-shadow w-full h-[350px] flex flex-col" // reduced height
+                    className="bg-white rounded-md shadow-md overflow-hidden hover:shadow-lg transition-shadow w-full h-[350px] flex flex-col"
                   >
                     <img
                       src={product.img}
                       alt={product.name}
-                      className="h-40 w-full object-cover" // reduced height
+                      className="h-40 w-full object-cover"
                     />
 
                     <div className="p-4 flex flex-col gap-2 flex-1">
@@ -196,22 +189,21 @@ const Explore: React.FC = () => {
                         {product.name}
                       </h3>
 
-                      <p className="text-sm text-gray-600 flex items-center space-x-2">
-                      <Tag size={15} className="text-gray-400" /> 
-                       <span className="font-medium">{product.category}</span>
-                           </p>
+                      <p className="text-sm text-gray-600 flex items-center gap-2">
+                        <Tag size={15} className="text-gray-400" />
+                        {product.category}
+                      </p>
 
-                      <p className="text-sm text-gray-400 flex space-x-2">
-                      <MapPin size={15} className="text-gray-400" style={{ verticalAlign: 'middle' }} />
-                       <span className="align-baseline">{product.location}</span>
-                         </p>
-
+                      <p className="text-sm text-gray-500 flex items-center gap-2">
+                        <MapPin size={15} className="text-gray-400" />
+                        {product.location}
+                      </p>
 
                       <p className="text-green-600 font-bold mt-2">
                         RWF {product.price.toLocaleString()}
                       </p>
 
-                      <div className="flex gap-2 mt-3">
+                      <div className="flex gap-2 mt-auto">
                         <button
                           onClick={() => setSelectedProduct(product)}
                           className="flex items-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white text-xs px-3 py-1 rounded-md transition"
@@ -235,8 +227,34 @@ const Explore: React.FC = () => {
                           <ShoppingCartIcon className="w-4 h-4" /> Add
                         </button>
 
-                        <button className="flex items-center gap-1 px-3 py-1 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 text-xs transition">
-                          <HeartIcon className="w-4 h-4" /> Wishlist
+                        <button
+                          onClick={() => {
+                            const wishlistItem = {
+                              id: product.id.toString(),
+                              name: product.name,
+                              price: product.price,
+                              img: product.img,
+                              material: product.material
+                            };
+
+                            if (isWishlisted(product.id.toString())) {
+                              removeFromWishlist(product.id.toString());
+                            } else {
+                              addToWishlist(wishlistItem);
+                            }
+                          }}
+                          className={`flex items-center gap-1 px-3 py-1 rounded-md border text-xs transition ${isWishlisted(product.id.toString())
+                              ? "border-red-600 text-red-600 bg-red-50"
+                              : "border-gray-300 text-gray-700 hover:bg-gray-100"
+                            }`}
+                        >
+                          <HeartIcon
+                            className={`w-4 h-4 ${isWishlisted(product.id.toString())
+                                ? "text-red-600 fill-red-600"
+                                : ""
+                              }`}
+                          />
+                          {isWishlisted(product.id.toString()) ? "Wishlisted" : "Wishlist"}
                         </button>
                       </div>
                     </div>
@@ -247,61 +265,6 @@ const Explore: React.FC = () => {
           </section>
         </div>
       </main>
-
-      {/* MODAL */}
-      {selectedProduct && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-md max-w-md w-full relative shadow-lg">
-            <button
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-              onClick={() => setSelectedProduct(null)}
-            >
-              ✖
-            </button>
-
-            <img
-              src={selectedProduct.img}
-              alt={selectedProduct.name}
-              className="w-full h-48 object-cover rounded-md mb-4"
-            />
-
-            <h3 className="text-xl font-semibold text-[#4B341C]">
-              {selectedProduct.name}
-            </h3>
-
-            <p className="text-gray-600">{selectedProduct.material}</p>
-
-            <p className="text-green-600 font-bold mt-2">
-              RWF {selectedProduct.price.toLocaleString()}
-            </p>
-
-            <p className="text-gray-600 mt-2">
-              Vendor: <span className="font-semibold">{selectedProduct.vendor_id}</span>
-            </p>
-
-            <p className="text-gray-500">
-              Location: {selectedProduct.location}
-            </p>
-
-            <button
-              className="mt-4 bg-[#4B341C] text-white px-4 py-2 rounded-md w-full"
-              onClick={() => {
-                addToCart({
-                  id: selectedProduct.id.toString(),
-                  name: selectedProduct.name,
-                  price: selectedProduct.price,
-                  vendor: selectedProduct.vendor,
-                  img: selectedProduct.img,
-                  quantity: 1,
-                });
-                setSelectedProduct(null);
-              }}
-            >
-              Add to Cart
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
