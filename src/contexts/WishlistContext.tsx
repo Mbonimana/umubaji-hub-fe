@@ -1,4 +1,4 @@
-// src/contexts/WishlistContext.tsx
+
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 export interface WishlistItem {
@@ -25,7 +25,7 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
     const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
 
-    // Load from localStorage
+   
     useEffect(() => {
         const stored = localStorage.getItem("wishlist");
         if (stored) setWishlist(JSON.parse(stored));
