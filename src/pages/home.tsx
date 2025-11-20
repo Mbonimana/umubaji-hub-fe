@@ -157,16 +157,35 @@ const Home: React.FC = () => {
 
                         <button
                           className="flex-1 flex items-center justify-center gap-1 bg-[#4B341C] hover:bg-[#3b2a15] text-white text-sm px-2 py-1 rounded-md transition"
-                          onClick={() =>
-                            addToCart({
+                          onClick={async () => {
+                            const item = {
                               id: product.id,
                               name: product.name,
                               price: parseFloat(product.price),
                               vendor: "Default Vendor",
                               img: product.images?.[0] ?? "",
                               quantity: 1,
-                            })
-                          }
+                            };
+
+                            addToCart(item); // save to frontend
+
+                            const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+
+                            if (storedUser?.id) {
+                              try {
+                                await axios.post("http://localhost:3000/api/cart/add", {
+                                  user_id: storedUser.id,
+                                  product_id: item.id,
+                                  quantity: item.quantity,
+                                });
+                                console.log("🛒 Synced to DB");
+                              } catch (err) {
+                                console.error("Error syncing cart item to DB", err);
+                              }
+                            } else {
+                              console.log("🛒 Added to local cart (user not logged in)");
+                            }
+                          }}
                         >
                           <ShoppingCartIcon className="w-4 h-4" /> Add
                         </button>

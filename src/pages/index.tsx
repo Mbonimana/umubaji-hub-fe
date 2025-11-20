@@ -30,7 +30,7 @@ const Index: React.FC = () => {
 
     return (
         <div className="font-sans bg-[#F5F5F5] text-[#4B341C] overflow-x-hidden">
-            {/* 🌄 Hero Section */}
+            
             <section className="relative h-[90vh] w-full">
                 <Slider {...sliderSettings}>
                     {heroImages.map((url, i) => (
@@ -154,7 +154,6 @@ const Index: React.FC = () => {
     );
 };
 
-// 📦 FeatureCard component
 const FeatureCard = ({
     icon,
     title,
