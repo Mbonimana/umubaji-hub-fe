@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-import { Star } from "lucide-react";
+import { Star, Tag, MapPin } from "lucide-react";
+import { useCart } from "../contexts/CartContext";
+import { useWishlist } from "../contexts/WishlistContext";
 import { getBaseUrl } from "../config/baseUrl";
 
 interface Product {
-  id: number;
+  id: number | string;
   name: string;
   woodType?: string;
   price: string;
@@ -34,11 +36,15 @@ const VendorPage: React.FC = () => {
   const location = useLocation();
   const vendor = location.state?.vendor as Vendor | null;
 
+  const { addToCart } = useCart();
+  const { addToWishlist, removeFromWishlist, isWishlisted } = useWishlist();
+
   const [products, setProducts] = useState<Product[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [averageRating, setAverageRating] = useState(0);
   const [totalReviews, setTotalReviews] = useState(0);
   const [activeTab, setActiveTab] = useState("Products");
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const [loadingVendor, setLoadingVendor] = useState(true);
   const [loadingProducts, setLoadingProducts] = useState(true);
@@ -101,7 +107,6 @@ const VendorPage: React.FC = () => {
       {/* Vendor Profile */}
       <div className="relative -mt-16 max-w-7xl mx-auto px-[4%]">
         <div className="bg-white w-full shadow-lg rounded-lg p-6 flex flex-col sm:flex-row items-center gap-6 border">
-
           {loadingVendor ? (
             <>
               <div className="w-24 h-24 rounded-full bg-gray-300 animate-pulse"></div>
@@ -129,7 +134,6 @@ const VendorPage: React.FC = () => {
               </div>
             </>
           )}
-
         </div>
       </div>
 
@@ -154,17 +158,12 @@ const VendorPage: React.FC = () => {
       {activeTab === "Products" && (
         <section className="pt-10 bg-[#F5F5F5]">
           <div className="max-w-7xl mx-auto px-[4%]">
-            <h2 className="text-xl font-semibold mb-6 text-[#4B341C]">
-              Products
-            </h2>
+            <h2 className="text-xl font-semibold mb-6 text-[#4B341C]">Products</h2>
 
             {loadingProducts ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
                 {Array.from({ length: 8 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="bg-white rounded-lg shadow p-4 animate-pulse"
-                  >
+                  <div key={i} className="bg-white rounded-lg shadow p-4 animate-pulse">
                     <div className="w-full h-48 bg-gray-300 rounded"></div>
                     <div className="h-4 bg-gray-300 rounded mt-4 w-3/4"></div>
                     <div className="h-4 bg-gray-300 rounded mt-2 w-1/2"></div>
@@ -179,41 +178,73 @@ const VendorPage: React.FC = () => {
                     key={product.id}
                     className="flex flex-col bg-white rounded-lg shadow hover:shadow-lg transition duration-300 overflow-hidden"
                   >
+                    {/* Product Image */}
                     <div className="overflow-hidden rounded-t-lg h-48">
                       <img
-                        src={
-                          product.images && product.images.length > 0
-                            ? product.images[0]
-                            : "https://via.placeholder.com/400x300"
-                        }
+                        src={product.images && product.images.length > 0 ? product.images[0] : "https://via.placeholder.com/400x300"}
                         alt={product.name}
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                       />
                     </div>
 
-                    <div className="p-4 flex flex-col gap-2">
-                      <h4 className="font-medium text-lg text-[#4B341C] truncate">
-                        {product.name}
-                      </h4>
-
-                      <p className="text-sm text-gray-600 truncate">
-                        {product.woodType || "Wooden Product"}
+                    {/* Product Info */}
+                    <div className="p-4 flex flex-col gap-2 flex-1">
+                      <h4 className="font-medium text-lg text-[#4B341C] truncate">{product.name}</h4>
+                      <p className="text-sm text-gray-600 flex items-center gap-1">
+                        <Tag size={15} className="text-gray-400" /> {product.woodType || "Wooden Product"}
                       </p>
-
-                      <p className="text-green-600 text-base font-semibold mt-1">
-                        RWF {product.price}
+                      <p className="text-sm text-gray-500 flex items-center gap-1">
+                        <MapPin size={15} className="text-gray-400" /> {vendor.company_location}
                       </p>
+                      <p className="text-green-600 text-base font-semibold mt-1">RWF {product.price}</p>
 
-                      <div className="flex justify-between gap-2 mt-3 flex-nowrap">
-                        <button className="flex-1 flex items-center justify-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white text-sm px-2 py-1 rounded-md transition">
+                      {/* Action Buttons */}
+                      <div className="flex gap-2 mt-auto pt-3">
+                        {/* View */}
+                        <button
+                          onClick={() => setSelectedProduct(product)}
+                          className="flex-1 flex items-center justify-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white text-sm px-2 py-1 rounded-md transition"
+                        >
                           View
                         </button>
 
-                        <button className="flex-1 flex items-center justify-center gap-1 bg-[#4B341C] hover:bg-[#3b2a15] text-white text-sm px-2 py-1 rounded-md transition">
+                        {/* Add to Cart */}
+                        <button
+                          onClick={() => {
+                            const item = {
+                              id: String(product.id),
+                              name: product.name,
+                              price: parseFloat(product.price),
+                              vendor: vendor.company_name,
+                              img: product.images[0] || "",
+                              quantity: 1,
+                            };
+                            addToCart(item);
+                          }}
+                          className="flex-1 flex items-center justify-center gap-1 bg-[#4B341C] hover:bg-[#3b2a15] text-white text-sm px-2 py-1 rounded-md transition"
+                        >
                           Add
                         </button>
 
-                        <button className="flex-1 flex items-center justify-center gap-1 px-2 py-1 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 text-sm transition">
+                        {/* Wishlist */}
+                        <button
+                          onClick={() => {
+                            const wishlistItem = {
+                              id: String(product.id),
+                              name: product.name,
+                              price: parseFloat(product.price),
+                              img: product.images[0] || "",
+                              material: product.woodType || "",
+                            };
+                            if (isWishlisted(String(product.id))) removeFromWishlist(String(product.id));
+                            else addToWishlist(wishlistItem);
+                          }}
+                          className={`flex-1 flex items-center justify-center gap-1 px-2 py-1 rounded-md border text-sm transition ${
+                            isWishlisted(String(product.id))
+                              ? "border-red-600 text-red-600 bg-red-50"
+                              : "border-gray-300 text-gray-700 hover:bg-gray-100"
+                          }`}
+                        >
                           Wishlist
                         </button>
                       </div>
@@ -228,6 +259,51 @@ const VendorPage: React.FC = () => {
         </section>
       )}
 
+      {/* Product Modal */}
+      {selectedProduct && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-md max-w-md w-full relative shadow-lg">
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              onClick={() => setSelectedProduct(null)}
+            >
+              ✖
+            </button>
+
+            <img
+              src={selectedProduct.images?.[0] || "https://via.placeholder.com/400x300"}
+              alt={selectedProduct.name}
+              className="w-full h-48 object-cover rounded-md mb-4"
+            />
+
+            <h3 className="text-xl font-semibold text-[#4B341C]">{selectedProduct.name}</h3>
+            <p className="text-gray-600 mt-2">{selectedProduct.woodType || "No description available."}</p>
+            <p className="text-green-600 font-bold mt-2">RWF {selectedProduct.price}</p>
+            <p className="text-gray-600 mt-2">Vendor: <span className="font-semibold">{vendor.company_name}</span></p>
+            <p className="text-gray-500">Location: {vendor.company_location}</p>
+
+            <div className="mt-4">
+              <button
+                onClick={() => {
+                  addToCart({
+                    id: String(selectedProduct.id),
+                    name: selectedProduct.name,
+                    price: parseFloat(selectedProduct.price),
+                    vendor: vendor.company_name,
+                    img: selectedProduct.images[0] || "",
+                    quantity: 1,
+                  });
+                  setSelectedProduct(null);
+                }}
+                className="w-full bg-[#4B341C] text-white py-2 rounded hover:bg-[#3b2a15]"
+              >
+                Add to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* About */}
       {activeTab === "About" && (
         <div className="w-11/12 max-w-4xl mx-auto mt-6 text-gray-700 leading-relaxed p-4 bg-white rounded-md shadow">
@@ -235,14 +311,11 @@ const VendorPage: React.FC = () => {
         </div>
       )}
 
-      {/* ⭐ NEW REVIEWS SECTION */}
+      {/* Reviews */}
       {activeTab === "Reviews" && (
         <section className="pt-10 bg-[#F5F5F5]">
           <div className="max-w-7xl mx-auto px-[4%]">
-
-            <h2 className="text-xl font-semibold mb-6 text-[#4B341C]">
-              Reviews
-            </h2>
+            <h2 className="text-xl font-semibold mb-6 text-[#4B341C]">Reviews</h2>
 
             {reviews.length === 0 ? (
               <p className="text-gray-500">No reviews yet.</p>
@@ -250,30 +323,16 @@ const VendorPage: React.FC = () => {
               <div className="space-y-6">
                 {reviews.map((r) => (
                   <div key={r.id} className="pb-4 border-b border-gray-300">
-
-                    {/* Review title */}
-                    <p className="font-semibold text-[#4B341C] text-lg">
-                      {r.title}
-                    </p>
-
-                    {/* Stars */}
+                    <p className="font-semibold text-[#4B341C] text-lg">{r.title}</p>
                     <div className="flex mt-1">
                       {[...Array(r.rating)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className="text-yellow-500 fill-yellow-500 h-5 w-5"
-                        />
+                        <Star key={i} className="text-yellow-500 fill-yellow-500 h-5 w-5" />
                       ))}
                     </div>
-
-                    {/* Comment */}
                     <p className="text-gray-700 mt-2">{r.comment}</p>
-
-                    {/* User */}
                     <p className="text-sm text-gray-500 mt-1">
                       By {r.customer_firstname} {r.customer_lastname}
                     </p>
-
                   </div>
                 ))}
               </div>
