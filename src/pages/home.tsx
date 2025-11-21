@@ -15,6 +15,7 @@ import { MapPin, Tag } from 'lucide-react';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
+
 const heroImages = [
   { url: '/ph9.jpg', text: 'Connect with Skilled Carpenters' },
   { url: '/ph5.jpg', text: 'Modern Furniture Builds for Your Lifestyle' },
@@ -160,7 +161,7 @@ const Home: React.FC = () => {
                             const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
                             if (storedUser?.id) {
                               try {
-                                await axios.post(`http://localhost:3000/api/cart/add`, {
+                                await axios.post(`${getBaseUrl}/cart/add`, {
                                   user_id: storedUser.id,
                                   product_id: product.id,
                                   quantity: 1
@@ -228,10 +229,10 @@ const Home: React.FC = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-md max-w-md w-full relative shadow-lg">
             <button
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              className="text-2xl absolute top-2 right-2 text-gray-500 hover:text-gray-700"
               onClick={() => setSelectedProduct(null)}
             >
-              ✖
+              X
             </button>
 
             <img
@@ -251,10 +252,10 @@ const Home: React.FC = () => {
             </p>
 
             <p className="text-gray-600 mt-2">
-              Vendor: <span className="font-semibold">Unknown Vendor</span>
+              Vendor: <span className="font-semibold">{selectedProduct.company_name || "Unknown Vendor"}</span>
             </p>
 
-            <p className="text-gray-500">Location: {selectedProduct.company_location}</p>
+            <p className="text-gray-600 ">Location: <span className='font-semibold'> {selectedProduct.company_location || "Unknown Location"} </span> </p>
 
             <div className="mt-4">
               <button
@@ -263,7 +264,7 @@ const Home: React.FC = () => {
                     id: selectedProduct.id,
                     name: selectedProduct.name,
                     price: parseFloat(selectedProduct.price),
-                    vendor: "Default Vendor",
+                    vendor: selectedProduct.company_name || "Default Vendor",
                     img: selectedProduct.images?.[0] ?? "",
                     quantity: 1,
                   });

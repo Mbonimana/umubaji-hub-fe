@@ -100,18 +100,19 @@ function App() {
       </Route>
 
       {/* Vendor routes */}
-      <Route path="vendordashboard" element={<VendorDashboard />} />
-      <Route path="/my-products" element={<MyProducts />} />
-      <Route path="/my-products/add" element={<ProductFormPage />} />
-      <Route path="/my-products/edit/:id" element={<ProductFormPage />} />
-      <Route path="/orders" element={<Orders />} />
-      <Route path="/reviews" element={<Reviews />} />
-      <Route path="/analytics" element={<Analytics />} />
-      <Route path="/messages" element={<Messages />} />
-      <Route path="/earnings" element={<Earnings />} />
-      <Route path="/settings" element={<Settings />} />
-      <Route path="/profile" element={<Profile />} />
+      <Route path="/vendordashboard" element={<ProtectedRoute allowedRoles={['vendor']}><VendorDashboard /></ProtectedRoute>} />
+      <Route path="/my-products" element={<ProtectedRoute allowedRoles={['vendor']}><MyProducts /></ProtectedRoute>} />
+      <Route path="/my-products/add" element={<ProtectedRoute allowedRoles={['vendor']}><ProductFormPage /></ProtectedRoute>} />
+      <Route path="/my-products/edit/:id" element={<ProtectedRoute allowedRoles={['vendor']}><ProductFormPage /></ProtectedRoute>} />
+      <Route path="/orders" element={<ProtectedRoute allowedRoles={['vendor']}><Orders /></ProtectedRoute>} />
+      <Route path="/reviews" element={<ProtectedRoute allowedRoles={['vendor']}><Reviews /></ProtectedRoute>} />
+      <Route path="/analytics" element={<ProtectedRoute allowedRoles={['vendor']}><Analytics /></ProtectedRoute>} />
+      <Route path="/messages" element={<ProtectedRoute allowedRoles={['vendor']}><Messages /></ProtectedRoute>} />
+      <Route path="/earnings" element={<ProtectedRoute allowedRoles={['vendor']}><Earnings /></ProtectedRoute>} />
+      <Route path="/settings" element={<ProtectedRoute allowedRoles={['vendor']}><Settings /></ProtectedRoute>} />
+      <Route path="/profile" element={<ProtectedRoute allowedRoles={['vendor']}><Profile /></ProtectedRoute>} />
       <Route path="/vendor-registration" element={<VendorRegistration />} />
+
 
       {/* Customer routes */}
       <Route path="/customer-dashboard" element={<CustomerDashboard />} />
