@@ -13,9 +13,9 @@ import "slick-carousel/slick/slick-theme.css";
 
 const Index: React.FC = () => {
     const heroImages = [
-        "/ph10.jpg",
-        "/ph5.jpg",
-        "/ph2.jpg",
+        "/img4.jpg",
+        // "/img2.jpg",
+        // "/img3.jpg",
     ];
 
     const sliderSettings = {
@@ -31,17 +31,18 @@ const Index: React.FC = () => {
     return (
         <div className="font-sans bg-[#F5F5F5] text-[#4B341C] overflow-x-hidden">
             {/* 🌄 Hero Section */}
-            <section className="relative h-[90vh] w-full">
+            <section className="relative h-[90vh] w-full overflow-hidden">
                 <Slider {...sliderSettings}>
                     {heroImages.map((url, i) => (
-                        <div
-                            key={i}
-                            className="h-[90vh] bg-cover bg-center"
-                            style={{
-                                backgroundImage: `url(${url})`,
-                            }}
-                        >
-                            <div className="bg-black/40 h-full w-full flex items-center justify-center text-center px-4">
+                        <div key={i} className="relative h-[90vh]">
+                            {/* Background image */}
+                            <div
+                                className="absolute inset-0 bg-cover bg-center"
+                                style={{ backgroundImage: `url(${url})` }}
+                            ></div>
+
+                            {/* Overlay + content */}
+                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-center px-4">
                                 <div className="max-w-3xl space-y-5 text-white">
                                     <h1 className="text-4xl md:text-5xl font-bold drop-shadow-md">
                                         <Typewriter
@@ -126,7 +127,7 @@ const Index: React.FC = () => {
 
                     <div className="w-full lg:w-1/2">
                         <img
-                            src="/ph10.jpg"
+                            src="/img3.jpg"
                             alt="Artisan at work"
                             className="rounded-lg object-cover w-full shadow-lg max-h-[470px]"
                         />
