@@ -1,6 +1,4 @@
 
-import { Plus } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/vendorDashboard/Sidebar';
 import Navbar from '../components/vendorDashboard/Navbar';
 import StatsCard from '../components/vendorDashboard/StatsCard';
@@ -10,7 +8,7 @@ import RecentOrders from '../components/vendorDashboard/RecentOrders';
 import TopProducts from '../components/vendorDashboard/TopProducts';
 
 export default function VendorDashboard() {
-  const navigate = useNavigate();
+  
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex">
@@ -29,22 +27,12 @@ export default function VendorDashboard() {
         
         <main className="flex-1 pt-20 p-6 overflow-y-auto">
         
-          <div className="mb-6 flex justify-end">
-            <button 
-              onClick={() => navigate('/my-products/add')}
-              className="bg-[#4B341C] text-white mt-6 px-5 py-3 rounded-lg flex items-center gap-2 hover:bg-amber-700 font-medium"
-            >
-              <Plus className="w-5 h-5" />
-              Add New Product
-            </button>
-          </div>
-
           {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-6 mt-4">
             <StatsCard title="Total Views" value="12,458" change="+12% this month" icon="views" />
-            <StatsCard title="Total Sales" value="₦561K" change="+8% this month" icon="sales" />
+            <StatsCard title="Total Sales" value="RF561K" change="+8% this month" icon="sales" />
             <StatsCard title="Total Orders" value="117" change="+15% this month" icon="orders" />
-            <StatsCard title="Avg. Rating" value="4.8 Star" change="124 reviews" icon="rating" />
+            <StatsCard title="Avg. Rating" value="4.8 Star" change="3 reviews" icon="rating" />
           </div>
 
           {/* Charts */}
