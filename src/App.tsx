@@ -30,6 +30,8 @@ import Messages from './pages/vendor/Messages.tsx';
 import Earnings from './pages/vendor/Earnings.tsx';
 import Settings from './pages/vendor/Settings.tsx';
 import Profile from './pages/vendor/profile';
+import Payment from './pages/Payment.tsx';
+import OrderSuccess from './pages/OrderSuccess.tsx';
 
 
 // Customer dashboard pages
@@ -82,6 +84,8 @@ function App() {
         <Route path = 'explore' element={< Explore/>} />
         <Route path="/wishlist" element={<WishlistPage />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/Payment" element={<Payment />} />
+        <Route path="/OrderSuccess" element={<OrderSuccess />} />
       </Route>
 
       {/* Admin routes */}

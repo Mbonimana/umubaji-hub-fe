@@ -16,13 +16,38 @@ interface Product {
 interface Vendor {
   id: number;
   company_name: string;
-  company_email: string;
+  company_email?: string;
   company_location: string;
   image?: string;
   cover_image?: string;
   products?: Product[];
   rating?: number;
   reviews?: number;
+}
+
+interface VendorApi {
+  id: number;
+  company_name: string;
+  company_email?: string;
+  company_location?: string;
+  company_logo?: string;
+  company_cover_photo?: string;
+  products?: Product[];
+}
+
+interface ReviewsResponse {
+  reviews: Review[];
+  average_rating: string;
+  total_reviews: number;
+}
+
+interface Review {
+  id: number;
+  title: string;
+  rating: number;
+  comment: string;
+  customer_firstname?: string;
+  customer_lastname?: string;
 }
 
 const VendorsPage: React.FC = () => {
@@ -34,7 +59,7 @@ const VendorsPage: React.FC = () => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState<number | null>(null);
 
-  const [reviews, setReviews] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [average, setAverage] = useState(0);
   const [total, setTotal] = useState(0);
 
@@ -44,7 +69,11 @@ const VendorsPage: React.FC = () => {
   const [loadingReview, setLoadingReview] = useState(false);
 
   const baseURL = getBaseUrl();
-  const user_id = JSON.parse(localStorage.getItem("user") || "{}")?.id;
+
+  // Safely parse the user id from localStorage without using `any`
+  const storedUser = localStorage.getItem("user");
+  const parsedUser = storedUser ? (JSON.parse(storedUser) as { id?: number }) : undefined;
+  const user_id = parsedUser?.id;
 
   // Helper: get color based on rating
   const getRatingColor = (r: number) => {
@@ -58,14 +87,13 @@ const VendorsPage: React.FC = () => {
     const fetchVendors = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${baseURL}/users/verified`);
+        const response = await axios.get<{ users?: VendorApi[] }>(`${baseURL}/users/verified`);
         const vendorListRaw = response.data.users ?? [];
 
-        const vendorList: Vendor[] = vendorListRaw.map((v: any) => ({
+        const vendorList: Vendor[] = vendorListRaw.map((v: VendorApi) => ({
           id: v.id,
           company_name: v.company_name,
-          company_email: v.email,
-          company_location: v.company_location,
+          company_location: v.company_location || "",
           image: v.company_logo || "",
           cover_image: v.company_cover_photo || "",
           products: v.products || [],
@@ -76,21 +104,23 @@ const VendorsPage: React.FC = () => {
         setVendors(vendorList);
 
         await Promise.all(
-          vendorList.map(async (v) => {
+          vendorList.map(async (vendor) => {
             try {
-              const res = await axios.get(`${baseURL}/reviews/${v.id}`);
-              const avg = parseFloat(res.data.average_rating);
-              const totalReviews = res.data.total_reviews;
+              const res = await axios.get<{ average_rating?: string; total_reviews?: number }>(
+                `${baseURL}/reviews/${vendor.id}`
+              );
+
+              const avg = parseFloat(res.data.average_rating ?? "0");
+              const totalReviews = res.data.total_reviews ?? 0;
 
               setVendors((prev) =>
-                prev.map((vendor) =>
-                  vendor.id === v.id
-                    ? { ...vendor, rating: avg, reviews: totalReviews }
-                    : vendor
+                prev.map((v) =>
+                  v.id === vendor.id ? { ...v, rating: avg, reviews: totalReviews } : v
                 )
               );
             } catch (err) {
-              console.error(`Failed to fetch reviews for vendor ${v.id}`, err);
+              // `err` is `unknown` in modern TS; log safely
+              console.error(`Failed to fetch reviews for vendor ${vendor.id}`, err);
             }
           })
         );
@@ -102,15 +132,16 @@ const VendorsPage: React.FC = () => {
       }
     };
     fetchVendors();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchVendorReviews = async (vendorId: number) => {
     try {
       Notiflix.Loading.standard("Loading reviews...");
-      const res = await axios.get(`${baseURL}/reviews/${vendorId}`);
-      setReviews(res.data.reviews);
-      setAverage(parseFloat(res.data.average_rating));
-      setTotal(res.data.total_reviews);
+      const res = await axios.get<ReviewsResponse>(`${baseURL}/reviews/${vendorId}`);
+      setReviews(res.data.reviews ?? []);
+      setAverage(parseFloat(res.data.average_rating ?? "0"));
+      setTotal(res.data.total_reviews ?? 0);
     } catch (error) {
       console.error("Failed to load reviews", error);
     } finally {
@@ -121,6 +152,8 @@ const VendorsPage: React.FC = () => {
   const submitReview = async () => {
     if (!title || !comment || !rating)
       return Notiflix.Notify.failure("All fields are required");
+
+    if (selectedVendor === null) return Notiflix.Notify.failure("No vendor selected");
 
     setLoadingReview(true);
     Notiflix.Loading.standard("Submitting review...");
@@ -138,7 +171,7 @@ const VendorsPage: React.FC = () => {
       setComment("");
       setRating(1);
 
-      await fetchVendorReviews(selectedVendor!);
+      await fetchVendorReviews(selectedVendor);
 
       Notiflix.Loading.remove();
       Notiflix.Notify.success("Review submitted!");
@@ -309,7 +342,7 @@ const VendorsPage: React.FC = () => {
                     </div>
                     <p className="text-gray-700 text-sm ">{r.comment}</p>
                     <p className="text-xs text-gray-500 font-bold ">
-                      By {r.customer_firstname} {r.customer_lastname}
+                      By {r.customer_firstname ?? "Anonymous"} {r.customer_lastname ?? ""}
                     </p>
                   </div>
                 ))
@@ -346,8 +379,8 @@ const VendorsPage: React.FC = () => {
                   }`}
                 />
               ))}
-             
-             <span className="text-sm italic ml-8">"Tip: Enter star rating for this vendor"</span>
+
+              <span className="text-sm italic ml-8">"Tip: Enter star rating for this vendor"</span>
             </div>
 
             <button
