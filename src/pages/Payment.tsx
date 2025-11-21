@@ -1,84 +1,78 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useCart } from "../contexts/CartContext";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
-    LoaderCircle,
     ArrowLeft,
     ArrowRight,
+    LoaderCircle,
     Smartphone,
 } from "lucide-react";
 
-// Response structure based on your backend
-type PaymentResponse = {
+interface PaymentResponse {
     success: boolean;
     message?: string;
-    result?: {
+    data?: {
         reference?: string;
-        status?: string;
         amount?: number;
-        kind?: string;
+        status?: string;
     };
-};
+}
 
-const Payment = () => {
+const Payment: React.FC = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [orderId, setOrderId] = useState<number | null>(null);
+    const [amount, setAmount] = useState<number>(0);
     const [method, setMethod] = useState<"mtn" | "airtel" | null>(null);
-    const [phoneNumber, setPhoneNumber] = useState("");
+    const [phone, setPhone] = useState("");
     const [processing, setProcessing] = useState(false);
 
-    const navigate = useNavigate();
-    const { cartItems } = useCart();
+   
+    useEffect(() => {
+        const storedOrder = location.state?.orderId || localStorage.getItem("lastOrderId");
+        const storedAmount = location.state?.amount || localStorage.getItem("lastOrderAmount");
 
-    const total = cartItems.reduce(
-        (acc, item) => acc + item.price * item.quantity,
-        0
-    );
+        if (storedOrder) setOrderId(parseInt(storedOrder));
+        if (storedAmount) setAmount(parseFloat(storedAmount));
+    }, [location.state]);
 
     const handlePay = async () => {
-        if (!method || phoneNumber.trim().length < 10) {
-            alert("Please choose a payment method and enter a valid phone number (at least 10 digits).");
+        if (!orderId || !method || !phone || phone.trim().length < 10) {
+            alert("ℹ️ Please complete all payment fields.");
             return;
         }
 
         setProcessing(true);
 
         try {
-            const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/transactions/cashin`, // ✅ Send to updated backend path
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        number: phoneNumber,
-                        amount: total,
-                    }),
-                }
+            const response = await fetch("http://localhost:3000/api/payments/pay", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    order_id: orderId,
+                    amount,
+                    phone,
+                    method,
+                }),
+            });
+
+            const result: PaymentResponse = await response.json();
+
+            if (!result.success) {
+                throw new Error(result.message || "Payment failed. Try again.");
+            }
+
+            alert(
+                "📲 Payment initiated.\nCheck your phone and enter your Mobile Money PIN to confirm."
             );
 
-            const responseText = await response.text();
-            let result: PaymentResponse;
-
-            try {
-                result = JSON.parse(responseText);
-            } catch {
-                console.error("❌ Invalid JSON from backend:", responseText);
-                throw new Error("Backend did not return valid JSON.");
-            }
-
-            if (!response.ok || !result.success) {
-                throw new Error(result.message || "Payment failed.");
-            }
-
-            
-            alert("📲 Payment initiated.\nPlease check your phone and confirm using your Mobile Money PIN.");
-
-            
-            navigate("/order-success");
-
-        } catch (err) {
-            const msg = err instanceof Error ? err.message : "Unknown payment error.";
-            alert(`❌ Payment failed: ${msg}`);
+            navigate("/order-success", {
+                state: {
+                    orderId,
+                    reference: result?.data?.reference || "N/A",
+                },
+            });
+        } catch (err: any) {
+            alert(`❌ Error: ${err.message || "Unknown error"}`);
         } finally {
             setProcessing(false);
         }
@@ -87,10 +81,9 @@ const Payment = () => {
     return (
         <div className="bg-[#F8F6F2] py-8 px-6 lg:px-20 min-h-screen">
             <h1 className="text-2xl font-semibold mb-1">Payment</h1>
-            <p className="text-sm text-gray-500 mb-6">Choose how you'd like to pay</p>
+            <p className="text-sm text-gray-500 mb-6">Choose your payment method</p>
 
-            {/* Payment Options */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl">
                 <PaymentOption
                     label="MTN Mobile Money"
                     icon={<img src="/mtn.png" className="h-6" alt="MTN" />}
@@ -105,11 +98,11 @@ const Payment = () => {
                 />
             </div>
 
-            {/* Phone Number Input */}
+            {/* Phone Input */}
             {method && (
-                <div className="mt-6 bg-white rounded-md p-4 max-w-md shadow-sm">
+                <div className="mt-6 bg-white rounded-md p-4 shadow-sm max-w-md">
                     <label className="block text-sm font-medium mb-2">
-                        Enter {method?.toUpperCase()} Phone Number:
+                        Enter {method?.toUpperCase()} Number:
                     </label>
                     <div className="flex items-center border rounded-md px-3 py-2 focus-within:ring-2 focus-within:ring-[#FFB800]">
                         <Smartphone size={16} />
@@ -117,34 +110,34 @@ const Payment = () => {
                             type="tel"
                             className="flex-1 ml-2 outline-none text-sm"
                             placeholder="07XX..."
-                            value={phoneNumber}
-                            onChange={(e) => setPhoneNumber(e.target.value)}
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
                         />
                     </div>
                 </div>
             )}
 
-            {/* Bottom Buttons */}
-            <div className="flex justify-between items-center mt-8 max-w-3xl">
+            {/* Buttons */}
+            <div className="flex justify-between items-center mt-10 max-w-3xl">
                 <button
-                    className="flex items-center gap-1 text-sm font-medium text-gray-600 hover:underline"
+                    className="flex items-center gap-2 text-sm text-gray-600 hover:underline"
                     onClick={() => navigate("/checkout")}
                 >
                     <ArrowLeft size={16} /> Back to Checkout
                 </button>
-
                 <button
                     onClick={handlePay}
-                    disabled={processing}
-                    className="flex items-center gap-2 bg-[#4B341C] text-white px-6 py-2 rounded hover:bg-[#3b2a15] transition shadow disabled:opacity-50"
+                    disabled={!orderId || processing}
+                    className="flex items-center gap-2 bg-[#4B341C] text-white px-6 py-2 rounded hover:bg-[#3b2a15] transition disabled:opacity-50"
                 >
                     {processing ? (
                         <>
-                            <LoaderCircle className="animate-spin" /> Processing...
+                            <LoaderCircle className="animate-spin" size={18} />
+                            Processing...
                         </>
                     ) : (
                         <>
-                            Pay Now <ArrowRight />
+                            Pay Now <ArrowRight size={16} />
                         </>
                     )}
                 </button>
@@ -166,9 +159,9 @@ const PaymentOption = ({
 }) => (
     <div
         onClick={onSelect}
-        className={`flex items-center gap-3 p-4 cursor-pointer border rounded-md ${selected
+        className={`flex items-center gap-3 p-4 cursor-pointer border rounded-md duration-150 ${selected
                 ? "border-[#FFB800] bg-[#fff7ee]"
-                : "border-gray-300 hover:border-[#FFB800]"
+                : "border-gray-300 hover:border-[#FFB800] hover:bg-[#fffaf3]"
             }`}
     >
         {icon}

@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Sidebar from "../../components/vendorDashboard/Sidebar";
 import Navbar from "../../components/vendorDashboard/Navbar";
+import { Eye, X } from "lucide-react";
 
 type Item = {
   product_id: number;
@@ -20,6 +21,7 @@ type Order = {
 
 export default function VendorOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,8 +41,7 @@ export default function VendorOrders() {
       if (response.ok && Array.isArray(data)) {
         setOrders(data);
       } else {
-        console.warn("🔥 Response is not array!", data);
-        setOrders([]); // Fallback: no orders found
+        setOrders([]);
       }
     } catch (err) {
       console.error("❌ Error fetching vendor orders:", err);
@@ -68,11 +69,13 @@ export default function VendorOrders() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex">
+      {/* Sidebar */}
       <div className="fixed inset-y-0 left-0 w-64 z-50">
         <Sidebar />
       </div>
 
       <div className="flex-1 ml-64 flex flex-col">
+        {/* Top Navbar */}
         <div className="fixed top-0 left-64 right-0 z-40 bg-white border-b border-gray-200">
           <Navbar />
         </div>
@@ -131,14 +134,66 @@ export default function VendorOrders() {
                           </span>
                         </td>
                         <td className="px-4 py-3">
-                          <button className="bg-[#4B341C] text-white text-xs px-3 py-1 rounded hover:bg-[#3b2a15] transition">
-                            Pay Now
+                          <button
+                            className="flex items-center gap-1 text-xs bg-[#4B341C] hover:bg-[#3b2a15] text-white px-3 py-1 rounded-md transition"
+                            onClick={() => setSelectedOrder(order)}
+                          >
+                            <Eye size={14} /> View
                           </button>
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          )}
+
+          {/* MODAL to display full order details */}
+          {selectedOrder && (
+            <div className="fixed inset-0 z-50 bg-black/40 flex justify-center items-center">
+              <div
+                className="bg-white w-full max-w-lg rounded-md p-6 relative shadow-lg"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
+                  onClick={() => setSelectedOrder(null)}
+                >
+                  <X size={20} />
+                </button>
+                <h3 className="text-xl font-bold text-[#4B341C] mb-4">
+                  Order #{selectedOrder.id} Details
+                </h3>
+
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <p><strong>Customer:</strong> {selectedOrder.full_name}</p>
+                  <p><strong>Phone:</strong> {selectedOrder.phone}</p>
+                  <p><strong>Shipping:</strong> {selectedOrder.shipping_address}</p>
+                  <p><strong>Date:</strong> {new Date(selectedOrder.created_at).toLocaleString()}</p>
+                </div>
+
+                <div className="mt-6">
+                  <h4 className="font-semibold text-[#4B341C] mb-2">Products Sold:</h4>
+                  <ul className="text-sm space-y-2">
+                    {selectedOrder.items.map((item, idx) => (
+                      <li
+                        key={idx}
+                        className="flex justify-between border-b pb-1 text-gray-700"
+                      >
+                        <span>Product #{item.product_id}</span>
+                        <span>
+                          {item.quantity} × {formatRWF(item.price)} ={" "}
+                          {formatRWF(item.quantity * parseFloat(item.price))}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="mt-4 font-semibold text-base text-[#4B341C]">
+                    Total: {formatRWF(getOrderTotal(selectedOrder.items))}
+                  </div>
+                </div>
               </div>
             </div>
           )}

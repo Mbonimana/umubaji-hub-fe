@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import CustomerSidebar from '../../components/customerDashboard/Sidebar';
 import CustomerTopbar from '../../components/customerDashboard/Navbar';
+import { Link } from 'react-router-dom';
 
 type OrderItem = {
   product_id: number;
@@ -214,12 +215,14 @@ export default function CustomerOrders() {
                   </div>
 
                   {selected.status !== "Delivered" && (
+                    <Link to="/payment" state={{ orderId: selected.id, amount: selected.total_amount }}>
                     <button
-                      onClick={() => alert('🔜 Payment system launching soon!')}
+                      onClick={() => alert(' Payment system launching soon!')}
                       className="w-full mt-4 py-2 bg-[#4B341C] text-white rounded hover:bg-[#3b2a15] transition"
                     >
                       Pay Now
                     </button>
+                    </Link>
                   )}
                 </div>
               </div>
