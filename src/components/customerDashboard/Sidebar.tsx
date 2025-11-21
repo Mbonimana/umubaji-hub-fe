@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Home, ShoppingBag, Heart, MessageSquare, Settings, LogOut } from 'lucide-react';
+import { Home, ShoppingBag,  Settings, LogOut } from 'lucide-react';
 
 export default function CustomerSidebar() {
   const linkClass = ({ isActive }: { isActive: boolean }) =>
@@ -23,25 +23,23 @@ export default function CustomerSidebar() {
       </div>
 
       <nav className="space-y-2">
-        <NavLink to="/customer-dashboard" className={linkClass} end>
-          <Home size={18} /> Overview
+        <NavLink to="/home" className={linkClass} end>
+          <Home size={18} /> Home
         </NavLink>
         <NavLink to="/customer/orders" className={linkClass}>
           <ShoppingBag size={18} /> My Orders
         </NavLink>
-        <NavLink to="/customer/wishlist" className={linkClass}>
-          <Heart size={18} /> Wishlist
-        </NavLink>
-        <NavLink to="/customer/messages" className={linkClass}>
+       
+        {/* <NavLink to="/customer/messages" className={linkClass}>
           <MessageSquare size={18} /> Messages
-        </NavLink>
+        </NavLink> */}
         <NavLink to="/customer/settings" className={linkClass}>
           <Settings size={18} /> Settings
         </NavLink>
       </nav>
 
       <div className="mt-6 pt-4 border-t">
-        <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">
+        <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 mb-0">
           <LogOut size={18} /> Logout
         </button>
       </div>
