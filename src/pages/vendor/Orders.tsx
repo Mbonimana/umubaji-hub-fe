@@ -168,7 +168,7 @@ export default function VendorOrders() {
 
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <p><strong>Customer:</strong> {selectedOrder.full_name}</p>
-                  <p><strong>Phone:</strong> {selectedOrder.phone}</p>
+                 
                   <p><strong>Shipping:</strong> {selectedOrder.shipping_address}</p>
                   <p><strong>Date:</strong> {new Date(selectedOrder.created_at).toLocaleString()}</p>
                 </div>
