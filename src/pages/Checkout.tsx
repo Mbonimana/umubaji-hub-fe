@@ -247,7 +247,7 @@ const Checkout = () => {
                 </div>
             </div>
 
-            {/* ✅ Confirmation Popup */}
+            
             {showPopup && (
                 <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center">
                     <div className="bg-white w-full max-w-md mx-auto p-6 rounded-lg shadow-lg text-center relative">
@@ -276,8 +276,12 @@ const Checkout = () => {
                             </button>
                             <button
                                 onClick={() => {
-                                    setShowPopup(false);
-                                    alert("🔔 Redirecting to payment gateway!");
+                                    navigate("/payment", {
+                                        state: {
+                                            orderId: placedOrderId,
+                                            amount: total,
+                                        },
+                                    });
                                 }}
                                 className="w-full bg-[#4B341C] text-white py-2 rounded font-medium hover:bg-[#3b2a15]"
                             >

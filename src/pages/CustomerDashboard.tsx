@@ -76,7 +76,7 @@ export default function CustomerDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
             <div className="bg-white rounded-xl p-5 shadow border border-gray-100">
               <p className="text-sm text-gray-500">Total Orders</p>
-              <p className="text-2xl font-semibold text-[#333]">27</p>
+              <p className="text-2xl font-semibold text-[#333]">4</p>
             </div>
             <div className="bg-white rounded-xl p-5 shadow border border-gray-100">
               <p className="text-sm text-gray-500">In Progress</p>
@@ -88,7 +88,7 @@ export default function CustomerDashboard() {
             </div>
             <div className="bg-white rounded-xl p-5 shadow border border-gray-100">
               <p className="text-sm text-gray-500">Site Visits</p>
-              <p className="text-2xl font-semibold text-[#333]">320</p>
+              <p className="text-2xl font-semibold text-[#333]">5</p>
             </div>
           </div>
 
