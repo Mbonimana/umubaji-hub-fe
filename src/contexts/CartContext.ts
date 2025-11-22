@@ -1,4 +1,3 @@
-
 import { createContext, useContext } from "react";
 
 export type CartItem = {
@@ -12,7 +11,7 @@ export type CartItem = {
 
 export type CartContextProps = {
     cartItems: CartItem[];
-    addToCart: (item: CartItem) => void;
+    addToCart: (item: CartItem) => Promise<void> | void;
     updateQuantity: (id: string, value: number) => void;
     removeFromCart: (id: string) => void;
     clearCart: () => void;
@@ -20,9 +19,9 @@ export type CartContextProps = {
 
 export const CartContext = createContext<CartContextProps>({
     cartItems: [],
-    addToCart: () => { },
-    updateQuantity: () => { },
-    removeFromCart: () => { },
+    addToCart: async () => {},
+    updateQuantity: () => {},
+    removeFromCart: () => {},
     clearCart: () => {},
 });
 

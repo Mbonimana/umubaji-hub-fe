@@ -1,63 +1,66 @@
-
 import { useEffect, useState } from "react";
 import { CartContext } from "./CartContext";
 import { getBaseUrl } from "../config/baseUrl";
 import axios from "axios";
+import { useAuth } from "./AuthContext";
 
 import type { FC, ReactNode } from "react";
 import type { CartItem } from "./CartContext";
-import { useAuth } from "./AuthContext";
 
 const CartProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
     const { user } = useAuth();
 
-  
+    // Load cart from localStorage on first render
     useEffect(() => {
-        const storedCart = localStorage.getItem("cart");
-        if (storedCart) {
-            setCartItems(JSON.parse(storedCart));
+        const stored = localStorage.getItem("cart");
+        if (stored) {
+            setCartItems(JSON.parse(stored));
         }
     }, []);
 
-    // Auto sync guest cart to localStorage on change
+    // Save cart to localStorage whenever it changes
     useEffect(() => {
         localStorage.setItem("cart", JSON.stringify(cartItems));
     }, [cartItems]);
 
     // Sync guest cart to DB when user logs in
     useEffect(() => {
-        const syncCartToDatabase = async () => {
+        const syncCartToDB = async () => {
             if (!user) return;
 
-            const guestCart = localStorage.getItem("cart");
-            if (!guestCart) return;
+            const guest = localStorage.getItem("cart");
+            if (!guest) return;
 
-            const parsedCart: CartItem[] = JSON.parse(guestCart);
+            const items: CartItem[] = JSON.parse(guest);
 
             try {
-                // Send each item to DB
-                for (const item of parsedCart) {
-                    await axios.post(`${getBaseUrl()}/cart/add`, {
-                        product_id: item.id,
-                        quantity: item.quantity,
-                    }, {
-                        headers: {
-                            Authorization: `Bearer ${user.access_token}`,
+                for (const item of items) {
+                    await axios.post(
+                        `${getBaseUrl()}/cart/add`,
+                        {
+                            product_id: item.id,
+                            quantity: item.quantity,
                         },
-                    });
+                        {
+                            headers: {
+                                Authorization: `Bearer ${user.access_token}`,
+                            },
+                        }
+                    );
                 }
 
-                
                 localStorage.removeItem("cart");
-            } catch (error) {
-                console.error("❌ Failed to sync cart to DB:", error);
+                setCartItems([]);
+            } catch (err) {
+                console.error(" Failed to sync guest cart to DB:", err);
             }
         };
 
-        syncCartToDatabase();
-    }, [user]); // run once after login
+        syncCartToDB();
+    }, [user]);
 
+    // Add item to cart
     const addToCart = async (item: CartItem) => {
         setCartItems((prev) => {
             const exists = prev.find((i) => i.id === item.id);
@@ -71,38 +74,58 @@ const CartProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
         if (user) {
             try {
-                await axios.post(`${getBaseUrl()}/cart/add`, {
-                    product_id: item.id,
-                    quantity: 1,
-                }, {
-                    headers: {
-                        Authorization: `Bearer ${user.access_token}`,
+                await axios.post(
+                    `${getBaseUrl()}/cart/add`,
+                    {
+                        product_id: item.id,
+                        quantity: 1,
                     },
-                });
-
-                console.log(`🛒 Added item to DB for user ${user.id}`);
+                    {
+                        headers: {
+                            Authorization: `Bearer ${user.access_token}`,
+                        },
+                    }
+                );
             } catch (err) {
-                console.error("❌ DB Cart add failed:", err);
+                console.error("❌ Failed to add to DB cart:", err);
             }
         }
     };
 
+    // Update item quantity (+ or -)
     const updateQuantity = (id: string, value: number) => {
         setCartItems((prev) =>
             prev
                 .map((item) =>
-                    item.id === id ? { ...item, quantity: item.quantity + value } : item
+                    item.id === id
+                        ? { ...item, quantity: item.quantity + value }
+                        : item
                 )
                 .filter((item) => item.quantity > 0)
         );
     };
 
+    // Remove item from cart
     const removeFromCart = (id: string) => {
         setCartItems((prev) => prev.filter((item) => item.id !== id));
     };
 
+    // Clear full cart
+    const clearCart = () => {
+        setCartItems([]);
+        localStorage.removeItem("cart");
+    };
+
     return (
-        <CartContext.Provider value={{ cartItems, addToCart, updateQuantity, removeFromCart }}>
+        <CartContext.Provider
+            value={{
+                cartItems,
+                addToCart,
+                updateQuantity,
+                removeFromCart,
+                clearCart,
+            }}
+        >
             {children}
         </CartContext.Provider>
     );
