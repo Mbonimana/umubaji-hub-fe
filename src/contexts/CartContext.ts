@@ -15,6 +15,7 @@ export type CartContextProps = {
     addToCart: (item: CartItem) => void;
     updateQuantity: (id: string, value: number) => void;
     removeFromCart: (id: string) => void;
+    clearCart: () => void;
 };
 
 export const CartContext = createContext<CartContextProps>({
@@ -22,6 +23,7 @@ export const CartContext = createContext<CartContextProps>({
     addToCart: () => { },
     updateQuantity: () => { },
     removeFromCart: () => { },
+    clearCart: () => {},
 });
 
 export const useCart = () => useContext(CartContext);

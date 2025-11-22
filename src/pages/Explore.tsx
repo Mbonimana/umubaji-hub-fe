@@ -29,8 +29,8 @@ const Explore: React.FC = () => {
   const [location, setLocation] = useState("All");
   const [maxPrice, setMaxPrice] = useState(100000000);
   const [sortBy, setSortBy] = useState("Highest Rated");
-  const [loading, setLoading] = useState(true);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [, setLoading] = useState(true);
+  const [, setSelectedProduct] = useState<Product | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
 
   const { addToCart } = useCart();

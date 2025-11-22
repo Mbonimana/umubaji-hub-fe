@@ -44,7 +44,7 @@ export default function VendorOrders() {
         setOrders([]);
       }
     } catch (err) {
-      console.error("❌ Error fetching vendor orders:", err);
+      console.error(" Error fetching vendor orders:", err);
       setError("Error fetching orders");
       setOrders([]);
     } finally {
@@ -183,7 +183,7 @@ export default function VendorOrders() {
                       >
                         <span>Product #{item.product_id}</span>
                         <span>
-                          {item.quantity} × {formatRWF(item.price)} ={" "}
+                          {item.quantity} × {formatRWF(parseFloat(item.price))}={" "}
                           {formatRWF(item.quantity * parseFloat(item.price))}
                         </span>
                       </li>

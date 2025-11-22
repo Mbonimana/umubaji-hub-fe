@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { MapPin, Star } from "lucide-react";
 import { getBaseUrl } from "../config/baseUrl";
-import Notiflix from "notiflix";
+
 
 interface Product {
   id: number;
