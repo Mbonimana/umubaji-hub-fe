@@ -7,5 +7,5 @@ export const getBaseUrl = () => {
   }
 
   // If not localhost, assume deployed
-  return 'https://your-deployed-domain.com/api'; 
+  return 'https://umubaji-hub-be.onrender.com/api'; // replace with your real deployed URL
 };
