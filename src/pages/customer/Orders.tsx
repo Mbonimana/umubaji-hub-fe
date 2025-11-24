@@ -25,18 +25,21 @@ export default function CustomerOrders() {
   const [selected, setSelected] = useState<Order | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
 
+  // Load user ID from JWT token stored in localStorage
   useEffect(() => {
-    const uRaw = localStorage.getItem('user');
-    if (uRaw) {
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
       try {
-        const u = JSON.parse(uRaw);
-        setUserId(u?.id || null);
-      } catch {
+        const decoded: any = JSON.parse(atob(token.split('.')[1]));
+        setUserId(decoded?.id || null);
+      } catch (err) {
+        console.error('Failed to decode token:', err);
         setUserId(null);
       }
     }
   }, []);
 
+  // Fetch user orders
   useEffect(() => {
     if (!userId) return;
 
@@ -44,12 +47,8 @@ export default function CustomerOrders() {
       try {
         const res = await fetch(`http://localhost:3000/api/orders/user/${userId}`);
         const data = await res.json();
-
-        if (Array.isArray(data)) {
-          setOrders(data);
-        } else {
-          setOrders([]);
-        }
+        if (Array.isArray(data)) setOrders(data);
+        else setOrders([]);
       } catch (err) {
         console.error('Failed to fetch orders:', err);
         setOrders([]);
@@ -77,6 +76,21 @@ export default function CustomerOrders() {
 
   const getItemCount = (items: OrderItem[]) =>
     items.reduce((sum, i) => sum + i.quantity, 0);
+
+  // Function to get status color classes
+  const getStatusClasses = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'delivered':
+        return 'bg-[#E6F7EF] text-[#0F9D58] border border-[#BFE9D6]';
+      case 'cancelled':
+        return 'bg-[#FDE2E1] text-[#D32F2F] border border-[#F9BDBD]';
+      case 'pending':
+      case 'processing':
+        return 'bg-[#FFF7E6] text-[#AD6800] border border-[#FFE7BA]';
+      default:
+        return 'bg-gray-100 text-gray-700 border border-gray-200';
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex">
@@ -121,14 +135,9 @@ export default function CustomerOrders() {
                         <td className="px-4 py-3 text-gray-800">
                           {formatRWF(order.total_amount)}
                         </td>
-                        <td className="px-4 py-3 text-gray-800">
+                        <td className="px-4 py-3">
                           <span
-                            className={`px-3 py-1 rounded-full text-xs font-medium ${order.status === 'Delivered'
-                                ? 'bg-[#E6F7EF] text-[#0F9D58] border border-[#BFE9D6]'
-                                : order.status === 'Cancelled'
-                                  ? 'bg-red-50 text-red-700 border border-red-300'
-                                  : 'bg-[#FFF7E6] text-[#AD6800] border border-[#FFE7BA]'
-                              }`}
+                            className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusClasses(order.status)}`}
                           >
                             {order.status}
                           </span>
@@ -180,8 +189,7 @@ export default function CustomerOrders() {
                       return (
                         <div key={step} className="flex items-start gap-3">
                           <div
-                            className={`w-3 h-3 rounded-full mt-1 ${active ? 'bg-[#4B341C]' : 'bg-gray-300'
-                              }`}
+                            className={`w-3 h-3 rounded-full mt-1 ${active ? 'bg-[#4B341C]' : 'bg-gray-300'}`}
                           />
                           <div>
                             <div className={`text-sm ${active ? 'text-gray-900' : 'text-gray-400'}`}>
@@ -189,8 +197,7 @@ export default function CustomerOrders() {
                             </div>
                             {i < steps.length - 1 && (
                               <div
-                                className={`ml-1 mt-1 w-0.5 h-4 ${active ? 'bg-[#4B341C]' : 'bg-gray-200'
-                                  }`}
+                                className={`ml-1 mt-1 w-0.5 h-4 ${active ? 'bg-[#4B341C]' : 'bg-gray-200'}`}
                               />
                             )}
                           </div>
@@ -210,18 +217,20 @@ export default function CustomerOrders() {
                     </div>
                     <div className="flex justify-between">
                       <span>Status:</span>
-                      <span>{selected.status}</span>
+                      <span className={`${getStatusClasses(selected.status)} px-2 py-1 rounded-full text-xs font-medium`}>
+                        {selected.status}
+                      </span>
                     </div>
                   </div>
 
-                  {selected.status !== "Delivered" && (
+                  {selected.status.toLowerCase() !== "delivered" && (
                     <Link to="/payment" state={{ orderId: selected.id, amount: selected.total_amount }}>
-                    <button
-                      onClick={() => alert(' Payment system launching soon!')}
-                      className="w-full mt-4 py-2 bg-[#4B341C] text-white rounded hover:bg-[#3b2a15] transition"
-                    >
-                      Pay Now
-                    </button>
+                      <button
+                        onClick={() => alert('Payment system launching soon!')}
+                        className="w-full mt-4 py-2 bg-[#4B341C] text-white rounded hover:bg-[#3b2a15] transition"
+                      >
+                        Pay Now
+                      </button>
                     </Link>
                   )}
                 </div>
