@@ -6,6 +6,7 @@ import { X } from "lucide-react";
 import Notiflix from "notiflix";
 import { useCart } from "../contexts/CartContext";
 import { formatRWF } from "../utils/currency";
+import { getBaseUrl } from "../config/baseUrl";
 import axios from "axios";
 
 Notiflix.Notify.init({
@@ -40,16 +41,16 @@ const Cart = () => {
     try {
       await Promise.all(
         cartItems.map((item) =>
-          axios.post("http://localhost:3000/api/cart/add", {
+          axios.post(`${getBaseUrl()}/cart/add`, {
             user_id: userId,
             product_id: item.id,
             quantity: item.quantity,
           })
         )
       );
-      console.log("✅ Cart synced to backend");
+      console.log(" Cart synced to backend");
     } catch (error) {
-      console.error("❌ Error syncing cart", error);
+      console.error(" Error syncing cart", error);
     }
   };
 

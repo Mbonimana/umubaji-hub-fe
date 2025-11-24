@@ -7,5 +7,5 @@ export const getBaseUrl = () => {
   }
 
   // If not localhost, 
-  return 'https://umubaji-hub-be.onrender.com/api'; // replace with your real deployed URL
+  return 'https://umubaji-hub-bn.andasy.dev/api'; // replace with your real deployed URL
 };
