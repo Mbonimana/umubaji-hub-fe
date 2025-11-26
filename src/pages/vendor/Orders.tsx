@@ -2,21 +2,27 @@ import { useEffect, useState, useCallback } from "react";
 import Sidebar from "../../components/vendorDashboard/Sidebar";
 import Navbar from "../../components/vendorDashboard/Navbar";
 import { Eye, X } from "lucide-react";
+import { getBaseUrl } from "../../config/baseUrl";
 
 type Item = {
   product_id: number;
+  name: string;
   quantity: number;
-  price: string;
+  unit_price: number;
+  subtotal: number;
+  images: string[];
 };
 
 type Order = {
   id: number;
-  full_name: string;
+  fullnames: string;
   phone: string;
-  shipping_address: string;
+  address: string;
   status: string;
   created_at: string;
   items: Item[];
+  currency?: string;
+  total_amount?: string;
 };
 
 export default function VendorOrders() {
@@ -25,32 +31,38 @@ export default function VendorOrders() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 5;
+
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const vendorId = user?.id;
+  const token = localStorage.getItem("jwtToken");
 
   const fetchVendorOrders = useCallback(async () => {
-    if (!vendorId) {
-      setError("Vendor ID not found.");
+    if (!vendorId || !token) {
+      setError("Authentication error. Please login again.");
+      setLoading(false);
       return;
     }
 
     try {
-      const response = await fetch(`http://localhost:3000/api/orders/vendor/${vendorId}`);
-      const data = await response.json();
+      const response = await fetch(`${getBaseUrl()}/orders/vendor/${vendorId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-      if (response.ok && Array.isArray(data)) {
-        setOrders(data);
-      } else {
-        setOrders([]);
-      }
+      const data = await response.json();
+      if (response.ok && Array.isArray(data)) setOrders(data);
+      else setError("No orders found or invalid response.");
     } catch (err) {
-      console.error(" Error fetching vendor orders:", err);
+      console.error(err);
       setError("Error fetching orders");
-      setOrders([]);
     } finally {
       setLoading(false);
     }
-  }, [vendorId]);
+  }, [vendorId, token]);
 
   useEffect(() => {
     fetchVendorOrders();
@@ -60,45 +72,49 @@ export default function VendorOrders() {
     `RWF ${amount.toLocaleString("en-RW", { minimumFractionDigits: 0 })}`;
 
   const getOrderTotal = (items: Item[]) =>
-    items.reduce((sum, item) => sum + parseFloat(item.price) * item.quantity, 0);
+    items.reduce((sum, item) => sum + item.subtotal, 0);
 
   const statusClass = (status: string) =>
-    status === "paid"
+    status === "completed"
       ? "bg-[#E6F7EF] text-[#0F9D58] border border-[#BFE9D6]"
       : "bg-[#FDEDEE] text-[#D93025] border border-[#F7C2C6]";
 
+  const indexOfLast = currentPage * ordersPerPage;
+  const indexOfFirst = indexOfLast - ordersPerPage;
+  const currentOrders = orders.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(orders.length / ordersPerPage);
+
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex">
-      {/* Sidebar */}
       <div className="fixed inset-y-0 left-0 w-64 z-50">
         <Sidebar />
       </div>
 
       <div className="flex-1 ml-64 flex flex-col">
-        {/* Top Navbar */}
         <div className="fixed top-0 left-64 right-0 z-40 bg-white border-b border-gray-200">
           <Navbar />
         </div>
 
         <main className="flex-1 pt-20 p-6 overflow-y-auto">
-          <h1 className="text-2xl font-semibold text-[#5a4632] mb-4">Vendor Orders</h1>
+          <h1 className="text-2xl font-semibold text-[#5a4632] mb-4">
+            Vendor Orders
+          </h1>
 
           {loading ? (
             <p className="text-gray-400">Loading orders...</p>
           ) : error ? (
             <p className="text-red-500">❌ {error}</p>
           ) : orders.length === 0 ? (
-            <p className="text-gray-500">No orders found for your products.</p>
+            <p className="text-gray-500">No orders found.</p>
           ) : (
             <div className="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto max-h-[70vh]">
                 <table className="min-w-full text-left text-sm">
-                  <thead className="bg-[#f9fafb] text-gray-600">
+                  <thead className="bg-[#f9fafb] text-gray-600 sticky top-0">
                     <tr>
                       <th className="px-4 py-3">Order ID</th>
                       <th className="px-4 py-3">Customer</th>
-                      <th className="px-4 py-3">Phone</th>
-                      <th className="px-4 py-3">Shipping</th>
+                      <th className="px-4 py-3">Address</th>
                       <th className="px-4 py-3">Date</th>
                       <th className="px-4 py-3">Products</th>
                       <th className="px-4 py-3">Total</th>
@@ -106,13 +122,15 @@ export default function VendorOrders() {
                       <th className="px-4 py-3">Action</th>
                     </tr>
                   </thead>
+
                   <tbody>
-                    {orders.map((order) => (
+                    {currentOrders.map((order) => (
                       <tr key={order.id} className="border-t">
-                        <td className="px-4 py-3 font-medium text-[#4B341C]">#{order.id}</td>
-                        <td className="px-4 py-3 text-gray-800">{order.full_name}</td>
-                        <td className="px-4 py-3 text-gray-600">{order.phone}</td>
-                        <td className="px-4 py-3 text-gray-600">{order.shipping_address}</td>
+                        <td className="px-4 py-3 font-medium text-[#4B341C]">
+                          #{order.id}
+                        </td>
+                        <td className="px-4 py-3 text-gray-800">{order.fullnames}</td>
+                        <td className="px-4 py-3 text-gray-600">{order.address}</td>
                         <td className="px-4 py-3 text-gray-600">
                           {new Date(order.created_at).toLocaleString()}
                         </td>
@@ -120,7 +138,7 @@ export default function VendorOrders() {
                           <ul className="list-disc list-inside space-y-1">
                             {order.items.map((item, idx) => (
                               <li key={idx}>
-                                Product #{item.product_id} × {item.quantity}
+                                {item.name} × {item.quantity}
                               </li>
                             ))}
                           </ul>
@@ -129,13 +147,17 @@ export default function VendorOrders() {
                           {formatRWF(getOrderTotal(order.items))}
                         </td>
                         <td className="px-4 py-3">
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusClass(order.status)}`}>
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-medium ${statusClass(
+                              order.status
+                            )}`}
+                          >
                             {order.status}
                           </span>
                         </td>
                         <td className="px-4 py-3">
                           <button
-                            className="flex items-center gap-1 text-xs bg-[#4B341C] hover:bg-[#3b2a15] text-white px-3 py-1 rounded-md transition"
+                            className="flex items-center gap-1 text-xs bg-[#4B341C] hover:bg-[#3b2a15] text-white px-3 py-1 rounded-md"
                             onClick={() => setSelectedOrder(order)}
                           >
                             <Eye size={14} /> View
@@ -146,53 +168,73 @@ export default function VendorOrders() {
                   </tbody>
                 </table>
               </div>
+
+              {/* Pagination */}
+              <div className="flex justify-between items-center p-4 bg-white border-t">
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage((p) => p - 1)}
+                  className="px-3 py-1 rounded bg-gray-200 disabled:opacity-40"
+                >
+                  Prev
+                </button>
+                <span className="font-medium">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage((p) => p + 1)}
+                  className="px-3 py-1 rounded bg-gray-200 disabled:opacity-40"
+                >
+                  Next
+                </button>
+              </div>
             </div>
           )}
 
-          {/* MODAL to display full order details */}
+          {/* Modal for full details */}
           {selectedOrder && (
-            <div className="fixed inset-0 z-50 bg-black/40 flex justify-center items-center">
-              <div
-                className="bg-white w-full max-w-lg rounded-md p-6 relative shadow-lg"
-                onClick={(e) => e.stopPropagation()}
-              >
+            <div className="fixed inset-0 z-50 bg-black/40 flex justify-center items-center p-4">
+              <div className="bg-white w-full max-w-2xl rounded-md p-6 relative shadow-lg overflow-y-auto max-h-[90vh]">
                 <button
                   className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
                   onClick={() => setSelectedOrder(null)}
                 >
                   <X size={20} />
                 </button>
+
                 <h3 className="text-xl font-bold text-[#4B341C] mb-4">
-                  Order #{selectedOrder.id} Details
+                  Order #{selectedOrder.id}
                 </h3>
 
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <p><strong>Customer:</strong> {selectedOrder.full_name}</p>
-                 
-                  <p><strong>Shipping:</strong> {selectedOrder.shipping_address}</p>
+                <div className="grid grid-cols-2 gap-4 text-sm mb-4">
+                  <p><strong>Customer:</strong> {selectedOrder.fullnames}</p>
+                  <p><strong>Phone:</strong> {selectedOrder.phone}</p>
+                  <p><strong>Address:</strong> {selectedOrder.address}</p>
                   <p><strong>Date:</strong> {new Date(selectedOrder.created_at).toLocaleString()}</p>
+                  <p><strong>Total:</strong> {formatRWF(getOrderTotal(selectedOrder.items))}</p>
+                  <p><strong>Status:</strong> {selectedOrder.status}</p>
                 </div>
 
-                <div className="mt-6">
+                <div>
                   <h4 className="font-semibold text-[#4B341C] mb-2">Products Sold:</h4>
-                  <ul className="text-sm space-y-2">
-                    {selectedOrder.items.map((item, idx) => (
-                      <li
-                        key={idx}
-                        className="flex justify-between border-b pb-1 text-gray-700"
-                      >
-                        <span>Product #{item.product_id}</span>
-                        <span>
-                          {item.quantity} × {formatRWF(parseFloat(item.price))}={" "}
-                          {formatRWF(item.quantity * parseFloat(item.price))}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div className="mt-4 font-semibold text-base text-[#4B341C]">
-                    Total: {formatRWF(getOrderTotal(selectedOrder.items))}
-                  </div>
+                  {selectedOrder.items.map((item, i) => (
+                    <div key={i} className="flex items-center justify-between border-b py-2">
+                      <div className="flex items-center gap-2">
+                        {item.images?.[0] && (
+                          <img
+                            src={item.images[0]}
+                            alt={item.name}
+                            className="w-12 h-12 object-cover rounded"
+                          />
+                        )}
+                        <span>{item.name}</span>
+                      </div>
+                      <div>
+                        {item.quantity} × {formatRWF(item.unit_price)} = {formatRWF(item.subtotal)}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
