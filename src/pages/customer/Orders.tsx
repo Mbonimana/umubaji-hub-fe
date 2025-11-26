@@ -1,23 +1,26 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import CustomerSidebar from '../../components/customerDashboard/Sidebar';
 import CustomerTopbar from '../../components/customerDashboard/Navbar';
 import { Link } from 'react-router-dom';
+import { getBaseUrl } from '../../config/baseUrl';
 
 type OrderItem = {
   product_id: number;
-  title?: string;
-  price: string;
+  product_name: string;
+  unit_price: string;
   quantity: number;
+  subtotal: string;
 };
 
 type Order = {
   id: number;
-  full_name: string;
+  fullnames: string;
   created_at: string;
   status: string;
   items: OrderItem[];
   total_amount: string;
-  shipping_address: string;
+  address: string;
+  phone: string;
 };
 
 export default function CustomerOrders() {
@@ -25,7 +28,30 @@ export default function CustomerOrders() {
   const [selected, setSelected] = useState<Order | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
 
-  // Load user ID from JWT token stored in localStorage
+  // Steps for order tracking
+  const steps = ['Placed', 'Processing', 'Shipped', 'Out for delivery', 'Delivered', 'Cancelled'];
+  const stepIndex = (status: string) => steps.findIndex((s) => s.toLowerCase() === status.toLowerCase());
+
+  const formatRWF = (amount: number | string) => `RWF ${parseFloat(amount.toString()).toLocaleString('en-RW')}`;
+  const getItemCount = (items: OrderItem[]) => items.reduce((sum, i) => sum + i.quantity, 0);
+
+  const getStatusClasses = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'delivered':
+        return 'bg-[#E6F7EF] text-[#0F9D58] border border-[#BFE9D6]';
+      case 'cancelled':
+        return 'bg-[#FDE2E1] text-[#D32F2F] border border-[#F9BDBD]';
+      case 'processing':
+      case 'placed':
+        return 'bg-[#FFF7E6] text-[#AD6800] border border-[#FFE7BA]';
+      case 'paid':
+        return 'bg-[#E6F7EF] text-[#0F9D58] border border-[#BFE9D6]';
+      default:
+        return 'bg-gray-100 text-gray-700 border border-gray-200';
+    }
+  };
+
+  // Decode JWT to get user ID
   useEffect(() => {
     const token = localStorage.getItem('jwtToken');
     if (token) {
@@ -33,24 +59,34 @@ export default function CustomerOrders() {
         const decoded: any = JSON.parse(atob(token.split('.')[1]));
         setUserId(decoded?.id || null);
       } catch (err) {
-        console.error('Failed to decode token:', err);
-        setUserId(null);
+        console.error('JWT decode error:', err);
       }
     }
   }, []);
 
-  // Fetch user orders
+  // Fetch customer orders
   useEffect(() => {
     if (!userId) return;
 
     const fetchOrders = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/api/orders/user/${userId}`);
+        const res = await fetch(`${getBaseUrl()}/orders/customer/${userId}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`,
+          },
+        });
+
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(text || 'Failed to fetch orders');
+        }
+
         const data = await res.json();
-        if (Array.isArray(data)) setOrders(data);
-        else setOrders([]);
-      } catch (err) {
-        console.error('Failed to fetch orders:', err);
+        // Access the 'orders' array from backend
+        setOrders(Array.isArray(data.orders) ? data.orders : []);
+      } catch (err: any) {
+        console.error('Failed to fetch orders:', err.message);
         setOrders([]);
       }
     };
@@ -58,46 +94,14 @@ export default function CustomerOrders() {
     fetchOrders();
   }, [userId]);
 
-  const steps: Array<Order['status']> = [
-    'Placed',
-    'Processing',
-    'Shipped',
-    'Out for delivery',
-    'Delivered',
-    'Cancelled'
-  ];
-
-  const stepIndex = (status: Order['status']) => steps.findIndex(s => s === status);
-
-  const formatRWF = (amount: number | string) =>
-    `RWF ${parseFloat(amount.toString()).toLocaleString('en-RW')}`;
-
-  const myOrders = useMemo(() => orders, [orders]);
-
-  const getItemCount = (items: OrderItem[]) =>
-    items.reduce((sum, i) => sum + i.quantity, 0);
-
-  // Function to get status color classes
-  const getStatusClasses = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'delivered':
-        return 'bg-[#E6F7EF] text-[#0F9D58] border border-[#BFE9D6]';
-      case 'cancelled':
-        return 'bg-[#FDE2E1] text-[#D32F2F] border border-[#F9BDBD]';
-      case 'pending':
-      case 'processing':
-        return 'bg-[#FFF7E6] text-[#AD6800] border border-[#FFE7BA]';
-      default:
-        return 'bg-gray-100 text-gray-700 border border-gray-200';
-    }
-  };
-
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex">
+      {/* Sidebar */}
       <div className="fixed inset-y-0 left-0 w-64 z-50">
         <CustomerSidebar />
       </div>
 
+      {/* Main Content */}
       <div className="flex-1 ml-64 flex flex-col">
         <div className="fixed top-0 left-64 right-0 z-40 bg-white border-b border-gray-200">
           <CustomerTopbar />
@@ -123,22 +127,14 @@ export default function CustomerOrders() {
                     </tr>
                   </thead>
                   <tbody>
-                    {myOrders.map((order, idx) => (
+                    {orders.map((order, idx) => (
                       <tr key={order.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-[#fcfcfc]'}>
                         <td className="px-4 py-3 font-medium text-[#4B341C]">#{order.id}</td>
-                        <td className="px-4 py-3 text-gray-600">
-                          {new Date(order.created_at).toLocaleString()}
-                        </td>
-                        <td className="px-4 py-3 text-gray-800">
-                          {getItemCount(order.items)}
-                        </td>
-                        <td className="px-4 py-3 text-gray-800">
-                          {formatRWF(order.total_amount)}
-                        </td>
+                        <td className="px-4 py-3 text-gray-600">{new Date(order.created_at).toLocaleString()}</td>
+                        <td className="px-4 py-3 text-gray-800">{getItemCount(order.items)}</td>
+                        <td className="px-4 py-3 text-gray-800">{formatRWF(order.total_amount)}</td>
                         <td className="px-4 py-3">
-                          <span
-                            className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusClasses(order.status)}`}
-                          >
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusClasses(order.status)}`}>
                             {order.status}
                           </span>
                         </td>
@@ -158,47 +154,28 @@ export default function CustomerOrders() {
             </div>
           )}
 
-          {/* Order drawer */}
+          {/* Order Drawer */}
           {selected && (
-            <div
-              className="fixed inset-0 bg-black/30 z-50 flex justify-end"
-              onClick={() => setSelected(null)}
-            >
-              <div
-                className="w-full sm:w-[420px] h-full bg-white shadow-xl"
-                onClick={(e) => e.stopPropagation()}
-              >
+            <div className="fixed inset-0 bg-black/30 z-50 flex justify-end" onClick={() => setSelected(null)}>
+              <div className="w-full sm:w-[420px] h-full bg-white shadow-xl" onClick={(e) => e.stopPropagation()}>
                 <div className="p-4 border-b flex items-center justify-between">
                   <div className="font-semibold text-gray-800">Track Order #{selected.id}</div>
-                  <button
-                    onClick={() => setSelected(null)}
-                    className="text-gray-500 text-sm"
-                  >
-                    Close
-                  </button>
+                  <button onClick={() => setSelected(null)} className="text-gray-500 text-sm">Close</button>
                 </div>
 
                 <div className="p-4 space-y-6 text-sm">
-                  <div className="text-gray-500">
-                    Placed on {new Date(selected.created_at).toLocaleString()}
-                  </div>
+                  <div className="text-gray-500">Placed on {new Date(selected.created_at).toLocaleString()}</div>
 
                   <div className="space-y-4">
                     {steps.map((step, i) => {
                       const active = i <= stepIndex(selected.status);
                       return (
                         <div key={step} className="flex items-start gap-3">
-                          <div
-                            className={`w-3 h-3 rounded-full mt-1 ${active ? 'bg-[#4B341C]' : 'bg-gray-300'}`}
-                          />
+                          <div className={`w-3 h-3 rounded-full mt-1 ${active ? 'bg-[#4B341C]' : 'bg-gray-300'}`} />
                           <div>
-                            <div className={`text-sm ${active ? 'text-gray-900' : 'text-gray-400'}`}>
-                              {step}
-                            </div>
+                            <div className={`text-sm ${active ? 'text-gray-900' : 'text-gray-400'}`}>{step}</div>
                             {i < steps.length - 1 && (
-                              <div
-                                className={`ml-1 mt-1 w-0.5 h-4 ${active ? 'bg-[#4B341C]' : 'bg-gray-200'}`}
-                              />
+                              <div className={`ml-1 mt-1 w-0.5 h-4 ${active ? 'bg-[#4B341C]' : 'bg-gray-200'}`} />
                             )}
                           </div>
                         </div>
@@ -223,12 +200,9 @@ export default function CustomerOrders() {
                     </div>
                   </div>
 
-                  {selected.status.toLowerCase() !== "delivered" && (
+                  {selected.status.toLowerCase() !== 'delivered' && (
                     <Link to="/payment" state={{ orderId: selected.id, amount: selected.total_amount }}>
-                      <button
-                        onClick={() => alert('Payment system launching soon!')}
-                        className="w-full mt-4 py-2 bg-[#4B341C] text-white rounded hover:bg-[#3b2a15] transition"
-                      >
+                      <button className="w-full mt-4 py-2 bg-[#4B341C] text-white rounded hover:bg-[#3b2a15] transition">
                         Pay Now
                       </button>
                     </Link>
