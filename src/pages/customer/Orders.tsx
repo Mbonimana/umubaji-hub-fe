@@ -36,20 +36,22 @@ export default function CustomerOrders() {
     `RWF ${parseFloat(amount.toString()).toLocaleString("en-RW")}`;
   const getItemCount = (items: OrderItem[]) =>
     items.reduce((sum, i) => sum + i.quantity, 0);
-  const getStatusClasses = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "delivered":
-      case "paid":
-        return "bg-[#E6F7EF] text-[#0F9D58] border border-[#BFE9D6]";
-      case "cancelled":
-        return "bg-[#FDE2E1] text-[#D32F2F] border border-[#F9BDBD]";
-      case "processing":
-      case "placed":
-        return "bg-[#FFF7E6] text-[#AD6800] border border-[#FFE7BA]";
-      default:
-        return "bg-gray-100 text-gray-700 border border-gray-200";
-    }
-  };
+const getStatusClasses = (status: string) => {
+  switch (status.toLowerCase()) {
+    case "delivering":
+      return "bg-blue-100 text-blue-800 border border-blue-200" ; 
+    case "paid":
+      return "bg-green-100 text-green-800 border border-green-200";    
+    case "cancelled":
+      return "bg-red-100 text-red-800 border border-red-200";       
+    case "processing":
+      return "bg-yellow-100 text-yellow-800 border border-yellow-200";
+    case "completed":
+      return "bg-green-100 text-green-800 border border-green-200";     
+    default:
+      return "bg-gray-100 text-gray-700 border border-gray-200";     
+  }
+};
 
   // Decode JWT
   useEffect(() => {
@@ -120,7 +122,7 @@ export default function CustomerOrders() {
         </div>
 
         <main className="flex-1 pt-20 p-6 flex flex-col">
-          <h1 className="text-2xl font-semibold text-[#4B341C] mb-6">🛒 My Orders</h1>
+          <h1 className="text-2xl font-semibold text-[#4B341C] mb-6"> My Orders</h1>
 
           {orders.length === 0 ? (
             <div className="text-gray-500 flex-1 flex items-center justify-center">
