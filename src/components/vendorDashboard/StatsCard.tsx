@@ -1,11 +1,13 @@
 // src/components/vendor/StatsCard.tsx
-import { Eye, DollarSign, ShoppingCart, Star } from 'lucide-react';
+import { Eye, DollarSign, ShoppingCart, Star, Wallet, Package } from 'lucide-react';
 
 const icons = {
   views: Eye,
   sales: DollarSign,
   orders: ShoppingCart,
   rating: Star,
+  wallet: Wallet,
+  product: Package
 };
 
 interface Props {

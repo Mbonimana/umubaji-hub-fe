@@ -1,5 +1,5 @@
 // src/components/vendorDashboard/Sidebar.tsx
-import { Home, Package, ShoppingCart,  Star,  DollarSign, Settings } from 'lucide-react';
+import { Home, Package, ShoppingCart,  Star,  Wallet, Settings } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { useState, useEffect } from 'react';
@@ -10,7 +10,7 @@ const menu = [
   { icon: Star, label: 'Reviews', path: '/reviews' },
  
 
-  { icon: DollarSign, label: 'Earnings', path: '/earnings' },
+  { icon: Wallet, label: 'Earnings', path: '/earnings' },
   { icon: Settings, label: 'Settings', path: '/settings' },
 ];
 

@@ -16,12 +16,12 @@ interface SalesData {
 }
 
 const data: SalesData[] = [
-  { name: "May", sales: 48000 },
-  { name: "Jun", sales: 66000 },
-  { name: "Jul", sales: 54000 },
-  { name: "Aug", sales: 90000 },
-  { name: "Sep", sales: 95000 },
-  { name: "Oct", sales: 115000 },
+  { name: "July", sales: 0 },
+  { name: "Sept", sales: 0 },
+  { name: "Aug", sales: 0},
+  { name: "Oct", sales: 0 },
+  { name: "Nov", sales: 62000 },
+  { name: "Dec", sales: 0 },
 ];
 
 export default function BarChartComponent() {
