@@ -57,6 +57,7 @@ import AdminOrders from './pages/admin/Orders';
 import AdminAnalytics from './pages/admin/Analytics';
 import AdminSettings from './pages/admin/Settings';
 import ProtectedRoute from './routes/ProtectedRoute.tsx';
+import AdminPayouts from './pages/admin/payouts.tsx';
 
 function App() {
   return (
@@ -97,6 +98,7 @@ function App() {
         <Route path="orders" element={<AdminOrders />} />
         <Route path="analytics" element={<AdminAnalytics />} />
         <Route path="settings" element={<AdminSettings />} />
+        <Route path="payouts" element={<AdminPayouts/>} />
       </Route>
 
       {/* Vendor routes */}

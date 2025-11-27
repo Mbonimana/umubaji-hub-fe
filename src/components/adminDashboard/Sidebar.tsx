@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Home, Users, Package, ShoppingCart, Settings, LogOut } from 'lucide-react';
+import { Home, Users, Package, ShoppingCart, Settings, LogOut, DollarSign } from 'lucide-react';
 import { useNavigate} from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { useState, useEffect } from 'react';
@@ -10,7 +10,11 @@ const items = [
   { to: '/admin/customers', label: 'Customers', icon: Users },
   { to: '/admin/products', label: 'Products', icon: Package },
   { to: '/admin/orders', label: 'Orders', icon: ShoppingCart },
+   { to: '/admin/payouts', label: 'Payouts', icon: DollarSign },
   { to: '/admin/settings', label: 'Settings', icon: Settings },
+ 
+  
+
 ];
 
 export default function AdminSidebar() {
