@@ -117,26 +117,26 @@ export default function Earnings() {
             <StatsCard
               title="Net Earnings"
               value={stats ? `RF ${stats.total_earnings.toLocaleString()}` : '...'}
-              change="Lifetime (Post-Fee)"
-              icon="sales"
+              
+              icon="wallet"
             />
             <StatsCard
               title="Withdrawable Balance"
               value={stats ? `RF ${stats.pending_payouts.toLocaleString()}` : '...'}
-              change="Available Now"
-              icon="orders" 
+             
+              icon="wallet" 
             />
             <StatsCard
               title="This Month"
               value={stats ? `RF ${stats.month_earnings.toLocaleString()}` : '...'}
-              change="Net Income"
-              icon="sales"
+              
+              icon="wallet"
             />
             <StatsCard
               title="Last Payout"
               value={stats ? `RF ${stats.last_payout_amount.toLocaleString()}` : '...'}
               change={formatDate(stats?.last_payout_date || null)}
-              icon="views"
+              icon="wallet"
             />
           </div>
 
