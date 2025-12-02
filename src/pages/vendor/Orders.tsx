@@ -35,6 +35,10 @@ export default function VendorOrders() {
   const [currentPage, setCurrentPage] = useState(1);
   const ordersPerPage = 5;
 
+  // NEW STATES
+  const [processingLoading, setProcessingLoading] = useState(false);
+  const [deliveringLoading, setDeliveringLoading] = useState(false);
+
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const vendorId = user?.id;
   const token = localStorage.getItem("jwtToken");
@@ -77,14 +81,15 @@ export default function VendorOrders() {
 
   const statusClass = (status: string) =>
     status === "completed"
-    ? "bg-green-100 text-green-800 border border-green-200" 
-    : status === "paid"
-    ? "bg-teal-100 text-teal-800 border border-teal-200"   
-    : status === "delivering"
-    ? "bg-blue-100 text-blue-800 border border-blue-200"   
-    : status === "processing"
-    ? "bg-yellow-100 text-yellow-800 border border-yellow-200"
-    : "bg-red-100 text-red-800 border border-red-200"; 
+      ? "bg-green-100 text-green-800 border border-green-200"
+      : status === "paid"
+      ? "bg-teal-100 text-teal-800 border border-teal-200"
+      : status === "delivering"
+      ? "bg-blue-100 text-blue-800 border border-blue-200"
+      : status === "processing"
+      ? "bg-yellow-100 text-yellow-800 border border-yellow-200"
+      : "bg-red-100 text-red-800 border border-red-200";
+
   const indexOfLast = currentPage * ordersPerPage;
   const indexOfFirst = indexOfLast - ordersPerPage;
   const currentOrders = orders.slice(indexOfFirst, indexOfLast);
@@ -135,8 +140,12 @@ export default function VendorOrders() {
                         <td className="px-4 py-3 font-medium text-[#4B341C]">
                           #{order.id}
                         </td>
-                        <td className="px-4 py-3 text-gray-800">{order.fullnames}</td>
-                        <td className="px-4 py-3 text-gray-600">{order.address}</td>
+                        <td className="px-4 py-3 text-gray-800">
+                          {order.fullnames}
+                        </td>
+                        <td className="px-4 py-3 text-gray-600">
+                          {order.address}
+                        </td>
                         <td className="px-4 py-3 text-gray-600">
                           {new Date(order.created_at).toLocaleString()}
                         </td>
@@ -175,7 +184,6 @@ export default function VendorOrders() {
                 </table>
               </div>
 
-              {/* Pagination */}
               <div className="flex justify-between items-center p-4 bg-white border-t">
                 <button
                   disabled={currentPage === 1}
@@ -198,7 +206,7 @@ export default function VendorOrders() {
             </div>
           )}
 
-          {/* Modal for full details */}
+          {/* Modal */}
           {selectedOrder && (
             <div className="fixed inset-0 z-50 bg-black/40 flex justify-center items-center p-4">
               <div className="bg-white w-full max-w-2xl rounded-md p-6 relative shadow-lg overflow-y-auto max-h-[90vh]">
@@ -243,11 +251,15 @@ export default function VendorOrders() {
                   ))}
                 </div>
 
-                {/* Clickable vendor action buttons */}
+                {/* BUTTONS WITH LOADING */}
                 <div className="mt-4 flex gap-3">
+                  
+                  {/* PROCESSING BUTTON */}
                   <button
-                    className="px-4 py-2 rounded bg-yellow-500 text-white hover:bg-yellow-600 text-sm"
+                    className="px-4 py-2 rounded bg-yellow-500 text-white hover:bg-yellow-600 text-sm disabled:opacity-50"
+                    disabled={processingLoading}
                     onClick={async () => {
+                      setProcessingLoading(true);
                       try {
                         const res = await fetch(
                           `${getBaseUrl()}/orders/orders/${selectedOrder.id}/processing`,
@@ -270,15 +282,20 @@ export default function VendorOrders() {
                       } catch (err) {
                         console.error(err);
                         Notiflix.Notify.failure("Error updating order");
+                      } finally {
+                        setProcessingLoading(false);
                       }
                     }}
                   >
-                    Mark as Processing
+                    {processingLoading ? "Processing..." : "Mark as Processing"}
                   </button>
 
+                  {/* DELIVERING BUTTON */}
                   <button
-                    className="px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600 text-sm"
+                    className="px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600 text-sm disabled:opacity-50"
+                    disabled={deliveringLoading}
                     onClick={async () => {
+                      setDeliveringLoading(true);
                       try {
                         const res = await fetch(
                           `${getBaseUrl()}/orders/orders/${selectedOrder.id}/delivering`,
@@ -301,10 +318,12 @@ export default function VendorOrders() {
                       } catch (err) {
                         console.error(err);
                         Notiflix.Notify.failure("Error updating order");
+                      } finally {
+                        setDeliveringLoading(false);
                       }
                     }}
                   >
-                    Mark as Delivering
+                    {deliveringLoading ? "Updating..." : "Mark as Delivering"}
                   </button>
 
                 </div>
