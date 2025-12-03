@@ -26,7 +26,6 @@ type Order = {
   payout_amount: number;
 };
 
-// Utility
 const formatRWF = (v: number | string) =>
   `RWF ${parseFloat(v.toString()).toLocaleString("en-RW")}`;
 
@@ -43,6 +42,17 @@ export default function AdminOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+
+  // ✅ Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 10;
+
+  // Get current page orders without removing any logic
+  const indexOfLastOrder = currentPage * ordersPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
+
+  const totalPages = Math.ceil(orders.length / ordersPerPage);
 
   useEffect(() => {
     fetchOrders();
@@ -62,11 +72,10 @@ export default function AdminOrders() {
         },
       });
 
-      // Ensure we always have an array
       const ordersArray = Array.isArray(res.data) ? res.data : [];
       setOrders(ordersArray);
     } catch (error: any) {
-      console.error(" Failed to fetch orders", error);
+      console.error("Failed to fetch orders", error);
       Notiflix.Notify.failure(error.response?.data?.error || "Failed to load orders.");
       setOrders([]);
     }
@@ -106,24 +115,21 @@ export default function AdminOrders() {
                 <th className="px-4 py-2 text-right">Details</th>
               </tr>
             </thead>
+
             <tbody className="divide-y">
-              {orders.length > 0 ? (
-                orders.map((o) => (
+              {currentOrders.length > 0 ? (
+                currentOrders.map((o) => (
                   <tr key={o.id}>
                     <td className="px-4 py-2 font-bold text-[#4B341C]">#{o.id}</td>
                     <td className="px-4 py-2">{o.full_name}</td>
                     <td className="px-4 py-2">{formatRWF(o.total_amount)}</td>
                     <td className="px-4 py-2">
-                      <span
-                        className={`text-xs px-2 py-1 rounded ${statusColor(o.status)}`}
-                      >
+                      <span className={`text-xs px-2 py-1 rounded ${statusColor(o.status)}`}>
                         {o.status}
                       </span>
                     </td>
                     <td className="px-4 py-2">{o.payment_status}</td>
-                    <td className="px-4 py-2">
-                      {new Date(o.created_at).toLocaleString()}
-                    </td>
+                    <td className="px-4 py-2">{new Date(o.created_at).toLocaleString()}</td>
                     <td className="px-4 py-2">{o.payment_method}</td>
                     <td className="px-4 py-2 text-right">
                       <button
@@ -147,7 +153,32 @@ export default function AdminOrders() {
         </div>
       </div>
 
-      {/* Modal for Order Details */}
+      {/* Pagination Controls */}
+      {orders.length > 0 && (
+        <div className="flex justify-center items-center space-x-4 mt-4">
+          <button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((p) => p - 1)}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            Prev
+          </button>
+
+          <span className="text-sm">
+            Page {currentPage} of {totalPages}
+          </span>
+
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((p) => p + 1)}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      )}
+
+      {/* Modal */}
       {modalVisible && selectedOrder && (
         <div className="fixed inset-0 bg-black/30 flex items-start justify-center z-50 py-10 px-4">
           <div className="bg-white w-full max-w-2xl rounded-lg p-6 relative shadow-md overflow-y-auto max-h-[90vh]">
@@ -163,40 +194,18 @@ export default function AdminOrders() {
             </h3>
 
             <div className="grid grid-cols-2 text-sm gap-2 mb-4">
-              <p>
-                <strong>Customer:</strong> {selectedOrder.full_name}
-              </p>
-              <p>
-                <strong>Phone:</strong> {selectedOrder.phone}
-              </p>
-              <p>
-                <strong>Address:</strong> {selectedOrder.shipping_address}
-              </p>
-              <p>
-                <strong>Placed:</strong>{" "}
-                {new Date(selectedOrder.created_at).toLocaleString()}
-              </p>
-              <p>
-                <strong>Status:</strong> {selectedOrder.status}
-              </p>
-              <p>
-                <strong>Payment Status:</strong> {selectedOrder.payment_status}
-              </p>
-              <p>
-                <strong>Payment Method:</strong> {selectedOrder.payment_method}
-              </p>
-              <p>
-                <strong>Instructions:</strong>{" "}
-                {selectedOrder.instructions || "N/A"}
-              </p>
+              <p><strong>Customer:</strong> {selectedOrder.full_name}</p>
+              <p><strong>Phone:</strong> {selectedOrder.phone}</p>
+              <p><strong>Address:</strong> {selectedOrder.shipping_address}</p>
+              <p><strong>Placed:</strong> {new Date(selectedOrder.created_at).toLocaleString()}</p>
+              <p><strong>Status:</strong> {selectedOrder.status}</p>
+              <p><strong>Payment Status:</strong> {selectedOrder.payment_status}</p>
+              <p><strong>Payment Method:</strong> {selectedOrder.payment_method}</p>
+              <p><strong>Instructions:</strong> {selectedOrder.instructions || "N/A"}</p>
             </div>
 
-            <p>
-              <strong>Platform Fee:</strong> {formatRWF(selectedOrder.platform_fee)}
-            </p>
-            <p>
-              <strong>Payout Amount:</strong> {formatRWF(selectedOrder.payout_amount)}
-            </p>
+            <p><strong>Platform Fee:</strong> {formatRWF(selectedOrder.platform_fee)}</p>
+            <p><strong>Payout Amount:</strong> {formatRWF(selectedOrder.payout_amount)}</p>
           </div>
         </div>
       )}
