@@ -20,8 +20,8 @@ export default function AdminOverview() {
   const [totalAmount, setTotalAmount] = useState(0);
   const [platformFee, setPlatformFee] = useState(0);
   const [payoutAmount, setPayoutAmount] = useState(0);
+  const [totalOrders, setotalOrders] = useState(0);
 
-  // Utility to format numbers with comma and RWF
   const formatRWF = (value: number) => `RF ${value.toLocaleString('en-RW')}`;
 
   useEffect(() => {
@@ -31,26 +31,33 @@ export default function AdminOverview() {
     const fetchTotals = async () => {
       setLoading(true);
       try {
-        jwtDecode(token); // optionally verify/admin
+        jwtDecode(token);
 
-        const [totalRes, platformRes, payoutRes] = await Promise.all([
+        const [totalRes, platformRes, payoutRes, orderRes] = await Promise.all([
           fetch(`${getBaseUrl()}/payouts/total-amount`, { headers: { Authorization: `Bearer ${token}` } }),
           fetch(`${getBaseUrl()}/payouts/total-platform-fee`, { headers: { Authorization: `Bearer ${token}` } }),
           fetch(`${getBaseUrl()}/payouts/total-payout`, { headers: { Authorization: `Bearer ${token}` } }),
+          fetch(`${getBaseUrl()}/orders/`, { headers: { Authorization: `Bearer ${token}` } }),
         ]);
 
         const totalData = await totalRes.json();
         const platformData = await platformRes.json();
         const payoutData = await payoutRes.json();
+        const orderData = await orderRes.json();
 
         setTotalAmount(Number(totalData.totalAmount || 0));
         setPlatformFee(Number(platformData.totalPlatformFee || 0));
         setPayoutAmount(Number(payoutData.totalPayout || 0));
+
+        // ✅ FIXED: Correctly count orders
+        setotalOrders(orderData.length || 0);
+
       } catch (error) {
         console.error('Error fetching totals:', error);
         setTotalAmount(0);
         setPlatformFee(0);
         setPayoutAmount(0);
+        setotalOrders(0);
       } finally {
         setLoading(false);
       }
@@ -66,7 +73,7 @@ export default function AdminOverview() {
       icon: <Repeat className="w-5 h-5" />,
       loading,
     },
-    
+
     {
       title: 'Total Payout Amount',
       value: formatRWF(payoutAmount),
@@ -81,9 +88,10 @@ export default function AdminOverview() {
     },
     {
       title: 'Total Orders',
-      value: 8, // replace with API later
+      value: totalOrders,
       icon: <ShoppingCart className="w-5 h-5" />,
       highlight: 'muted',
+      loading,
     },
   ];
 
