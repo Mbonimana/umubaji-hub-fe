@@ -47,12 +47,8 @@ export default function AdminOrders() {
   const [currentPage, setCurrentPage] = useState(1);
   const ordersPerPage = 10;
 
-  // Get current page orders without removing any logic
-  const indexOfLastOrder = currentPage * ordersPerPage;
-  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
-  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
-
-  const totalPages = Math.ceil(orders.length / ordersPerPage);
+  // ✅ Filter state
+  const [filterStatus, setFilterStatus] = useState<string>("all");
 
   useEffect(() => {
     fetchOrders();
@@ -81,6 +77,19 @@ export default function AdminOrders() {
     }
   };
 
+  // ✅ Compute filtered orders
+  const filteredOrders =
+    filterStatus === "all"
+      ? orders
+      : orders.filter((o) => o.status.toLowerCase() === filterStatus);
+
+  // Apply pagination AFTER filtering
+  const indexOfLastOrder = currentPage * ordersPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+  const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
+
+  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+
   const viewOrderDetails = (order: Order) => {
     setSelectedOrder(order);
     setModalVisible(true);
@@ -95,6 +104,32 @@ export default function AdminOrders() {
     <div className="space-y-4 px-4 py-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold text-[#4B341C]">Orders</h2>
+      </div>
+
+      {/* ✅ FILTER BUTTONS */}
+      <div className="flex gap-2 mb-4 flex-wrap">
+        {[
+          { label: "All", value: "all" },
+          { label: "Paid", value: "paid" },
+          { label: "Processing", value: "processing" },
+          { label: "Delivering", value: "delivering" },
+          { label: "Completed", value: "completed" },
+        ].map((btn) => (
+          <button
+            key={btn.value}
+            onClick={() => {
+              setFilterStatus(btn.value);
+              setCurrentPage(1);
+            }}
+            className={`px-3 py-1 rounded border ${
+              filterStatus === btn.value
+                ? "bg-[#4B341C] text-white"
+                : "bg-white text-[#4B341C]"
+            }`}
+          >
+            {btn.label}
+          </button>
+        ))}
       </div>
 
       <div className="bg-white rounded shadow overflow-hidden">
@@ -154,7 +189,7 @@ export default function AdminOrders() {
       </div>
 
       {/* Pagination Controls */}
-      {orders.length > 0 && (
+      {filteredOrders.length > 0 && (
         <div className="flex justify-center items-center space-x-4 mt-4">
           <button
             disabled={currentPage === 1}
@@ -182,10 +217,7 @@ export default function AdminOrders() {
       {modalVisible && selectedOrder && (
         <div className="fixed inset-0 bg-black/30 flex items-start justify-center z-50 py-10 px-4">
           <div className="bg-white w-full max-w-2xl rounded-lg p-6 relative shadow-md overflow-y-auto max-h-[90vh]">
-            <button
-              className="absolute top-4 right-4 text-gray-600"
-              onClick={closeModal}
-            >
+            <button className="absolute top-4 right-4 text-gray-600" onClick={closeModal}>
               <X size={20} />
             </button>
 
