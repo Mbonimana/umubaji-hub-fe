@@ -1,7 +1,7 @@
-import CustomerSidebar from '../components/customerDashboard/Sidebar';
-import CustomerTopbar from '../components/customerDashboard/Navbar';
-import { useEffect, useMemo, useState } from 'react';
-import { getBaseUrl } from '../config/baseUrl';
+import CustomerSidebar from "../components/customerDashboard/Sidebar";
+import CustomerTopbar from "../components/customerDashboard/Navbar";
+import { useEffect, useState } from "react";
+import { getBaseUrl } from "../config/baseUrl";
 import {
   ResponsiveContainer,
   LineChart,
@@ -12,8 +12,8 @@ import {
   Tooltip,
   BarChart as ReBarChart,
   Bar,
-} from 'recharts';
-import { jwtDecode } from 'jwt-decode';
+} from "recharts";
+import { jwtDecode } from "jwt-decode";
 
 interface OrderItem {
   quantity: number;
@@ -39,71 +39,111 @@ interface DecodedUser {
 export default function CustomerDashboard() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [user, setUser] = useState<DecodedUser | null>(null);
+  const [loading, setLoading] = useState(false); // ✅ fix: read & write
 
-  // Load user from JWT token stored in localStorage
+  // Decode user from JWT
   useEffect(() => {
-    const token = localStorage.getItem('jwtToken');
+    const token = localStorage.getItem("jwtToken");
     if (token) {
       try {
         const decoded: DecodedUser = jwtDecode(token);
         setUser(decoded);
       } catch (err) {
-        console.error('Failed to decode token:', err);
-        setUser(null);
+        console.error("Failed to decode token:", err);
       }
     }
   }, []);
 
-  // Fetch orders for logged-in user
+  // Fetch customer orders
   useEffect(() => {
     if (!user?.id) return;
 
     const fetchOrders = async () => {
+      setLoading(true);
       try {
-        const res = await fetch(`${getBaseUrl()}/orders/customer/${user.id}`);
+        const res = await fetch(
+          `${getBaseUrl()}/orders/customer/${user.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+            },
+          }
+        );
+
         const data = await res.json();
-        if (Array.isArray(data)) setOrders(data);
+
+        if (Array.isArray(data.orders)) setOrders(data.orders);
         else setOrders([]);
       } catch (err) {
-        console.error('Failed to fetch orders:', err);
+        console.error("Failed to fetch orders:", err);
         setOrders([]);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchOrders();
   }, [user?.id]);
 
-  // Get recent orders (last 5)
-  const recentOrders = useMemo(() => {
-    const sorted = [...orders].sort(
-      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
-    return sorted.slice(0, 5).map((o) => ({
-      id: o.id,
-      date: new Date(o.created_at).toLocaleDateString('en-GB'),
-      total: parseFloat(o.total_amount),
-      status: o.status,
-    }));
-  }, [orders]);
+  // Stats
+  const completedOrders = orders.filter(
+    (o) => o.status.toLowerCase() === "completed"
+  ).length;
 
-  // Dummy chart data
+  const processingOrders = orders.filter(
+    (o) => o.status.toLowerCase() === "processing"
+  ).length;
+
+  const deliveringOrders = orders.filter(
+    (o) => o.status.toLowerCase() === "delivering"
+  ).length;
+
+  const paidOrders = orders.filter(
+    (o) => o.status.toLowerCase() === "paid"
+  ).length;
+
+  // Static chart data
   const ordersData = [
-    { m: 'May', orders: 2 },
-    { m: 'Jun', orders: 4 },
-    { m: 'Jul', orders: 3 },
-    { m: 'Aug', orders: 6 },
-    { m: 'Sep', orders: 5 },
-    { m: 'Oct', orders: 7 },
+    { m: "May", orders: 2 },
+    { m: "Jun", orders: 4 },
+    { m: "Jul", orders: 3 },
+    { m: "Aug", orders: 6 },
+    { m: "Sep", orders: 5 },
+    { m: "Oct", orders: 7 },
   ];
 
   const visitsData = [
-    { m: 'May', visits: 12 },
-    { m: 'Jun', visits: 16 },
-    { m: 'Jul', visits: 12 },
-    { m: 'Aug', visits: 24 },
-    { m: 'Sep', visits: 26 },
-    { m: 'Oct', visits: 32 },
+    { m: "May", visits: 12 },
+    { m: "Jun", visits: 16 },
+    { m: "Jul", visits: 12 },
+    { m: "Aug", visits: 24 },
+    { m: "Sep", visits: 26 },
+    { m: "Oct", visits: 32 },
   ];
+
+  // Spinner SVG component
+  const Spinner = () => (
+    <svg
+      className="animate-spin h-6 w-6 text-gray-600 mx-auto"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <circle
+        className="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+      ></circle>
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+      ></path>
+    </svg>
+  );
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex">
@@ -118,51 +158,43 @@ export default function CustomerDashboard() {
 
         <main className="flex-1 pt-20 p-6 overflow-y-auto">
           <h1 className="text-2xl font-semibold text-[#5a4632] mb-4">
-            Welcome{user?.firstname ? `, ${user.firstname}` : ''}
+            Welcome{user?.firstname ? `, ${user.firstname}` : ""}
           </h1>
-
 
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
-            {/* Total Orders */}
-            <div className="bg-white rounded-xl p-5 shadow border border-gray-100">
-              <p className="text-sm text-gray-500 flex justify-center">Total Orders</p>
-              <p className="text-2xl font-semibold text-[#333] flex justify-center">{orders.length}</p>
-            </div>
-            
-             {/* Completed Orders */}
-            <div className="bg-white rounded-xl p-5 shadow border border-gray-100">
-              <p className="text-sm text-gray-500 flex justify-center">Completed Orders</p>
-               
-              <p className="text-2xl font-semibold text-[#333] flex justify-center">
-                {orders.filter(o => o.status.toLowerCase() === 'completed').length}
 
+            <div className="bg-white rounded-xl p-5 shadow border border-gray-100">
+              <p className="text-sm text-gray-500 text-center">Completed</p>
+              <p className="text-2xl font-semibold text-center">
+                {loading ? <Spinner /> : completedOrders}
               </p>
             </div>
 
-            {/* Pending Orders */}
             <div className="bg-white rounded-xl p-5 shadow border border-gray-100">
-              <p className="text-sm text-gray-500 flex justify-center">Pending Orders</p>
-              <p className="text-2xl font-semibold text-[#333] flex justify-center">
-                {orders.filter(o => o.status.toLowerCase() === 'pending').length}
+              <p className="text-sm text-gray-500 text-center">Processing</p>
+              <p className="text-2xl font-semibold text-center">
+                {loading ? <Spinner /> : processingOrders}
               </p>
             </div>
 
-            {/* Cancelled Orders */}
             <div className="bg-white rounded-xl p-5 shadow border border-gray-100">
-              <p className="text-sm text-gray-500 flex justify-center">Cancelled Orders</p>
-              <p className="text-2xl font-semibold text-[#333] flex justify-center">
-                {orders.filter(o => o.status.toLowerCase() === 'cancelled').length}
+              <p className="text-sm text-gray-500 text-center">Delivering</p>
+              <p className="text-2xl font-semibold text-center">
+                {loading ? <Spinner /> : deliveringOrders}
               </p>
             </div>
 
-           
+            <div className="bg-white rounded-xl p-5 shadow border border-gray-100">
+              <p className="text-sm text-gray-500 text-center">Unprocessed</p>
+              <p className="text-2xl font-semibold text-center">
+                {loading ? <Spinner /> : paidOrders}
+              </p>
+            </div>
           </div>
 
-
-
-          {/* Charts */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* TWO GRAPHS INSTEAD OF TABLE */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 mt-6">
             <div className="bg-white rounded-2xl shadow-sm p-6">
               <h2 className="text-lg font-medium mb-4 text-gray-800">Orders per Month</h2>
               <ResponsiveContainer width="100%" height={250}>
@@ -184,30 +216,18 @@ export default function CustomerDashboard() {
                   <XAxis dataKey="m" />
                   <YAxis />
                   <Tooltip />
-                  <Line type="monotone" dataKey="visits" stroke="#4B341C" strokeWidth={3} dot />
+                  <Line
+                    type="monotone"
+                    dataKey="visits"
+                    stroke="#4B341C"
+                    strokeWidth={3}
+                    dot
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          {/* Recent Orders */}
-          <div className="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
-            <div className="p-4 border-b text-gray-700 font-medium">Recent Orders</div>
-            <div className="divide-y">
-              {recentOrders.length > 0 ? (
-                recentOrders.map(o => (
-                  <div key={o.id} className="p-4 flex items-center justify-between text-sm">
-                    <div className="font-medium text-gray-800">#{o.id}</div>
-                    <div className="text-gray-500">{o.date}</div>
-                    <div className="text-gray-800">RWF {o.total.toLocaleString()}</div>
-                    <div className="text-gray-600">{o.status}</div>
-                  </div>
-                ))
-              ) : (
-                <div className="p-4 text-gray-500 text-sm">No recent orders found</div>
-              )}
-            </div>
-          </div>
         </main>
       </div>
     </div>
