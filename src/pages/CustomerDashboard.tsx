@@ -60,7 +60,7 @@ export default function CustomerDashboard() {
 
     const fetchOrders = async () => {
       try {
-        const res = await fetch(`${getBaseUrl()}/orders/user/${user.id}`);
+        const res = await fetch(`${getBaseUrl()}/orders/customer/${user.id}`);
         const data = await res.json();
         if (Array.isArray(data)) setOrders(data);
         else setOrders([]);
