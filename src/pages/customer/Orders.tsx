@@ -28,30 +28,32 @@ export default function CustomerOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [userId, setUserId] = useState<number | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false); // main loading
+  const [completingOrderId, setCompletingOrderId] = useState<number | null>(null); // spinner for button
 
   const [currentPage, setCurrentPage] = useState(1);
-  const ordersPerPage = 5;
+  const ordersPerPage = 8;
 
   const formatRWF = (amount: string | number) =>
     `RWF ${parseFloat(amount.toString()).toLocaleString("en-RW")}`;
   const getItemCount = (items: OrderItem[]) =>
     items.reduce((sum, i) => sum + i.quantity, 0);
-const getStatusClasses = (status: string) => {
-  switch (status.toLowerCase()) {
-    case "delivering":
-      return "bg-blue-100 text-blue-800 border border-blue-200" ; 
-    case "paid":
-      return "bg-green-100 text-green-800 border border-green-200";    
-    case "cancelled":
-      return "bg-red-100 text-red-800 border border-red-200";       
-    case "processing":
-      return "bg-yellow-100 text-yellow-800 border border-yellow-200";
-    case "completed":
-      return "bg-green-100 text-green-800 border border-green-200";     
-    default:
-      return "bg-gray-100 text-gray-700 border border-gray-200";     
-  }
-};
+
+  const getStatusClasses = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "delivering":
+        return "bg-blue-100 text-blue-800 border border-blue-200";
+      case "paid":
+      case "completed":
+        return "bg-green-100 text-green-800 border border-green-200";
+      case "cancelled":
+        return "bg-red-100 text-red-800 border border-red-200";
+      case "processing":
+        return "bg-yellow-100 text-yellow-800 border border-yellow-200";
+      default:
+        return "bg-gray-100 text-gray-700 border border-gray-200";
+    }
+  };
 
   // Decode JWT
   useEffect(() => {
@@ -69,7 +71,9 @@ const getStatusClasses = (status: string) => {
   // Fetch orders
   useEffect(() => {
     if (!userId) return;
+
     const fetchOrders = async () => {
+      setLoading(true); // start loading
       try {
         const res = await fetch(`${getBaseUrl()}/orders/customer/${userId}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("jwtToken")}` },
@@ -78,13 +82,17 @@ const getStatusClasses = (status: string) => {
         setOrders(Array.isArray(data.orders) ? data.orders : []);
       } catch (err) {
         console.error("Failed to fetch orders:", err);
+      } finally {
+        setLoading(false); // stop loading
       }
     };
+
     fetchOrders();
   }, [userId]);
 
   // Complete order
   const completeOrder = async (orderId: number) => {
+    setCompletingOrderId(orderId); // start button spinner
     try {
       const res = await fetch(`${getBaseUrl()}/orders/order/complete/${orderId}`, {
         method: "PATCH",
@@ -100,6 +108,8 @@ const getStatusClasses = (status: string) => {
       setDropdownOpen(null);
     } catch (err) {
       console.error(err);
+    } finally {
+      setCompletingOrderId(null); // stop button spinner
     }
   };
 
@@ -122,9 +132,13 @@ const getStatusClasses = (status: string) => {
         </div>
 
         <main className="flex-1 pt-20 p-6 flex flex-col">
-          <h1 className="text-2xl font-semibold text-[#4B341C] mb-6"> My Orders</h1>
+          <h1 className="text-2xl font-semibold text-[#4B341C] mb-6">My Orders</h1>
 
-          {orders.length === 0 ? (
+          {loading ? (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-[#4B341C]"></div>
+            </div>
+          ) : orders.length === 0 ? (
             <div className="text-gray-500 flex-1 flex items-center justify-center">
               No orders found yet.
             </div>
@@ -207,8 +221,12 @@ const getStatusClasses = (status: string) => {
                               {order.status.toLowerCase() !== "delivered" && (
                                 <button
                                   onClick={() => completeOrder(order.id)}
-                                  className="w-full mt-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+                                  className="w-full mt-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition flex justify-center items-center gap-2"
+                                  disabled={completingOrderId === order.id}
                                 >
+                                  {completingOrderId === order.id ? (
+                                    <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+                                  ) : null}
                                   Mark as Complete
                                 </button>
                               )}
