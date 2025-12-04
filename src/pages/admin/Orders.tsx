@@ -123,9 +123,10 @@ export default function AdminOrders() {
             }}
             className={`px-3 py-1 rounded border ${
               filterStatus === btn.value
-                ? "bg-[#4B341C] text-white"
-                : "bg-white text-[#4B341C]"
+              ? 'bg-[#4B341C] text-white border-[#4B341C]' : 'text-gray-700'
             }`}
+
+            
           >
             {btn.label}
           </button>
@@ -217,7 +218,8 @@ export default function AdminOrders() {
       {modalVisible && selectedOrder && (
         <div className="fixed inset-0 bg-black/30 flex items-start justify-center z-50 py-10 px-4">
           <div className="bg-white w-full max-w-2xl rounded-lg p-6 relative shadow-md overflow-y-auto max-h-[90vh]">
-            <button className="absolute top-4 right-4 text-gray-600" onClick={closeModal}>
+            <button className="absolute top-4 right-4 text-gray-600" onClick={closeModal}
+            >
               <X size={20} />
             </button>
 
