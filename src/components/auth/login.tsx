@@ -75,13 +75,13 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-[#f0ebe3] px-4">
+    <div className="min-h-screen flex flex-col justify-center items-center bg-[#f0ebe3] px-4 mt-[-4rem]">
      
 
       <h2 className="text-lg font-medium text-gray-700">Welcome Back</h2>
       <p className="text-sm text-gray-500 mb-6">Sign in to your account</p>
 
-      <form onSubmit={handleLogin} className="bg-white w-full max-w-sm rounded-lg shadow-md p-6 transition-all duration-300">
+      <form onSubmit={handleLogin} className="bg-white w-full max-w-sm rounded-lg shadow-md p-6 transition-all duration-300 ">
         <div className="mb-4">
           <label className="block text-sm mb-1 text-gray-700">Email</label>
           <div className="flex items-center border border-gray-300 rounded-md px-3">
@@ -125,13 +125,7 @@ export default function Login() {
         <p className="text-sm text-center mt-4 text-gray-600">
           Don’t have an account? <Link to="/signup" className="text-[#4B341C] font-medium hover:underline">Sign up</Link>
         </p>
-        <div>
-        <span className="text-xs text-gray-500 mt-2">Demo Credentials:</span>
-        <p className="text-xs text-gray-500 mt-2">Customer - email: customer@umubajihub.com</p>
-        <p className="text-xs text-gray-500 mt-2">Vendor - email: vendor@umubajihub.com</p>
-        <p className="text-xs text-gray-500 mt-2">Admin - email: itangishatsemusa@gmail.com</p>
-        <p className="text-xs text-gray-500 mt-2">Password: okok</p>
-      </div>
+      
       </form>
      
       <Link to="/" className="mt-6 text-sm text-gray-600 hover:text-[#4B341C] transition">← Back to Home</Link>
