@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async'; // ✅ SEO support
 import {
   ShoppingCartIcon,
   EyeIcon,
@@ -14,7 +15,6 @@ import { MapPin, Tag } from 'lucide-react';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-
 
 const heroImages = [
   { url: '/ph9.jpg', text: 'Connect with Skilled Carpenters' },
@@ -63,7 +63,23 @@ const Home: React.FC = () => {
   return (
     <div className="font-sans bg-[#F5F5F5] overflow-x-hidden">
 
-      {/* Hero Section */}
+      {/* ================= SEO META TAGS ================= */}
+      <Helmet>
+        <title>Umubaji Hub - Kigali, Rwanda | Find Vendors & Products</title>
+        <meta
+          name="description"
+          content="Umubaji Hub connects you with top vendors and products in Kigali, Rwanda. Browse, buy, and discover trusted services and handmade furniture."
+        />
+        <meta name="keywords" content="Umubaji Hub, Kigali Rwanda, vendors, products, shopping, furniture, handmade, marketplace" />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://umubaji-hub-fe.vercel.app/" />
+        <meta property="og:title" content="Umubaji Hub - Kigali, Rwanda" />
+        <meta property="og:description" content="Connect with top vendors and products in Kigali with Umubaji Hub." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://umubaji-hub-fe.vercel.app/" />
+      </Helmet>
+
+      {/* ================= HERO SECTION ================= */}
       <section className="relative h-[600px] text-white">
         <Slider {...sliderSettings}>
           {heroImages.map((item, idx) => (
@@ -88,7 +104,7 @@ const Home: React.FC = () => {
         </Slider>
       </section>
 
-      {/* Trending Products */}
+      {/* ================= TRENDING PRODUCTS ================= */}
       <section className="py-16 bg-[#F5F5F5]">
         <div className="max-w-7xl mx-auto px-[4%]">
           <h2 className="text-xl font-semibold mb-6 text-[#4B341C]">
@@ -224,7 +240,7 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Product Modal */}
+      {/* ================= PRODUCT MODAL ================= */}
       {selectedProduct && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-md max-w-md w-full relative shadow-lg">
